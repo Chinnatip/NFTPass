@@ -1,0 +1,143 @@
+/* purgecss start ignore */
+@tailwind base;
+@tailwind components;
+/* purgecss end ignore */
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css?family=Lato:300,400,600&display=swap');
+
+body {
+  font-family: 'Lato';
+}
+
+.text-ss {
+  font-size: 0.5rem;
+}
+
+.text-b {
+  font-family: 'Lato';
+}
+
+.tab-active {
+  color: #ffb986;
+}
+
+.banner-bottom-height {
+  height: 4.2rem;
+}
+
+@media only screen and (min-width: 200px) {
+  .drawer-expand {
+    top: 9rem;
+    bottom: 4rem;
+    right: 100%;
+  }
+}
+
+@media only screen and (min-width: 780px) {
+  .drawer-expand {
+    top: 5rem !important;
+    bottom: 4rem !important;
+    right: auto !important;
+  }
+}
+
+.drawer-active {
+  background-color: #756e66;
+}
+
+.bg-brown {
+  background-color: #4f482b;
+}
+
+.bg-dark-gray {
+  background-color: #606060;
+}
+
+.text-brown {
+  color: #4f482b;
+}
+
+.bg-blue {
+  background-color: #b1e1f4;
+}
+
+.bg-accent {
+  background-color: #fbd38d;
+}
+
+.button-accent {
+  background-color: #fbd38d;
+}
+
+.button-accent:hover {
+  background-color: #b34b1e;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  /* background-color: #b46868; */
+  background: none;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #fbd38d;
+}
+
+::-webkit-scrollbar-button {
+  background-color: #fbd38d;
+}
+
+::-webkit-scrollbar-corner {
+  background-color: black;
+}
+
+/* Filter brightness */
+.bri-70 {
+  filter: brightness(70%);
+}
+.bri-100 {
+  filter: brightness(100%);
+}
+
+/* Chart div */
+.chart-height {
+  height: 300px;
+}
+
+.fa-show {
+  height: 1em;
+}
+
+.font-family-karla {
+  font-family: karla;
+}
+.bg-sidebar {
+  background: #3d68ff;
+}
+.cta-btn {
+  color: #3d68ff;
+}
+.upgrade-btn {
+  background: #1947ee;
+}
+.upgrade-btn:hover {
+  background: #0038fd;
+}
+.active-nav-link {
+  background: #1947ee;
+}
+.nav-item:hover {
+  background: #1947ee;
+}
+.account-link:hover {
+  background: #3d68ff;
+}
+
+.bg-sidebar {
+  background: #3d68ff;
+}
