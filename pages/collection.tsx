@@ -22,7 +22,7 @@ const Page = ({ address }: {address: string}) => {
   const Router = useRouter()
   return <div className="flex flex-col items-center bg-gray-300 h-screen overflow-y-scroll pb-24">
     <div>
-      <img className="logo-header my-4" src="https://firebasestorage.googleapis.com/v0/b/nftpass-6056c.appspot.com/o/NFTpass.svg?alt=media&token=624e343b-d138-4253-893d-e0a8bb39a4f8" />
+      <img className="logo-header my-4" src="https://firebasestorage.googleapis.com/v0/b/nftpass-6056c.appspot.com/o/Suez-Logo.svg?alt=media&token=d60cddd7-cbd4-4520-a05d-2b5c4e57b0cf" />
     </div>
     <div className=" w-full md:w-1/2 bg-white p-6 text-center text-2xl style-box-primary rounded-none flex flex-col bg-pattern">
       <div className="flex flex-col">
