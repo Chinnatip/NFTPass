@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
+import { faDownload } from '@fortawesome/free-solid-svg-icons'
+import Icon from '../components/Icon'
 
 const Page = () => {
   const [title] = useState('NFTPass')
@@ -13,7 +15,9 @@ const Page = () => {
         <img className="profile-image" src="https://images.barrons.com/im-310790?width=620&size=0.7498535442296427" alt="" />
 
         <div className="py-8 md:p-8 flex flex-col text-left">
-          <p className="font-semibold text-black-700 mb-5 text-left">Beeple (Mike Winkelmann)</p>
+          <p className="font-semibold text-black-700 mb-5 text-left">
+            <Icon fill={faDownload}></Icon>
+            Beeple (Mike Winkelmann)</p>
           <div className="flex flex-row">
             <a><i className="fab fa-facebook"></i></a>
 
