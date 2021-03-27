@@ -1,5 +1,5 @@
 import { Player } from 'video-react'
-import "node_modules/video-react/dist/video-react.css"
+
 
 const Video = ({ poster_link, animate_link }) => {
   return <Player

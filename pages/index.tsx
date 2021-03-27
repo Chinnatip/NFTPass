@@ -1,4 +1,18 @@
 import { useRouter } from 'next/router'
+import { Person } from "schema-dts"
+import { helmetJsonLdProp } from "react-schemaorg"
+import { Helmet } from "react-helmet"
+
+type Artist = {
+  name: string
+  alternateName: string
+  alumniOf: {
+    "@type": string
+    name: string[]
+  },
+  knowsAbout: string[]
+}
+
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons'
 import { useState, useEffect } from 'react'
 import { OpenseaCollection, OpenseaThing } from '../interfaces/opensea'
@@ -20,6 +34,15 @@ const Page = () => {
   const [connections, setConnection] = useState(iconLists)
   const [creator, setCreator] = useState<OpenseaCollection>({})
   const [creatorThings, setCreatorCurate] = useState<OpenseaThing[]>([])
+  const [artist] = useState<Artist>({
+    name: "Chinnatip Taemkaeo",
+    alternateName: "Chinnatip D. Taemkaeo",
+    alumniOf: {
+      "@type": "CollegeOrUniversity",
+      name: ["Silpakorn University", "SIIT"],
+    },
+    knowsAbout: ["Architecture", "Artificial intelligence"],
+  })
   useEffect(() => {
     axios.get('https://api.opensea.io/api/v1/asset_contract/0x12f28e2106ce8fd8464885b80ea865e98b465149').then(res => {
       const creatorData: OpenseaCollection = res.data
@@ -31,7 +54,23 @@ const Page = () => {
     })
   }, [])
   useEffect(() => { }, []);
-  return <div className="flex flex-col items-center justify-center relative">
+  return <>
+    <Helmet
+      script={[
+        helmetJsonLdProp<Person>({
+          "@context": "https://schema.org",
+          "@type": "Person",
+          name: artist.name,
+          alternateName: artist.alternateName,
+          alumniOf: {
+            "@type": "CollegeOrUniversity",
+            name: artist.alumniOf.name
+          },
+          knowsAbout: artist.knowsAbout
+        }),
+      ]}
+    />
+    <div className="flex flex-col items-center justify-center relative">
     {/* Modal */}
     { modal && <div className="fixed top-0 left-0 w-screen h-screen bg-gray-800 bg-opacity-75	z-10 flex items-center justify-center">
     
@@ -162,6 +201,8 @@ const Page = () => {
       </div>
     </div>
   </div>
+  </>
+
 }
 
 export default Page
