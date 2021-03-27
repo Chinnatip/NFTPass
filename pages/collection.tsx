@@ -5,6 +5,7 @@ import VideoPlayer from '../components/VideoPlayer'
 import axios from 'axios'
 
 const Page = ({ address }: {address: string}) => {
+  
   const [creatorNFT, setcreatorNFT] = useState<NFTAsset[]>([])
   useEffect(() => {
     let assets : NFTAsset[] = []
@@ -25,7 +26,7 @@ const Page = ({ address }: {address: string}) => {
     <div>
       <img className="logo-header my-4" src="https://firebasestorage.googleapis.com/v0/b/nftpass-6056c.appspot.com/o/Suez-Logo.svg?alt=media&token=d60cddd7-cbd4-4520-a05d-2b5c4e57b0cf" />
     </div>
-    <div className=" w-full md:w-1/2 bg-white p-6 text-center text-2xl style-box-primary rounded-none flex flex-col bg-pattern">
+    <div className=" w-full md:w-1/2 bg-white p-6 text-center text-2xl style-box-primary rounded-none flex flex-col bg-patter">
       <div className="flex flex-col">
         <a onClick={() => Router.push('/')} className="text-left mb-2"> ← Back </a>
         { creatorNFT[2]?.animation_original_url != undefined ?
@@ -44,7 +45,8 @@ const Page = ({ address }: {address: string}) => {
       </div>
     <span className="text-left">Exhibition</span>
     <div className="flex flex-col mb-8">
-    <a href={creatorNFT[2]?.external_link} target="_blank" className="text-black bg-white rounded-none px-4 py-2 mt-4 border-gray-900 border-2"><img width="25" height="25" className="inline" src="https://res.cloudinary.com/nifty-gateway/image/upload/q_auto:good,w_500/v1576344316/nifty-builder-images/kyhclu5quebqm4sit0he.png" /> <span>Niftygateway</span></a>
+    <a href={creatorNFT[2]?.external_link} className="text-black bg-white rounded-none px-4 py-2 mt-4 border-gray-900 border-2 flex justify-between">
+          <div><img width="25" height="25" className="inline" src="https://res.cloudinary.com/nifty-gateway/image/upload/q_auto:good,w_500/v1576344316/nifty-builder-images/kyhclu5quebqm4sit0he.png" /> <span>Niftygateway</span></div><div>→</div></a>
     </div>
     <span className="text-left">Same Collection(4)</span>
     <div className="">
