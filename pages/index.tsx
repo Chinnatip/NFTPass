@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { faDownload } from '@fortawesome/free-solid-svg-icons'
+import { faCheckCircle } from '@fortawesome/free-solid-svg-icons'
 import Icon, { FacebookIcon, InstagramIcon, TwitterIcon } from '../components/Icon'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
@@ -63,9 +63,19 @@ type OpenseaData = {
   total_supply: string
 }
 
+const iconLists = [
+{img_url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/1200px-Facebook_Logo_%282019%29.png", title: "Facebook" , connected: false},
+{img_url: "https://rmutrecht.org/wp-content/uploads/sites/259/2017/07/logo-twitter.png", title: "Twitter" , connected: false},
+{img_url: "https://www.pngitem.com/pimgs/m/461-4618525_ig-small-instagram-logo-2019-hd-png-download.png", title: "Instagram" , connected: false},
+{img_url: "https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/395_Youtube_logo-512.png", title: "Youtube" , connected: false},
+{img_url: "https://pngimg.com/uploads/twitch/twitch_PNG13.png", title: "Twitch" , connected: false},
+{img_url: "https://cdn2.iconfinder.com/data/icons/minimalism/512/soundcloud.png", title: "SoundCloud" , connected: false},
+]
+
 const Page = () => {
-  const [title] = useState('NFTPass')
   const Router = useRouter()
+  const [modal, setModal] = useState(false)
+  const [connections, setConnection] = useState(iconLists)
   const [creator, setCreator] = useState<OpenseaData>({})
   useEffect(() => {
     axios.get('https://api.opensea.io/api/v1/asset_contract/0x12f28e2106ce8fd8464885b80ea865e98b465149').then(res => {
@@ -75,29 +85,66 @@ const Page = () => {
     })
   }, [])
   useEffect(() => { }, []);
-  return <div className="flex flex-col items-center justify-center bg-gray-300">
+  return <div className="flex flex-col items-center justify-center bg-gray-300 relative">
+    {/* Modal */}
+    { modal && <div className="fixed top-0 left-0 w-screen h-screen bg-gray-300 z-10 flex items-center justify-center">
+
+      <button onClick={() => setModal(false) } className="mt-2 mr-2 absolute top-0 right-0 text-4xl ">x</button>
+      <div className="w-4/5 botder-white border-2">
+      <div className="flex flex-col items-center justify-center bg-gray-300">
+      <div>
+        <img className="logo-header my-4" src="https://firebasestorage.googleapis.com/v0/b/nftpass-6056c.appspot.com/o/NFTpass.svg?alt=media&token=624e343b-d138-4253-893d-e0a8bb39a4f8" /></div>
+        <div className=" w-full md:w-1/2 bg-white p-6 text-center text-2xl style-box-primary rounded-none flex flex-col bg-pattern">
+          <div className="flex flex-col mb-8">
+            { connections.map((icon,index) => {
+              return <div className="flex  flex-row justify-between w-full items-center	mb-6">
+              <div className="flex flex-row items-center">
+                <img className="sm-connector mr-2" src={icon.img_url} />{icon.title}
+              </div>
+              { icon.connected ?
+                <button onClick={() => {
+                  const updateConnection = connections.map((connect,getIndex) => { return getIndex != index ? connect : { ...connect, connected: false }})
+                  setConnection(updateConnection)
+                }} className="text-black bg-white rounded-none px-4 py-2 mt-4 border-gray-900 border-2">
+                  <div className="text-green-400	inline">
+                    <Icon fill={faCheckCircle}/>
+                  </div>
+                  Connected
+                </button>:
+                <button onClick={() => {
+                  const updateConnection = connections.map((connect,getIndex) => { return getIndex != index ? connect : { ...connect, connected: true }})
+                  setConnection(updateConnection)
+                }} className="text-black bg-white rounded-none px-4 py-2 mt-4 border-gray-900 border-2">Connect</button>
+              }
+            </div>
+            })}
+          </div>
+
+        </div>
+      </div>
+      </div>
+    </div>}
+
+    {/* Passport page */}
     <div>
       <img className="logo-header my-4" src="https://firebasestorage.googleapis.com/v0/b/nftpass-6056c.appspot.com/o/NFTpass.svg?alt=media&token=624e343b-d138-4253-893d-e0a8bb39a4f8" /></div>
     <div className=" w-full md:w-1/2 bg-white p-6 text-center text-2xl style-box-primary rounded-none flex flex-col bg-pattern">
       <div className="flex flex-col mb-8">
-
-
         <div className="flex flex-row text-left w-full justify-between">
           <div className="flex flex-col">
             <p className="font-semibold text-black-700 mb-5 text-left">
-
               {creator?.name}</p>
-
             <span className="block text-base">Passport Views	1,771,705</span>
           </div>
           <img className="profile-image" src={creator?.collection?.image_url} alt="" />
-
         </div>
         <div className="flex flex-row bg-white p-4 rounded-lg mt-2 w-full">
           <a className="text-gray-500" onClick={() => Router.push('https://www.facebook.com/beeple')}><FacebookIcon></FacebookIcon></a>
           <a className="text-gray-500" onClick={() => Router.push('http://instagram.com/beeple_crap')}><InstagramIcon></InstagramIcon></a>
           <a className="text-gray-500" onClick={() => Router.push('https://twitter.com/beeple')}><TwitterIcon></TwitterIcon></a>
-
+          <div className="flex-grow text-right">
+            <button onClick={() => setModal(true)} className="inline text-blue-500 border-2 border-blue-500 px-5 hover:bg-blue-500 hover:text-white ">Connect</button>
+          </div>
         </div>
       </div>
       <span className="text-left">Exhibition (4)</span>
