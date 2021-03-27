@@ -4,7 +4,9 @@ import Icon, { FacebookIcon, InstagramIcon, TwitterIcon } from '../components/Ic
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
-type OpenseaData = {
+
+
+type OpenseaCollection = {
   address: string
   asset_contract_type: string
   buyer_fee_basis_points: number
@@ -63,6 +65,211 @@ type OpenseaData = {
   total_supply: string
 }
 
+type OpenseaThing = {
+  banner_image_url: string
+  chat_url?: string
+  created_date: string
+  default_to_fiat: boolean
+  description: string
+  dev_buyer_fee_basis_points: string
+  dev_seller_fee_basis_points: string
+  discord_url?: string
+  display_data: {
+    card_display_style: string
+  }
+  external_url: string
+  featured: boolean
+  featured_image_url: string
+  hidden: boolean
+  image_url: string
+  instagram_username?: string
+  is_subject_to_whitelist: boolean
+  large_image_url: string
+  medium_username?: string
+  name: string
+  only_proxied_transfers: boolean
+  opensea_buyer_fee_basis_points: string
+  opensea_seller_fee_basis_points: string
+  owned_asset_count: 1
+  payout_address: string
+  primary_asset_contracts: []
+  require_email: boolean
+  safelist_request_status: string
+  short_description?: string
+  slug: string
+  stats: {
+    average_price: number
+    count: number
+    market_cap: number
+    num_owners: number
+    seven_day_average_price: number
+    seven_day_change: number
+    seven_day_sales: number
+    seven_day_volume: number
+    total_sales: number
+    total_supply: number
+    total_volume: number
+  }
+  telegram_url?: string
+  traits: {}
+  twitter_username: string
+  wiki_url: string
+}
+
+type OpenSeaNFT = {
+  assets: NFTAsset[]
+}
+
+type NFTAsset = {
+  "id": number
+  "token_id": string
+  "num_sales": number
+  "background_color": string
+  "image_url": string
+  "image_preview_url": string
+  "image_thumbnail_url": string
+  "image_original_url": string
+  "animation_url": string
+  "animation_original_url": string
+  "name": string
+  "description": string
+  "external_link": string
+  "asset_contract": {
+      "address": string
+      "asset_contract_type": string
+      "created_date": string
+      "name": string
+      "nft_version": string
+      "opensea_version"?: string
+      "owner"?: string
+      "schema_name": string
+      "symbol": string
+      "total_supply": string
+      "description": string
+      "external_link": string
+      "image_url": string
+      "default_to_fiat": boolean
+      "dev_buyer_fee_basis_points": number
+      "dev_seller_fee_basis_points": number
+      "only_proxied_transfers": boolean
+      "opensea_buyer_fee_basis_points": number
+      "opensea_seller_fee_basis_points": number
+      "buyer_fee_basis_points": number
+      "seller_fee_basis_points": number
+      "payout_address": string
+  },
+  "owner": {
+      "user": {
+          "username": string
+      },
+      "profile_img_url": string
+      "address": string
+      "config": string
+      "discord_id": string
+  },
+  "permalink": string
+  "collection": {
+      "banner_image_url": string
+      "chat_url"?: string
+      "created_date": string
+      "default_to_fiat": boolean
+      "description": string
+      "dev_buyer_fee_basis_points": string
+      "dev_seller_fee_basis_points": string
+      "discord_url"?: string
+      "display_data": {
+          "card_display_style": string
+      },
+      "external_url": string
+      "featured": boolean
+      "featured_image_url": string
+      "hidden": boolean
+      "safelist_request_status": string
+      "image_url": string
+      "is_subject_to_whitelist": boolean
+      "large_image_url": string
+      "medium_username"?: string
+      "name": string
+      "only_proxied_transfers": boolean
+      "opensea_buyer_fee_basis_points": string
+      "opensea_seller_fee_basis_points": string
+      "payout_address": string
+      "require_email": boolean
+      "short_description"?: string
+      "slug": string
+      "telegram_url"?: string
+      "twitter_username"?: string
+      "instagram_username"?: string
+      "wiki_url"?: string
+  },
+  "decimals": number
+  "sell_orders": [],
+  "creator": {
+      "user": {
+          "username": string
+      },
+      "profile_img_url": string
+      "address": string
+      "config": string
+      "discord_id": string
+  },
+  "traits": [],
+  "last_sale": {
+      "asset": {
+          "token_id": string
+          "decimals": number
+      },
+      "asset_bundle"?: string
+      "event_type": string
+      "event_timestamp": string
+      "auction_type"?: string
+      "total_price": string
+      "payment_token": {
+          "id": number
+          "symbol": string
+          "address": string
+          "image_url": string
+          "name": string
+          "decimals": number
+          "eth_price": string
+          "usd_price": string
+      },
+      "transaction": {
+          "block_hash": string
+          "block_number": string
+          "from_account": {
+              "user": {
+                  "username": string
+              },
+              "profile_img_url": string
+              "address": string
+              "config": string
+              "discord_id": string
+          },
+          "id": number
+          "timestamp": string
+          "to_account": {
+              "user": {
+                  "username": string
+              },
+              "profile_img_url": string
+              "address": string
+              "config": string
+              "discord_id": string
+          },
+          "transaction_hash": string
+          "transaction_index": string
+      },
+      "created_date": string
+      "quantity": string
+  },
+  "top_bid"?: string
+  "listing_date"?: string
+  "is_presale": boolean
+  "transfer_fee_payment_token"?: string
+  "transfer_fee"?: string
+}
+
 const iconLists = [
 {img_url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/1200px-Facebook_Logo_%282019%29.png", title: "Facebook" , connected: false},
 {img_url: "https://rmutrecht.org/wp-content/uploads/sites/259/2017/07/logo-twitter.png", title: "Twitter" , connected: false},
@@ -76,24 +283,42 @@ const Page = () => {
   const Router = useRouter()
   const [modal, setModal] = useState(false)
   const [connections, setConnection] = useState(iconLists)
-  const [creator, setCreator] = useState<OpenseaData>({})
+  const [creator, setCreator] = useState<OpenseaCollection>({})
+  const [creatorThings, setCreatorCurate] = useState<OpenseaThing[]>([])
+  const [creatorNFT, setcreatorNFT] = useState<NFTAsset[]>([])
   useEffect(() => {
+    let assets : NFTAsset[] = []
     axios.get('https://api.opensea.io/api/v1/asset_contract/0x12f28e2106ce8fd8464885b80ea865e98b465149').then(res => {
-      const creatorData: OpenseaData = res.data
-      console.log(creatorData)
+      const creatorData : OpenseaCollection = res.data
       setCreator(creatorData)
+      axios.get('https://api.opensea.io/api/v1/collections?asset_owner=0xc6b0562605d35ee710138402b878ffe6f2e23807&offset=0&limit=300').then(res => {
+        const thingsData : OpenseaThing[] = res.data
+        setCreatorCurate(thingsData)
+        axios.get('https://api.opensea.io/api/v1/assets?asset_contract_address=0x12f28e2106ce8fd8464885b80ea865e98b465149&order_direction=desc&offset=0&limit=50').then(res => {
+          const nfts : OpenSeaNFT = res.data
+          const nft = nfts.assets
+          assets.push(...nft)
+          axios.get('https://api.opensea.io/api/v1/assets?asset_contract_address=0x12f28e2106ce8fd8464885b80ea865e98b465149&order_direction=desc&offset=50&limit=50').then(res => {
+            const nfts : OpenSeaNFT = res.data
+            const nft = nfts.assets
+            assets.push(...assets,...nft)
+            // console.log(assets.length)
+            setcreatorNFT(nft.filter(thing => thing?.last_sale != undefined).sort((a,b) => parseFloat(b.last_sale.payment_token?.usd_price) - parseFloat(a.last_sale.payment_token.usd_price)))
+          })
+        })
+      })
     })
-  }, [])
+  },[])
   useEffect(() => { }, []);
-  return <div className="flex flex-col items-center justify-center bg-gray-300 relative">
+  return <div className="flex flex-col items-center justify-center relative">
     {/* Modal */}
-    { modal && <div className="fixed top-0 left-0 w-screen h-screen bg-gray-300 z-10 flex items-center justify-center">
+    { modal && <div className="fixed top-0 left-0 w-screen h-screen bg-gray-800 bg-opacity-75	z-10 flex items-center justify-center">
 
-      <button onClick={() => setModal(false) } className="mt-2 mr-2 absolute top-0 right-0 text-4xl ">x</button>
-      <div className="w-4/5 botder-white border-2">
-      <div className="flex flex-col items-center justify-center bg-gray-300">
+      <button onClick={() => setModal(false) } className="mt-2 mr-2 absolute top-0 right-0 text-4xl text-white">x</button>
+      <div className="w-full ">
+      <div className="flex flex-col items-center justify-center   w-full">
       <div>
-        <img className="logo-header my-4" src="https://firebasestorage.googleapis.com/v0/b/nftpass-6056c.appspot.com/o/NFTpass.svg?alt=media&token=624e343b-d138-4253-893d-e0a8bb39a4f8" /></div>
+        </div>
         <div className=" w-full md:w-1/2 bg-white p-6 text-center text-2xl style-box-primary rounded-none flex flex-col bg-pattern">
           <div className="flex flex-col mb-8">
             { connections.map((icon,index) => {
@@ -143,7 +368,7 @@ const Page = () => {
           <a className="text-gray-500" onClick={() => Router.push('http://instagram.com/beeple_crap')}><InstagramIcon></InstagramIcon></a>
           <a className="text-gray-500" onClick={() => Router.push('https://twitter.com/beeple')}><TwitterIcon></TwitterIcon></a>
           <div className="flex-grow text-right">
-            <button onClick={() => setModal(true)} className="inline text-blue-500 border-2 border-blue-500 px-5 hover:bg-blue-500 hover:text-white ">Connect</button>
+            <button onClick={() => setModal(true)} className="inline text-gray-700 border-2 bg-gray-300 px-4">Connect</button>
           </div>
         </div>
       </div>
@@ -196,6 +421,15 @@ const Page = () => {
             <span className="text-sm	block text-gray-500	text-show-less">{creator?.collection?.description}</span>
           </div>
         </a>
+      </div>
+      <span className="text-left">{creator?.name}'s buys</span>
+      <div className="grid grid-cols-2 gap-4 my-4 mb-8">
+    {creatorThings.slice(0, 8).map(thing => {
+      return <span className="style-box-primary artwork-card flex-col text-left">
+        <img src={thing.image_url} className="m-auto block thumbnail-work" alt=""/>
+        <p className="text-sm	block text-blue-600 ">{thing.name}</p>
+      </span>
+    })}
       </div>
     </div>
   </div>
