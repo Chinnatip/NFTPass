@@ -1,13 +1,18 @@
 /* purgecss start ignore */
 @tailwind base;
 @tailwind components;
-/* purgecss end ignore */
 @tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css?family=Lato:300,400,600&display=swap');
+@import url('https://fonts.googleapis.com/css?family=RobotoMono:300,400,600&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css');
 
 body {
-  font-family: 'Lato';
+  font-family: 'Roboto Mono';
+  overflow-y: auto;
+}
+
+a,
+button {
+  cursor: pointer;
 }
 
 .text-ss {
@@ -15,7 +20,7 @@ body {
 }
 
 .text-b {
-  font-family: 'Lato';
+  font-family: 'Roboto Mono';
 }
 
 .tab-active {
@@ -140,4 +145,120 @@ body {
 
 .bg-sidebar {
   background: #3d68ff;
+}
+
+.style-box-primary {
+  box-shadow: 4px 4px 0 0 rgba(0, 0, 0, 1);
+  background-color: #ffffff;
+  border: 2px solid #000000;
+}
+
+.profile-image {
+  object-fit: cover;
+  max-width: 100px;
+  width: 100%;
+  max-height: 100px;
+  height: 220px;
+  border-radius: 100px;
+  filter: grayscale(100%);
+}
+
+.logo-header {
+  height: 46px;
+  width: 46px;
+  object-fit: contain;
+}
+
+.thumbnail-work {
+  width: 100%;
+  max-height: 250px;
+  object-fit: cover;
+}
+
+.artwork-card {
+  height: 400px;
+  padding: 16px;
+}
+
+.bg-pattern {
+  background-color: #ffffff;
+  background-image: repeating-radial-gradient(
+      circle at 0 0,
+      transparent 0,
+      #eaeaf1 5px
+    ),
+    repeating-linear-gradient(rgba(255, 255, 255, 0.33333), #ffffff);
+}
+
+.bg-pattern-a {
+  background-color: #e5e5f7;
+  background-image: radial-gradient(
+    ellipse farthest-corner at 8px 8px,
+    #444cf733,
+    #ffffff38 50%,
+    #ffffff8a 50%
+  );
+  background-size: 8px 8px;
+}
+
+.bg-pattern-b {
+  background-color: #e5e5f7;
+  background: linear-gradient(135deg, #85859255 25%, transparent 25%) -16px 0/
+      32px 32px,
+    linear-gradient(225deg, #858592 25%, transparent 25%) -16px 0/ 32px 32px,
+    linear-gradient(315deg, #85859255 25%, transparent 25%) 0px 0/ 32px 32px,
+    linear-gradient(45deg, #858592 25%, #e5e5f7 25%) 0px 0/ 32px 32px;
+}
+
+.bg-pattern-c {
+  background-color: #e5e5f7;
+  background: radial-gradient(
+      circle,
+      transparent 20%,
+      #e5e5f7 20%,
+      #e5e5f7 80%,
+      transparent 80%,
+      transparent
+    ),
+    radial-gradient(
+        circle,
+        transparent 20%,
+        #e5e5f7 20%,
+        #e5e5f7 80%,
+        transparent 80%,
+        transparent
+      )
+      30px 30px,
+    linear-gradient(
+        #a1a2bf 2.4000000000000004px,
+        transparent 2.4000000000000004px
+      )
+      0 -1.2000000000000002px,
+    linear-gradient(
+        90deg,
+        #a1a2bf 2.4000000000000004px,
+        #e5e5f7 2.4000000000000004px
+      ) -1.2000000000000002px 0;
+  background-size: 60px 60px, 60px 60px, 30px 30px, 30px 30px;
+}
+
+.sm-connector {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.text-show-less {
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.booklet-card {
+  position: relative;
+  height: 400px;
+}
+.booklet-card > div {
+  position: absolute;
+  bottom: 0;
 }
