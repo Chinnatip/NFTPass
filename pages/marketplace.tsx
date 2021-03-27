@@ -8,7 +8,7 @@ const Page = () => {
     <div><img className="logo-header my-4" src="https://firebasestorage.googleapis.com/v0/b/nftpass-6056c.appspot.com/o/NFTpass.svg?alt=media&token=624e343b-d138-4253-893d-e0a8bb39a4f8" /></div>
     <div className=" w-full md:w-1/2 bg-white p-6 text-center text-2xl style-box-primary rounded-none flex flex-col bg-pattern">
       <div className="flex flex-col mb-8">
-        <a onClick={() => Router.push('/')} className="text-left mb-2"> ← Back </a>
+        <input className="w-full bg-white border-2 rounded-none style-box-primary"></input>
         <img className="block w-full" src="https://mir-s3-cdn-cf.behance.net/project_modules/fs/ce0cbc73949311.5c1adc41ccdcd.jpg" alt="" />
         <div className="py-8 flex flex-col text-left">
           <div className="mt-2">
