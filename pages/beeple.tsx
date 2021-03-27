@@ -22,7 +22,6 @@ const Page = () => {
             const nfts : OpenSeaNFT = res.data
             const nft = nfts.assets
             assets.push(...assets,...nft)
-            // console.log(assets.length)
             setcreatorNFT(nft.filter(thing => thing?.last_sale != undefined).sort((a,b) => parseFloat(b.last_sale.payment_token?.usd_price) - parseFloat(a.last_sale.payment_token.usd_price)))
           })
         })
@@ -31,7 +30,6 @@ const Page = () => {
   },[])
 
   return <div>
-    {/* <p className="text-xs text-gray-300">{JSON.stringify(creator)}</p> */}
     <h1 className="text-2xl">{creator?.address}</h1>
     <h1 className="text-2xl">{creator?.payout_address}</h1>
     <h2 className="text-green-400 text-xl">{creator?.collection?.safelist_request_status}</h2>

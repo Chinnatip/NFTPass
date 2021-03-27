@@ -39,6 +39,8 @@
     "react-papaparse": "^3.11.1",
     "react-photo-gallery": "^8.0.0",
     "react-player": "^2.5.0",
+    "react-video-play": "^2.0.3",
+    "video-react": "^0.14.1",
     "xstate": "^4.13.0"
   },
   "devDependencies": {

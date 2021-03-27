@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons'
 import { useState, useEffect } from 'react'
-import { OpenseaCollection,OpenSeaNFT, OpenseaThing, NFTAsset } from '../interfaces/opensea'
+import { OpenseaCollection, OpenseaThing } from '../interfaces/opensea'
 import Icon, { FacebookIcon, InstagramIcon, TwitterIcon } from '../components/Icon'
 import axios from 'axios'
 
@@ -20,27 +20,13 @@ const Page = () => {
   const [connections, setConnection] = useState(iconLists)
   const [creator, setCreator] = useState<OpenseaCollection>({})
   const [creatorThings, setCreatorCurate] = useState<OpenseaThing[]>([])
-  const [creatorNFT, setcreatorNFT] = useState<NFTAsset[]>([])
   useEffect(() => {
-    let assets : NFTAsset[] = []
     axios.get('https://api.opensea.io/api/v1/asset_contract/0x12f28e2106ce8fd8464885b80ea865e98b465149').then(res => {
       const creatorData : OpenseaCollection = res.data
       setCreator(creatorData)
       axios.get('https://api.opensea.io/api/v1/collections?asset_owner=0xc6b0562605d35ee710138402b878ffe6f2e23807&offset=0&limit=300').then(res => {
         const thingsData : OpenseaThing[] = res.data
         setCreatorCurate(thingsData)
-        axios.get('https://api.opensea.io/api/v1/assets?asset_contract_address=0x12f28e2106ce8fd8464885b80ea865e98b465149&order_direction=desc&offset=0&limit=50').then(res => {
-          const nfts : OpenSeaNFT = res.data
-          const nft = nfts.assets
-          assets.push(...nft)
-          axios.get('https://api.opensea.io/api/v1/assets?asset_contract_address=0x12f28e2106ce8fd8464885b80ea865e98b465149&order_direction=desc&offset=50&limit=50').then(res => {
-            const nfts : OpenSeaNFT = res.data
-            const nft = nfts.assets
-            assets.push(...assets,...nft)
-            // console.log(assets.length)
-            setcreatorNFT(nft.filter(thing => thing?.last_sale != undefined).sort((a,b) => parseFloat(b.last_sale.payment_token?.usd_price) - parseFloat(a.last_sale.payment_token.usd_price)))
-          })
-        })
       })
     })
   },[])
@@ -48,7 +34,6 @@ const Page = () => {
   return <div className="flex flex-col items-center justify-center relative">
     {/* Modal */}
     { modal && <div className="fixed top-0 left-0 w-screen h-screen bg-gray-800 bg-opacity-75	z-10 flex items-center justify-center">
-
       <button onClick={() => setModal(false) } className="mt-2 mr-2 absolute top-0 right-0 text-4xl text-white">x</button>
       <div className="w-full ">
       <div className="flex flex-col items-center justify-center   w-full">

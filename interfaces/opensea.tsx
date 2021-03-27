@@ -58,10 +58,10 @@ export interface OpenseaData {
 }
 
 export interface OpenseaCollection  {
-  address: string
-  asset_contract_type: string
-  buyer_fee_basis_points: number
-  collection: {
+  address?: string
+  asset_contract_type?: string
+  buyer_fee_basis_points?: number
+  collection?: {
     banner_image_url: string
     chat_url?: string
     created_date: string
@@ -95,25 +95,25 @@ export interface OpenseaCollection  {
     twitter_username?: string
     wiki_url?: string
   }
-  created_date: string
-  default_to_fiat: boolean
-  description: string
-  dev_buyer_fee_basis_points: number
-  dev_seller_fee_basis_points: number
-  external_link: string
-  image_url: string
-  name: string
-  nft_version: string
-  only_proxied_transfers: boolean
-  opensea_buyer_fee_basis_points: number
-  opensea_seller_fee_basis_points: number
+  created_date?: string
+  default_to_fiat?: boolean
+  description?: string
+  dev_buyer_fee_basis_points?: number
+  dev_seller_fee_basis_points?: number
+  external_link?: string
+  image_url?: string
+  name?: string
+  nft_version?: string
+  only_proxied_transfers?: boolean
+  opensea_buyer_fee_basis_points?: number
+  opensea_seller_fee_basis_points?: number
   opensea_version?: string
   owner?: string
-  payout_address: string
-  schema_name: string
-  seller_fee_basis_points: number
-  symbol: string
-  total_supply: string
+  payout_address?: string
+  schema_name?: string
+  seller_fee_basis_points?: number
+  symbol?: string
+  total_supply?: string
 }
 
 export interface OpenseaThing  {

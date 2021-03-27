@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
 import { NFTAsset, OpenSeaNFT } from '../interfaces/opensea'
+import VideoPlayer from '../components/VideoPlayer'
 import axios from 'axios'
 
 const Page = ({ address }: {address: string}) => {
@@ -27,7 +28,10 @@ const Page = ({ address }: {address: string}) => {
     <div className=" w-full md:w-1/2 bg-white p-6 text-center text-2xl style-box-primary rounded-none flex flex-col bg-pattern">
       <div className="flex flex-col">
         <a onClick={() => Router.push('/')} className="text-left mb-2"> ← Back </a>
-        <img className="block w-full" src={creatorNFT[2]?.image_original_url} alt="" />
+        { creatorNFT[2]?.animation_original_url != undefined ?
+          <VideoPlayer poster_link={creatorNFT[2]?.image_original_url} animate_link={creatorNFT[2]?.animation_original_url}></VideoPlayer>:
+          <img className="block w-full" src={creatorNFT[2]?.image_original_url} alt="" />
+        }
         <div className="py-8 flex flex-col text-left">
           <div className="mt-2">
             <span className="text-sm	block text-blue-600">Name: {creatorNFT[2]?.name}</span>
