@@ -110,7 +110,7 @@ const Page = () => {
       <span className="text-left">Works(4)</span>
       <div className="grid grid-cols-2 gap-4 my-4 mb-8">
         <a onClick={() => Router.push('/next_page')} className="style-box-primary artwork-card flex-col text-left">
-          <img className="m-auto block thumbnail-work" src={creator?.collection?.large_image_url} alt="" />
+          <img className="m-auto block thumbnail-work" src="https://res.cloudinary.com/nifty-gateway/video/upload/v1603975889/Beeple/POLITICAL_BULLSHIT_uqbc8x.png" alt="" />
           <div className="mt-2">
             <span className="text-sm	block text-blue-600">Current Owner: Thanon</span>
             <span className="text-sm	block">Symbol: {creator?.symbol}</span>
