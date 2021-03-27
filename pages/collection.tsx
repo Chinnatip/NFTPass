@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
 import { NFTAsset, OpenSeaNFT } from '../interfaces/opensea'
-import VideoPlayer from '../components/VideoPlayer'
+// import VideoPlayer from '../components/VideoPlayer'
 import axios from 'axios'
 
 const Page = ({ address }: {address: string}) => {
