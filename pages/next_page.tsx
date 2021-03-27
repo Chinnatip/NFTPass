@@ -10,7 +10,6 @@ const Page = () => {
       <img className="m-auto block" src="mask_face/mask-red.png" alt=""/>
       <button onClick={() => Router.push('/')} className="text-white bg-blue-700 rounded-xl px-4 py-2 mt-4">Login</button>
     </div>
-
   </div>
 
 }
