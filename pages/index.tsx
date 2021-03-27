@@ -34,13 +34,15 @@ const Page = () => {
   return <div className="flex flex-col items-center justify-center relative">
     {/* Modal */}
     { modal && <div className="fixed top-0 left-0 w-screen h-screen bg-gray-800 bg-opacity-75	z-10 flex items-center justify-center">
-      <button onClick={() => setModal(false) } className="mt-2 mr-2 absolute top-0 right-0 text-4xl text-white">x</button>
+    
       <div className="w-full ">
         <div className="flex flex-col items-center justify-center   w-full">
           <div>
           </div>
           <div className=" w-full md:w-1/2 bg-white p-6 text-center text-2xl style-box-primary rounded-none flex flex-col">
+          
             <div className="flex flex-col mb-8">
+            <button onClick={() => setModal(false) } className="text-black text-right">x</button>
               {connections.map((icon, index) => {
                 return <div className="flex  flex-row justify-between w-full items-center	mb-6">
                   <div className="flex flex-row items-center">
