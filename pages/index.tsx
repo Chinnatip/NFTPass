@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons'
 import { useState, useEffect } from 'react'
-import { OpenseaData } from '../interfaces/opensea'
+import { OpenseaCollection,OpenSeaNFT, OpenseaThing, NFTAsset } from '../interfaces/opensea'
 import Icon, { FacebookIcon, InstagramIcon, TwitterIcon } from '../components/Icon'
 import axios from 'axios'
 
@@ -18,24 +18,42 @@ const Page = () => {
   const Router = useRouter()
   const [modal, setModal] = useState(false)
   const [connections, setConnection] = useState(iconLists)
-  const [creator, setCreator] = useState<OpenseaData>({})
+  const [creator, setCreator] = useState<OpenseaCollection>({})
+  const [creatorThings, setCreatorCurate] = useState<OpenseaThing[]>([])
+  const [creatorNFT, setcreatorNFT] = useState<NFTAsset[]>([])
   useEffect(() => {
+    let assets : NFTAsset[] = []
     axios.get('https://api.opensea.io/api/v1/asset_contract/0x12f28e2106ce8fd8464885b80ea865e98b465149').then(res => {
-      const creatorData: OpenseaData = res.data
-      console.log(creatorData)
+      const creatorData : OpenseaCollection = res.data
       setCreator(creatorData)
+      axios.get('https://api.opensea.io/api/v1/collections?asset_owner=0xc6b0562605d35ee710138402b878ffe6f2e23807&offset=0&limit=300').then(res => {
+        const thingsData : OpenseaThing[] = res.data
+        setCreatorCurate(thingsData)
+        axios.get('https://api.opensea.io/api/v1/assets?asset_contract_address=0x12f28e2106ce8fd8464885b80ea865e98b465149&order_direction=desc&offset=0&limit=50').then(res => {
+          const nfts : OpenSeaNFT = res.data
+          const nft = nfts.assets
+          assets.push(...nft)
+          axios.get('https://api.opensea.io/api/v1/assets?asset_contract_address=0x12f28e2106ce8fd8464885b80ea865e98b465149&order_direction=desc&offset=50&limit=50').then(res => {
+            const nfts : OpenSeaNFT = res.data
+            const nft = nfts.assets
+            assets.push(...assets,...nft)
+            // console.log(assets.length)
+            setcreatorNFT(nft.filter(thing => thing?.last_sale != undefined).sort((a,b) => parseFloat(b.last_sale.payment_token?.usd_price) - parseFloat(a.last_sale.payment_token.usd_price)))
+          })
+        })
+      })
     })
-  }, [])
+  },[])
   useEffect(() => { }, []);
-  return <div className="flex flex-col items-center justify-center bg-gray-300 relative">
+  return <div className="flex flex-col items-center justify-center relative">
     {/* Modal */}
-    { modal && <div className="fixed top-0 left-0 w-screen h-screen bg-gray-300 z-10 flex items-center justify-center">
+    { modal && <div className="fixed top-0 left-0 w-screen h-screen bg-gray-800 bg-opacity-75	z-10 flex items-center justify-center">
 
-      <button onClick={() => setModal(false) } className="mt-2 mr-2 absolute top-0 right-0 text-4xl ">x</button>
-      <div className="w-4/5 botder-white border-2">
-      <div className="flex flex-col items-center justify-center bg-gray-300">
+      <button onClick={() => setModal(false) } className="mt-2 mr-2 absolute top-0 right-0 text-4xl text-white">x</button>
+      <div className="w-full ">
+      <div className="flex flex-col items-center justify-center   w-full">
       <div>
-        <img className="logo-header my-4" src="https://firebasestorage.googleapis.com/v0/b/nftpass-6056c.appspot.com/o/NFTpass.svg?alt=media&token=624e343b-d138-4253-893d-e0a8bb39a4f8" /></div>
+        </div>
         <div className=" w-full md:w-1/2 bg-white p-6 text-center text-2xl style-box-primary rounded-none flex flex-col bg-pattern">
           <div className="flex flex-col mb-8">
             { connections.map((icon,index) => {
@@ -85,7 +103,7 @@ const Page = () => {
           <a className="text-gray-500" onClick={() => Router.push('http://instagram.com/beeple_crap')}><InstagramIcon></InstagramIcon></a>
           <a className="text-gray-500" onClick={() => Router.push('https://twitter.com/beeple')}><TwitterIcon></TwitterIcon></a>
           <div className="flex-grow text-right">
-            <button onClick={() => setModal(true)} className="inline text-blue-500 border-2 border-blue-500 px-5 hover:bg-blue-500 hover:text-white ">Connect</button>
+            <button onClick={() => setModal(true)} className="inline text-gray-700 border-2 bg-gray-300 px-4">Connect</button>
           </div>
         </div>
       </div>
@@ -99,7 +117,7 @@ const Page = () => {
       <span className="text-left">Works(4)</span>
       <div className="grid grid-cols-2 gap-4 my-4 mb-8">
         <a onClick={() => Router.push('/collection?address=0x12f28e2106ce8fd8464885b80ea865e98b465149')} className="style-box-primary artwork-card flex-col text-left">
-          <img className="m-auto block thumbnail-work" src={creator?.collection?.large_image_url} alt="" />
+          <img className="m-auto block thumbnail-work" src="https://res.cloudinary.com/nifty-gateway/video/upload/v1603975889/Beeple/POLITICAL_BULLSHIT_uqbc8x.png" alt="" />
           <div className="mt-2">
             <span className="text-sm	block text-blue-600">Current Owner: Thanon</span>
             <span className="text-sm	block">Symbol: {creator?.symbol}</span>
@@ -138,6 +156,15 @@ const Page = () => {
             <span className="text-sm	block text-gray-500	text-show-less">{creator?.collection?.description}</span>
           </div>
         </a>
+      </div>
+      <span className="text-left">{creator?.name}'s buys</span>
+      <div className="grid grid-cols-2 gap-4 my-4 mb-8">
+    {creatorThings.slice(0, 8).map(thing => {
+      return <span className="style-box-primary artwork-card flex-col text-left">
+        <img src={thing.image_url} className="m-auto block thumbnail-work" alt=""/>
+        <p className="text-sm	block text-blue-600 ">{thing.name}</p>
+      </span>
+    })}
       </div>
     </div>
   </div>
