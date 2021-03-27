@@ -23,7 +23,7 @@ const Page = ({ address }: {address: string}) => {
   const Router = useRouter()
   return <div className="flex flex-col items-center bg-gray-300 h-screen overflow-y-scroll pb-24">
     <div>
-      <img className="logo-header my-4" src="https://firebasestorage.googleapis.com/v0/b/nftpass-6056c.appspot.com/o/NFTpass.svg?alt=media&token=624e343b-d138-4253-893d-e0a8bb39a4f8" />
+      <img className="logo-header my-4" src="https://firebasestorage.googleapis.com/v0/b/nftpass-6056c.appspot.com/o/Suez-Logo.svg?alt=media&token=d60cddd7-cbd4-4520-a05d-2b5c4e57b0cf" />
     </div>
     <div className=" w-full md:w-1/2 bg-white p-6 text-center text-2xl style-box-primary rounded-none flex flex-col bg-pattern">
       <div className="flex flex-col">
@@ -32,7 +32,8 @@ const Page = ({ address }: {address: string}) => {
           <VideoPlayer poster_link={creatorNFT[2]?.image_original_url} animate_link={creatorNFT[2]?.animation_original_url}></VideoPlayer>:
           <img className="block w-full" src={creatorNFT[2]?.image_original_url} alt="" />
         }
-        <div className="py-8 flex flex-col text-left">
+        <div className="mt-4 style-box-primary">Ξ {Math.floor(parseFloat((creatorNFT[2]?.last_sale?.payment_token?.eth_price)))} | ${Math.floor(parseFloat((creatorNFT[2]?.last_sale?.payment_token?.usd_price)))} </div>
+        <div className="pt-4 flex flex-col text-left">
           <div className="mt-2">
             <span className="text-sm	block text-blue-600">Name: {creatorNFT[2]?.name}</span>
             <span className="text-sm	block">Token ID: {creatorNFT[2]?.token_id}</span>
