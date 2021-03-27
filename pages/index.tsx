@@ -1,28 +1,32 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { faDownload } from '@fortawesome/free-solid-svg-icons'
-import Icon from '../components/Icon'
+import Icon, {FacebookIcon, InstagramIcon, TwitterIcon} from '../components/Icon'
 
 const Page = () => {
   const [title] = useState('NFTPass')
   const Router = useRouter()
   useEffect(() => { }, []);
   return <div className="flex flex-col items-center justify-center bg-gray-300">
-    <div><img className="logo-header my-4" src="https://firebasestorage.googleapis.com/v0/b/nftpass-6056c.appspot.com/o/NFTpass.svg?alt=media&token=624e343b-d138-4253-893d-e0a8bb39a4f8" /></div>
-    <div className=" w-full md:w-1/2 bg-white p-6 text-center text-2xl style-box-primaey rounded-none flex flex-col">
+    <div>
+      <img className="logo-header my-4" src="https://firebasestorage.googleapis.com/v0/b/nftpass-6056c.appspot.com/o/NFTpass.svg?alt=media&token=624e343b-d138-4253-893d-e0a8bb39a4f8" /></div>
+    <div className=" w-full md:w-1/2 bg-white p-6 text-center text-2xl style-box-primaey rounded-none flex flex-col bg-pattern">
       <div className="flex flex-col md:flex-row mb-8">
 
         <img className="profile-image" src="https://images.barrons.com/im-310790?width=620&size=0.7498535442296427" alt="" />
 
-        <div className="py-8 md:p-8 flex flex-col text-left">
+        <div className="py-8 md:p-8 flex flex-col text-left w-full">
           <p className="font-semibold text-black-700 mb-5 text-left">
-            <Icon fill={faDownload}></Icon>
+           
             Beeple (Mike Winkelmann)</p>
-          <div className="flex flex-row">
-            <a><i className="fab fa-facebook"></i></a>
+          
+          <span className="block text-base">Passport Views	1,771,705</span>
+          <div className="flex flex-row bg-gray-300 p-4 rounded-lg mt-2 w-full">
+            <a className="text-gray-500" onClick={() => Router.push('https://www.facebook.com/beeple')}><FacebookIcon></FacebookIcon></a>
+            <a className="text-gray-500" onClick={() => Router.push('http://instagram.com/beeple_crap')}><InstagramIcon></InstagramIcon></a>
+            <a className="text-gray-500" onClick={() => Router.push('https://twitter.com/beeple')}><TwitterIcon></TwitterIcon></a>
 
           </div>
-          <span className="block text-base">Passport Views	1,771,705</span>
         </div>
       </div>
       <span className="text-left">Exhibition (4)</span>
