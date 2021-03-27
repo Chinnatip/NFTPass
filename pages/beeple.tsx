@@ -322,7 +322,7 @@ const Page = () => {
         <img src={thing?.image_thumbnail_url} className="h-24" alt=""/>
         <div className="flex-grow ml-4">
           <p className="block">{thing?.name}</p>
-          <p className="block">{thing?.owner?.user?.username}</p>
+          <p className="block">current owner: {thing?.owner?.user?.username}</p>
           <p className="block">
             Sale for {thing.last_sale.quantity} times | { Math.floor(parseFloat(thing.last_sale.payment_token.usd_price))} usd
           </p>
