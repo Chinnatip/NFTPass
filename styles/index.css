@@ -2,7 +2,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url('https://fonts.googleapis.com/css?family=RobotoMono:300,400,600&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono:300,400,600&display=swap');
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css');
 
 body {
