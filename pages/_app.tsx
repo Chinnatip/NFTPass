@@ -4,6 +4,7 @@ import { AppProps } from 'next/app'
 import { config } from '@fortawesome/fontawesome-svg-core'
 import 'styles/index.css'
 import '@fortawesome/fontawesome-svg-core/styles.css' // Import the CSS
+import "video-react/dist/video-react.css"
 // import { GTMPageView } from '../components/strategy/gtm';
 
 config.autoAddCss = false // Tell Font Awesome to skip adding the CSS automatically since it's being imported above
