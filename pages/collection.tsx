@@ -28,12 +28,14 @@ const Page = ({ address }: {address: string}) => {
       <div className="flex flex-col">
         <a onClick={() => Router.push('/')} className="text-left mb-2"> ← Back </a>
         <img className="block w-full" src={creatorNFT[2]?.image_original_url} alt="" />
-        <div className="py-8 flex flex-col text-left">
-          <div className="mt-2">
-            <span className="text-sm	block text-blue-600">Name: {creatorNFT[2]?.name}</span>
-            <span className="text-sm	block">Token ID: {creatorNFT[2]?.token_id}</span>
-            <span className="text-sm	block text-gray-700	">Creator: {creatorNFT[2]?.creator?.user?.username} </span>
-            <span className="text-sm	block text-gray-700	">Description: {creatorNFT[2]?.description}</span>
+        <div className="mt-4 style-box-primary">Ξ {Math.floor(parseFloat((creatorNFT[2]?.last_sale?.payment_token?.eth_price)))} | ${Math.floor(parseFloat((creatorNFT[2]?.last_sale?.payment_token?.usd_price)))} </div>
+        <div className="pt-4 flex flex-col text-left">
+          <div className="mt-2 bg-white p-4">
+            <span className="text-lg	block text-indigo-600">Name: {creatorNFT[2]?.name}</span>
+            <span className="text-lg	block text-indigo-600">Current Owner: {creatorNFT[2]?.owner?.user?.username}</span>
+            <span className="text-lg	block">Token ID: {creatorNFT[2]?.token_id}</span>
+            <span className="text-lg	block 	">Creator: {creatorNFT[2]?.creator?.user?.username} </span>
+            <span className="text-lg	block">Description: {creatorNFT[2]?.description}</span>
           </div>
         </div>
       </div>
