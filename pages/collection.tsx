@@ -1,11 +1,10 @@
 import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
 import { NFTAsset, OpenSeaNFT } from '../interfaces/opensea'
-// import VideoPlayer from '../components/VideoPlayer'
 import axios from 'axios'
 
 const Page = ({ address }: {address: string}) => {
-  
+
   const [creatorNFT, setcreatorNFT] = useState<NFTAsset[]>([])
   useEffect(() => {
     let assets : NFTAsset[] = []
@@ -29,11 +28,14 @@ const Page = ({ address }: {address: string}) => {
     <div className=" w-full md:w-1/2 bg-white p-6 text-center text-2xl style-box-primary rounded-none flex flex-col bg-patter">
       <div className="flex flex-col">
         <a onClick={() => Router.push('/')} className="text-left mb-2"> ← Back </a>
-        <img className="block w-full" src={creatorNFT[2]?.image_original_url} alt="" />
-        {/* { creatorNFT[2]?.animation_original_url != undefined ?
-          <VideoPlayer poster_link={creatorNFT[2]?.image_original_url} animate_link={creatorNFT[2]?.animation_original_url}></VideoPlayer>:
+        {/* <img className="block w-full" src={creatorNFT[2]?.image_original_url} alt="" /> */}
+        { creatorNFT[2]?.animation_original_url != undefined ?
+          <video poster={creatorNFT[2]?.image_original_url} width="100%" controls autoPlay>
+            <source src={creatorNFT[2]?.animation_original_url} type="video/mp4"></source>
+            Your browser does not support the video tag.
+          </video>:
           <img className="block w-full" src={creatorNFT[2]?.image_original_url} alt="" />
-        } */}
+        }
         <div className="mt-4 style-box-primary">Ξ {Math.floor(parseFloat((creatorNFT[2]?.last_sale?.payment_token?.eth_price)))} | ${Math.floor(parseFloat((creatorNFT[2]?.last_sale?.payment_token?.usd_price)))} </div>
         <div className="pt-4 flex flex-col text-left">
           <div className="mt-2">
