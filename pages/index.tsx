@@ -20,12 +20,10 @@ import Icon, { FacebookIcon, InstagramIcon, TwitterIcon } from '../components/Ic
 import axios from 'axios'
 
 const iconLists = [
-  { img_url: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/1200px-Facebook_Logo_%282019%29.png", title: "Facebook", connected: false },
   { img_url: "https://rmutrecht.org/wp-content/uploads/sites/259/2017/07/logo-twitter.png", title: "Twitter", connected: false },
   { img_url: "https://www.pngitem.com/pimgs/m/461-4618525_ig-small-instagram-logo-2019-hd-png-download.png", title: "Instagram", connected: false },
-  { img_url: "https://cdn4.iconfinder.com/data/icons/logos-and-brands/512/395_Youtube_logo-512.png", title: "Youtube", connected: false },
   { img_url: "https://pngimg.com/uploads/twitch/twitch_PNG13.png", title: "Twitch", connected: false },
-  { img_url: "https://cdn2.iconfinder.com/data/icons/minimalism/512/soundcloud.png", title: "SoundCloud", connected: false },
+  { img_url: "https://yt3.ggpht.com/ytc/AAUvwnhmkYDcmyI8GjyLt9fc_8q-x3FHjnzSuR9rYTjIp-g=s900-c-k-c0x00ffffff-no-rj", title: "Etsy", connected: false },
 ]
 
 const Page = () => {
@@ -105,7 +103,14 @@ const Page = () => {
                 </div>
               })}
             </div>
-
+            <hr className="border-2 border-dashed border-gray-300"/>
+            <div className="flex  flex-row justify-between w-full items-center mt-6">
+                  <div className="flex flex-row items-center text-left">
+                    <img className="sm-connector mr-2" src="https://firebasestorage.googleapis.com/v0/b/nftpass-6056c.appspot.com/o/Suez-Logo.svg?alt=media&token=d60cddd7-cbd4-4520-a05d-2b5c4e57b0cf"/> Suez Authentication
+                  </div>
+                  <button className="inline text-gray-700 border-2 bg-gray-300 px-4 cursor-not-allowed">Coming Soon</button>
+                   </div>
+           
           </div>
         </div>
       </div>
@@ -146,6 +151,9 @@ const Page = () => {
           <div><img width="25" height="25" className="inline" src="https://res.cloudinary.com/nifty-gateway/image/upload/q_auto:good,w_500/v1576344316/nifty-builder-images/kyhclu5quebqm4sit0he.png" /> <span>Niftygateway</span></div><div>→</div></a>
         <a onClick={() => Router.push('https://opensea.io/collection/beeple-special-edition')} className="text-black bg-white rounded-none px-4 py-2 mt-4 border-gray-900 border-2 flex justify-between">
           <div><img width="25" height="25" className="inline" src="https://gblobscdn.gitbook.com/assets%2F-L9DhFFkz5PkhEAgbJGh%2F-L9DhJDoyXpD9LnyXPA3%2F-L9DhPyTanReDVyz90bg%2FP2c8qzV.png?alt=media" /> <span>Opensea</span></div><div>→</div></a>
+          <a onClick={() => Router.push('https://www.christies.com/features/Monumental-collage-by-Beeple-is-first-purely-digital-artwork-NFT-to-come-to-auction-11510-7.aspx?fbclid=IwAR2CbeTwWWY-uED5s6XKh1xvK2_PD-ACWa_bOa80_uKAQWX7WuglhctAIAc')} className="text-black bg-white rounded-none px-4 py-2 mt-4 border-gray-900 border-2 flex justify-between">
+          <div><img width="100" className="inline" src="https://www.align.com/hubfs/5c6af10d5056c73583cd1504_Christies%20logo.png" /></div><div>→</div>
+          </a>
       </div>
       <span className="text-left">Works(4)</span>
       <div className="grid grid-cols-2 gap-4 my-4 mb-8">
@@ -193,10 +201,10 @@ const Page = () => {
       <span className="text-left">{creator?.name}'s buys</span>
       <div className="grid grid-cols-2 gap-4 my-4 mb-8">
         {creatorThings.slice(0, 8).map(thing => {
-          return <span className="style-box-primary artwork-card flex-col text-left">
+          return <a className="style-box-primary artwork-card flex-col text-left" href="">
             <img src={thing.image_url} className="m-auto block thumbnail-work" alt="" />
             <p className="text-sm	block text-blue-600 ">{thing.name}</p>
-          </span>
+          </a>
         })}
       </div>
     </div>

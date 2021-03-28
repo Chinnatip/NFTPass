@@ -46,7 +46,7 @@ const Page = ({ address }: {address: string}) => {
       </div>
     <span className="text-left">Exhibition</span>
     <div className="flex flex-col mb-8">
-    <a href={creatorNFT[2]?.external_link} className="text-black bg-white rounded-none px-4 py-2 mt-4 border-gray-900 border-2 flex justify-between">
+    <a href={creatorNFT[2]?.permalink} className="text-black bg-white rounded-none px-4 py-2 mt-4 border-gray-900 border-2 flex justify-between">
           <div><img width="25" height="25" className="inline" src="https://res.cloudinary.com/nifty-gateway/image/upload/q_auto:good,w_500/v1576344316/nifty-builder-images/kyhclu5quebqm4sit0he.png" /> <span>Niftygateway</span></div><div>→</div></a>
     </div>
     <span className="text-left">Same Collection(4)</span>

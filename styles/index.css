@@ -160,7 +160,6 @@ button {
   max-height: 100px;
   height: 220px;
   border-radius: 100px;
-  filter: grayscale(100%);
 }
 
 .logo-header {
