@@ -37,10 +37,11 @@ const Page = ({ address }: {address: string}) => {
         <div className="mt-4 style-box-primary">Ξ {Math.floor(parseFloat((creatorNFT[2]?.last_sale?.payment_token?.eth_price)))} | ${Math.floor(parseFloat((creatorNFT[2]?.last_sale?.payment_token?.usd_price)))} </div>
         <div className="pt-4 flex flex-col text-left">
           <div className="mt-2">
-            <span className="text-sm	block text-blue-600">Name: {creatorNFT[2]?.name}</span>
-            <span className="text-sm	block">Token ID: {creatorNFT[2]?.token_id}</span>
-            <span className="text-sm	block text-gray-700	">Creator: {creatorNFT[2]?.creator?.user?.username} </span>
-            <span className="text-sm	block text-gray-700	">Description: {creatorNFT[2]?.description}</span>
+            <span className="text-sm	block text-blue-600">Name: {creatorNFT[0]?.name}</span>
+            <span className="text-sm	block">Current Owner: {creatorNFT[0]?.owner?.user?.username}</span>
+            <span className="text-sm	block">Token ID: {creatorNFT[0]?.token_id}</span>
+            <span className="text-sm	block text-gray-700	">Creator: {creatorNFT[0]?.creator?.user?.username} </span>
+            <span className="text-sm	block text-gray-700	">Description: {creatorNFT[0]?.description}</span>
           </div>
         </div>
       </div>
@@ -56,7 +57,7 @@ const Page = ({ address }: {address: string}) => {
         <img src={thing?.image_thumbnail_url} className="h-full" alt=""/>
         <div className="flex-grow ml-4 text-left text-base	p-2 ">
           <p className="block">{thing?.name}</p>
-          <p className="block">current owner: {thing?.owner?.user?.username}</p>
+          <p className="block">Current Owner: {thing?.owner?.user?.username}</p>
           <p className="block">
             Sale for {thing.last_sale.quantity} times | { Math.floor(parseFloat(thing.last_sale.payment_token.usd_price))} usd
           </p>
