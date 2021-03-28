@@ -16,7 +16,7 @@ type Artist = {
 import { faCheckCircle, faIcons } from '@fortawesome/free-solid-svg-icons'
 import { useState, useEffect } from 'react'
 import { OpenseaCollection, OpenseaThing } from '../interfaces/opensea'
-import Icon, { FacebookIcon, InstagramIcon, TwitterIcon } from '../components/Icon'
+import Icon, { InstagramIcon, TwitterIcon } from '../components/Icon'
 import axios from 'axios'
 
 const iconLists = [
@@ -71,13 +71,13 @@ const Page = () => {
     <div className="flex flex-col items-center justify-center relative">
     {/* Modal */}
     { modal && <div className="fixed top-0 left-0 w-screen h-screen bg-gray-800 bg-opacity-75	z-10 flex items-center justify-center">
-    
+
       <div className="w-full ">
         <div className="flex flex-col items-center justify-center   w-full">
           <div>
           </div>
           <div className=" w-full md:w-1/2 bg-white p-6 text-center text-2xl style-box-primary rounded-none flex flex-col">
-          
+
             <div className="flex flex-col mb-8">
             <button onClick={() => setModal(false) } className="text-black text-right">x</button>
               {connections.map((icon, index) => {
@@ -110,7 +110,7 @@ const Page = () => {
                   </div>
                   <button className="inline text-gray-700 border-2 bg-gray-300 px-4 cursor-not-allowed">Verified</button>
                    </div>
-           
+
           </div>
         </div>
       </div>
@@ -132,7 +132,7 @@ const Page = () => {
         <div className="flex flex-row bg-gray-200 p-4 rounded-lg mt-2 w-full">
         <a className="text-gray-500 mr-2" onClick={() => Router.push('https://twitter.com/beeple')}><TwitterIcon></TwitterIcon></a>
           <a className="text-gray-500" onClick={() => Router.push('http://instagram.com/beeple_crap')}><InstagramIcon></InstagramIcon></a>
-      
+
           <div className="flex-grow text-right">
             <button onClick={() => setModal(true)} className="inline text-gray-700 border-2 bg-gray-300 px-4">Verified</button>
           </div>

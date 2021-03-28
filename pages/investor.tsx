@@ -15,8 +15,8 @@ type Artist = {
 
 import { faCheckCircle, faAtlas } from '@fortawesome/free-solid-svg-icons'
 import { useState, useEffect } from 'react'
-import { OpenseaCollection, OpenseaThing } from '../interfaces/opensea'
-import Icon, { FacebookIcon, InstagramIcon, TwitterIcon } from '../components/Icon'
+import { OpenseaCollection } from '../interfaces/opensea'
+import Icon, { InstagramIcon, TwitterIcon } from '../components/Icon'
 import axios from 'axios'
 
 const iconLists = [
@@ -31,7 +31,7 @@ const Page = () => {
   const [modal, setModal] = useState(false)
   const [connections, setConnection] = useState(iconLists)
   const [creator, setCreator] = useState<OpenseaCollection>({})
-  const [creatorThings, setCreatorCurate] = useState<OpenseaThing[]>([])
+  // const [creatorThings, setCreatorCurate] = useState<OpenseaThing[]>([])
   const [artist] = useState<Artist>({
     name: "Chinnatip Taemkaeo",
     alternateName: "Chinnatip D. Taemkaeo",
@@ -45,10 +45,10 @@ const Page = () => {
     axios.get('https://api.opensea.io/api/v1/asset_contract/0x12f28e2106ce8fd8464885b80ea865e98b465149').then(res => {
       const creatorData: OpenseaCollection = res.data
       setCreator(creatorData)
-      axios.get('https://api.opensea.io/api/v1/collections?asset_owner=0xc6b0562605d35ee710138402b878ffe6f2e23807&offset=0&limit=300').then(res => {
-        const thingsData: OpenseaThing[] = res.data
-        setCreatorCurate(thingsData)
-      })
+      // axios.get('https://api.opensea.io/api/v1/collections?asset_owner=0xc6b0562605d35ee710138402b878ffe6f2e23807&offset=0&limit=300').then(res => {
+      //   const thingsData: OpenseaThing[] = res.data
+      //   setCreatorCurate(thingsData)
+      // })
     })
   }, [])
   useEffect(() => { }, []);
@@ -71,13 +71,13 @@ const Page = () => {
     <div className="flex flex-col items-center justify-center relative">
     {/* Modal */}
     { modal && <div className="fixed top-0 left-0 w-screen h-screen bg-gray-800 bg-opacity-75	z-10 flex items-center justify-center">
-    
+
       <div className="w-full ">
         <div className="flex flex-col items-center justify-center   w-full">
           <div>
           </div>
           <div className=" w-full md:w-1/2 bg-white p-6 text-center text-2xl style-box-primary rounded-none flex flex-col">
-          
+
             <div className="flex flex-col mb-8">
             <button onClick={() => setModal(false) } className="text-black text-right">x</button>
               {connections.map((icon, index) => {
@@ -110,7 +110,7 @@ const Page = () => {
                   </div>
                   <button className="inline text-gray-700 border-2 bg-gray-300 px-4 cursor-not-allowed">Verified</button>
                    </div>
-           
+
           </div>
         </div>
       </div>
@@ -132,7 +132,7 @@ const Page = () => {
         <div className="flex flex-row bg-gray-200 p-4 rounded-lg mt-2 w-full">
         <a className="text-gray-500 mr-2" onClick={() => Router.push('https://twitter.com/beeple')}><TwitterIcon></TwitterIcon></a>
           <a className="text-gray-500" onClick={() => Router.push('http://instagram.com/beeple_crap')}><InstagramIcon></InstagramIcon></a>
-      
+
           <div className="flex-grow text-right">
             <button onClick={() => setModal(true)} className="inline text-gray-700 border-2 bg-gray-300 px-4">Connect</button>
           </div>
@@ -140,11 +140,11 @@ const Page = () => {
       </div>
       <span className="text-left ">Exhibition</span>
       <div className="flex-col mb-8 ">
-       
+
         <a onClick={() => Router.push('https://www.artsy.net/artist/beeple')} className="text-black bg-white rounded-none px-4 py-2 mt-4 border-gray-900 border-2 flex justify-between">
           <div><img width="25" height="25" className="inline" src="https://media-exp1.licdn.com/dms/image/C4E0BAQEx2xg5300_6Q/company-logo_200_200/0/1547489824860?e=2159024400&v=beta&t=saJPmXtDAMBfGv-lu07CGEoA9IT2GreSULAmydVANEg" /> <span>Artsy</span></div>
           <div>→</div></a>
-        
+
       </div>
       <span className="text-left"><span className="text-indigo-600"><Icon fill={faAtlas}/> </span> My Collections</span>
       <div className="grid grid-cols-2 gap-4 my-4 mb-8">
@@ -179,7 +179,7 @@ const Page = () => {
             <span className="text-sm	block">Creator: David Hockney</span>
           </div>
         </a>
-        
+
         <a className="style-box-primary artwork-card flex-col text-left">
           <img className="m-auto block thumbnail-work" src="https://d32dm0rphc51dk.cloudfront.net/DmTYwPa58HvKZ-cPphC9Eg/large.jpg" alt="" />
           <div className="mt-2">
@@ -216,7 +216,7 @@ const Page = () => {
           </div>
         </a>
       </div>
-      
+
     </div>
   </div>
   </>
