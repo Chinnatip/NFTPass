@@ -2,10 +2,13 @@ import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
 import { NFTAsset, OpenSeaNFT } from '../interfaces/opensea'
 import axios from 'axios'
+import Lottie from 'react-lottie';
+import { anim } from '../static/ball-spinner'
 
 const Page = ({ address }: {address: string}) => {
 
   const [creatorNFT, setcreatorNFT] = useState<NFTAsset[]>([])
+  const [ animated, setAnimate ] = useState(true)
   useEffect(() => {
     let assets : NFTAsset[] = []
     axios.get(`https://api.opensea.io/api/v1/assets?asset_contract_address=${address}&order_direction=desc&offset=0&limit=50`).then(res => {
@@ -16,12 +19,31 @@ const Page = ({ address }: {address: string}) => {
         const nfts : OpenSeaNFT = res.data
         const nft = nfts.assets
         assets.push(...assets,...nft)
+        setAnimate(false)
         setcreatorNFT(nft.filter(thing => thing?.last_sale != undefined).sort((a,b) => parseFloat(b.last_sale.payment_token?.usd_price) - parseFloat(a.last_sale.payment_token.usd_price)))
       })
     })
   },[])
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: anim,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice"
+    }
+  };
   const Router = useRouter()
   return <div className="flex flex-col items-center bg-gray-300 h-screen overflow-y-scroll pb-24">
+
+    { animated && <div className="fixed top-0 left-0 bg-gray-300  w-screen h-screen flex items-center justify-center">
+    <Lottie
+      isClickToPauseDisabled={true}
+      options={defaultOptions}
+      height={320}
+      width={320}
+    />
+    </div>}
+
     <div>
       <img className="logo-header my-4" src="https://firebasestorage.googleapis.com/v0/b/nftpass-6056c.appspot.com/o/Suez-Logo.svg?alt=media&token=d60cddd7-cbd4-4520-a05d-2b5c4e57b0cf" />
     </div>
