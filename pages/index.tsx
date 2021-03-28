@@ -138,7 +138,7 @@ const Page = () => {
           </div>
         </div>
       </div>
-      <span className="text-left">Exhibition (4)</span>
+      <span className="text-left">Exhibition</span>
       <div className="flex flex-col mb-8">
         <a onClick={() => Router.push('https://rarible.com/collection/0xd92e44ac213b9ebda0178e1523cc0ce177b7fa96')} className="text-black bg-white rounded-none px-4 py-2 mt-4 border-gray-900 border-2 flex justify-between">
           <div><img width="25" height="25" className="inline" src="https://dappstore.org/wp-content/uploads/2021/01/Rarible.jpg" /> <span>Rarible</span></div>
