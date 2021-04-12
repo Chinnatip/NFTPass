@@ -1,4 +1,4 @@
-const rate_eth_usd = 2139
+import { rate_eth_usd } from '../static/NFTLists'
 
 const NFT = ({ src }:{
   src: {

@@ -8,9 +8,9 @@ export const LinkButton = ({ active=false, fit=false, link ,text, icon }:{
   icon: string
 }) => {
   const Router = useRouter()
-  return <button className={` ${fit && 'w-full inline-block'}  ${active ? 'bg-black text-white' : 'bg-white'} focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft`}>
+  return <button onClick={() => Router.push(link) }  className={` ${fit && 'w-full inline-block'}  ${active ? 'bg-black text-white' : 'bg-white'} focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft`}>
     <img src={icon} className="rounded-full inline h-6" />
-    <span onClick={() => Router.push(link) } className="ml-2 font-thin text-sm">{text}</span>
+    <span className="ml-2 font-thin text-sm">{text}</span>
   </button>
 }
 
