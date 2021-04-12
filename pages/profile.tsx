@@ -1,28 +1,10 @@
-import { nfts } from '../static/NFTLists'
 import Card from "../components/Card"
 import Navbar from "../components/Navbar"
 import NFT from "../components/NFT"
+import { nfts } from '../static/NFTLists'
+import { artistProfile } from '../static/Artist'
 import { ProfileCard, ProfileStat } from '../components/Profile'
-
-const artistProfile = {
-  img: "image/beeple_profile.png",
-  name: 'Beeple',
-  address: '9531985...nvfnv4',
-  verfiy: true,
-  connection: {
-    twitter: {
-      follower: 593000,
-      url: 'https://twitter.com/beepleisbeeple'
-    },
-    instagram: {
-      follower: 2000000,
-      url: 'https://instagram.com/beepleisbeeple'
-    },
-    supporter: {
-      follower: 40
-    }
-  }
-}
+import { LinkButton } from '../components/Button'
 
 const Page = () => {
   return  <div className="w-screen h-screen pt-8 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")'}}>
@@ -33,10 +15,7 @@ const Page = () => {
         <div
           className="h-32 flex justify-end items-center px-16"
           style={{borderRadius: '24px 24px 0 0', background: '#d2cdcd26'}}>
-          <button className="bg-white rounded-full p-2 px-3 flex items-center shadow-nft">
-            <img src="image/edit_icon.png" className="inline h-6" />
-            <span className="ml-2 font-thin text-sm">Edit</span>
-          </button>
+          <LinkButton text="Edit" icon="image/edit_icon_dark.png" link="/dashboard" />
         </div>
         <div className="bg-white pt-24" style={{borderRadius: '0px 0px 24px 24px'}}>
           <ProfileCard profile={artistProfile} />

@@ -1,3 +1,5 @@
+import { prepNum } from '../method/setNumber'
+
 type Artist = {
   img: string
   name: string
@@ -15,16 +17,6 @@ type Artist = {
     supporter?: {
       follower: number
     }
-  }
-}
-
-const prepNum = (val: number) => {
-  if (val > 999999){
-    return `${ Math.floor(val/1000000) }M`
-  }else if (val > 999){
-    return `${ Math.floor(val/1000) }K`
-  }else{
-    return val
   }
 }
 

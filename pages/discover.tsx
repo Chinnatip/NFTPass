@@ -25,9 +25,6 @@ const Page = () => {
           </div>
         </div>
         <div className="h-8"></div>
-
-
-
         <div className="masonry py-4">
           {[...nfts, ...nfts].map((item,index) => (
             <div className="rounded-16 shadow-nft mb-8" key={index}>
