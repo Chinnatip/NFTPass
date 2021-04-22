@@ -1,4 +1,5 @@
 import { prepNum } from '../method/setNumber'
+import { LinkButton } from '../components/Button'
 
 type Artist = {
   img: string
@@ -22,10 +23,10 @@ type Artist = {
 
 export const ProfileCard = ({ profile }: { profile: Artist}) => {
   return <>
-    <div className="text-center -mt-48">
+    <div className="text-center">
       <img
         src={profile?.img}
-        className="inline-block h-40 w-40 border-8 border-white shadow-nft rounded-28"
+        className="inline-block h-20 w-20 border-4 border-white shadow-nft rounded-28 -mt-12"
         alt=""/>
     </div>
     <div className="m-auto text-center mt-3">
@@ -33,11 +34,17 @@ export const ProfileCard = ({ profile }: { profile: Artist}) => {
         {profile?.name}
         <img src="image/verify_logo.png" className="inline h-6 ml-2 -mt-1"/>
       </div>
-      <div className="text-sm shadow-nft rounded-full bg-white inline p-2 px-4 font-thin">
+      <div className="flex flex-row justify-center">
+      <div className="text-sm shadow-nft rounded-full bg-white inline p-2 px-4 font-thin ">
         <span>
           #{profile?.address}
           <img src="image/copy_icon.png" className="inline ml-2 -mr-2 -mt-1 h-5" />
         </span>
+        
+      </div>
+      <div className="ml-2">
+      <LinkButton text="Edit" icon="image/edit_icon_dark.png" link="/dashboard" />
+      </div>
       </div>
     </div>
   </>
