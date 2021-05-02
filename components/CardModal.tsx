@@ -26,19 +26,26 @@ const Modal = ({ src , action}: Props) => {
   return <div className="w-screen h-screen z-20 bg-white fixed top-0 left-0 overflow-y-scroll overflow-x-hidden">
     {/* Image content */}
     <div className="w-full relative flex items-center justify-center" style={{ background: '#5c56567a' , height: '75vh' }}>
-      <button onClick={() => action(false)} className="focus:outline-none shadow-nft rounded-full absolute top-0 right-0 m-8">
+      <button onClick={() => action(false)} className="focus:outline-none shadow-nft rounded-full absolute top-0 right-0 m-4">
         <img src="image/close_icon.png" className="h-10"/>
       </button>
-      <img src={img} className="shadow-nft-img rounded-lg" style={{ height: '85%' }}  alt=""/>
-      <button className="focus:outline-none shadow-nft rounded-full absolute bottom-0 right-0 m-8">
+      <div className="p-4" style={{ height: '85%' }} >
+      <img src={img} className="shadow-nft-img rounded-lg fit-wh-img"  alt=""/>
+      </div>
+      <div className="absolute bottom-0 right-0 m-4">
+      <button className="focus:outline-none shadow-nft rounded-full mr-4">
         <img src="image/expand_icon.png" className="h-10"/>
       </button>
+      <button className="focus:outline-none shadow-nft rounded-full mr-4">
+        <img src="image/expand_icon.png" className="h-10"/>
+      </button>
+      </div>
     </div>
 
     {/* Content */}
-    <div className="p-16 px-24 pb-0 flex">
+    <div className="p-16 px-2 md:px-24 pb-0 flex md:flex-row flex-col-reverse">
       {/* Description */}
-      <div className="w-2/3">
+      <div className="md:w-2/3 w-full">
         <div className="flex w-full mb-6">
           <div className="flex-grow">
             <p className="font-thin">Created by</p>
@@ -60,10 +67,10 @@ const Modal = ({ src , action}: Props) => {
         </div>
       </div>
 
-      <div className="w-20"></div>
+      
 
       {/* Side content */}
-      <div className="w-1/4">
+      <div className="w-full md:w-1/4 md:ml-12 ml-0">
         <div className="shadow-nft rounded-24 p-5 flex w-full">
           <div className="flex-grow">
             <p className="font-thin">Owned by</p>
@@ -98,7 +105,7 @@ const Modal = ({ src , action}: Props) => {
     <div className="p-16 px-24">
       <h1 className="font-thin text-gray-600 text-2xl">More Like This</h1>
 
-      <div className="masonry py-4">
+      <div className="masonry p-4">
         {nfts.map((item,index) => (
           <div className="rounded-16 shadow-nft mb-8" key={index}>
             <Card src={item}/>

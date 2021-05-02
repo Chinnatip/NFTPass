@@ -6,9 +6,12 @@
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css');
 
 body {
-  font-family: 'Lexend';
+  font-family: 'Lexend', sans-serif;
   overflow-y: auto;
 }
+
+h1, p { font-variation-settings: 'LXND' 2; }
+
 
 a,
 button {
@@ -20,7 +23,7 @@ button {
 }
 
 .text-b {
-  font-family: 'Lexend';
+  font-family: 'Lexend', sans-serif;
 }
 
 .tab-active {
@@ -1441,7 +1444,7 @@ body.video-react-full-window .video-react-fullscreen {
 }
 
 .masonry {
-  column-count: 3;
+  column-count: 2;
   column-gap: 2rem;
 }
 @screen lg {
@@ -1449,5 +1452,14 @@ body.video-react-full-window .video-react-fullscreen {
     column-count: 4;
   }
 }
+
+img.fit-wh-img {
+  display: block;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+}
+
 .w-min	{width: min-content;}
 .w-max	{width: max-content;}

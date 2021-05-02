@@ -7,7 +7,7 @@ import { ProfileCard, ProfileStat } from '../components/Profile'
 
 const Page = () => {
   return  <div className="w-screen h-screen pt-8 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")'}}>
-    <div className="md:w-4/5 w-11/12 m-auto z-10">
+    <div className="md:w-4/5 w-full m-auto z-10">
       <Navbar current={1} />
       {/* container */}
       <div className="rounded-24 border border-white shadow-nft mt-20">
@@ -57,7 +57,7 @@ const Page = () => {
         </div>
         <p className="text-lg mt-10 hidden">Works</p>
 
-        <div className="masonry py-4">
+        <div className="masonry p-4">
           {nfts.map((item,index) => (
             <div className="rounded-16 shadow-nft mb-8" key={index}>
               <Card src={item}/>
