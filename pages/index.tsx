@@ -14,23 +14,24 @@ const Page = () => {
 
       {/* Content */}
       <div className="rounded-24 mt-16 border border-white shadow-nft flex" style={{ height: "70vh" }}>
-        <div className="px-20 py-12 w-1/2 flex" style={{background: '#f3f3f352', borderRadius: '24px 0px 0px 24px'}}>
-          <h1 className="text-6xl w-full opacity-75 text-white" style={{ lineHeight: '4.8rem' }}>NFT Pass <br/> An Only Passport, Creator Will Ever Need</h1>
+        <div className="px-20 py-12 w-1/2 flex" style={{background: 'rgb(185 184 184 / 32%)', borderRadius: '24px 0px 0px 24px'}}>
+          <h1 className="text-6xl font-semibold w-full opacity-75 text-white" style={{ lineHeight: '4.8rem' }}>NFT Pass <br/> An Only Passport, Creator <br/> Will Ever <br/> Need</h1>
         </div>
 
         <div className="bg-white flex-grow p-8 flex items-center justify-center flex-col" style={{borderRadius: '0 24px 24px 0px'}}>
-          <img src="image/global_icon.png" className="h-10 mt-10"/>
-          <p className="mt-10 text-center text-gray-500">Connect to NFTPass <br/> with</p>
-          <button className="text-white text-lg bg-black rounded-full p-2 px-5 mt-10 focus:outline-none" onClick={() => Router.push('/dashboard')}>Connect to MetaMask Wallet</button>
+          <img src="image/ic_glob_black.png" className="h-10 mt-10"/>
+          <p className="mt-6 text-center text-black font-semibold">Connect to NFTPass <br/> with</p>
+          <button className="text-white text-lg bg-black rounded-full p-2 px-5 mt-20 focus:outline-none" onClick={() => Router.push('/dashboard')}>Connect to MetaMask Wallet</button>
           <div className="flex-grow"/>
-          <a href="/" className="text-gray-500 underline text-xl mb-4 font-thin">Sign up with Metamask</a>
+          <p className="font-semibold text-lg">New to NFTPass?</p>
+          <a href="/" className="text-gray-main text-xl mb-4 font-thin">Sign up with Metamask</a>
         </div>
       </div>
 
       <div className="h-24" />
 
       {/* Bookmark */}
-      <div className="text-center text-gray-600 font-thin text-3xl mt-8 mb-6">
+      <div className="text-center text-black opacity-50 font-thin text-4xl mt-8 mb-6">
         Top Bookmarked
       </div>
       { bookmarkLists.map(item => {

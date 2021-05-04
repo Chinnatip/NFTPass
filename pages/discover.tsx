@@ -15,12 +15,12 @@ const Page = () => {
       {/* container */}
       <div className="rounded-24 mb-20 px-12 py-16 border border-white shadow-nft" style={{background: '#ffffff8c'}}>
         {/* search box */}
-        <input className="block w-3/5 bg-white m-auto rounded-full h-10 px-5 font-thin appearance-none outline-none" placeholder="Press creator ID and see the magic!" />
+        <input className="placeholder-gray block w-3/5 bg-white m-auto rounded-full h-10 px-5 font-thin appearance-none outline-none" placeholder="Press creator ID and see the magic!" />
         <div className="h-8"></div>
         <div className="text-center">
-          <div className="py-1 inline-block  bg-white rounded-full text-center px-1 shadow-nft" >
+          <div className="py-1 inline-block bg-white rounded-full text-center px-1 shadow-nft" >
             {tagList.map((tag,index) =>
-              <button onClick={() => setCurrent(index)} className={`py-2 px-3 text-xs focus:outline-none appearance-none rounded-full px-2 ${current == index ?  'bg-black text-white': 'text-black' }`}>{tag}</button>
+              <button onClick={() => setCurrent(index)} className={`py-2 px-3 font-semibold text-sm focus:outline-none appearance-none rounded-full px-2 ${current == index ?  'bg-black text-white': 'text-black' }`}>{tag}</button>
             )}
           </div>
         </div>
