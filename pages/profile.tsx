@@ -1,10 +1,10 @@
 import Card from "../components/Card"
 import Navbar from "../components/Navbar"
-import NFT from "../components/NFT"
 import { useState } from 'react'
 import { nfts } from '../static/NFTLists'
 import { artistProfile } from '../static/Artist'
 import { ProfileCard, ProfileStat } from '../components/Profile'
+import Carousel from '../components/Carousel'
 
 const charactorList = ['Creations','Owned','Saved']
 
@@ -41,10 +41,7 @@ const Page = () => {
               Current Bidding
             </div>
             <div className="w-full">
-              { nfts
-                .filter(item => item.bid != undefined)
-                .map(item => <NFT src={item} /> )
-              }
+              <Carousel nfts={nfts}></Carousel>
             </div>
             <div className="text-center hidden">
               <a className="text-xl underline text-gray-400 font-thin" href="/">See more</a>
@@ -53,7 +50,6 @@ const Page = () => {
           </div>
 
           {/* Contents Section */}
-          {/* <p className="text-center text-white text-xl mt-6 mb-3">Collections</p> */}
           <div className="flex flex-row mb-6">
             {[...new Set(nfts.map(item => item.provider)) ].map((item, index) => {
               return <button className={`${index > 0 && 'ml-3'} bg-white shadow-nft rounded-full h-10 inline-flex px-1 pr-3 items-center`}>
