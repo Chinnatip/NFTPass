@@ -1,11 +1,15 @@
 import Card from "../components/Card"
 import Navbar from "../components/Navbar"
 import NFT from "../components/NFT"
+import { useState } from 'react'
 import { nfts } from '../static/NFTLists'
 import { artistProfile } from '../static/Artist'
 import { ProfileCard, ProfileStat } from '../components/Profile'
 
+const charactorList = ['Creations','Owned','Saved']
+
 const Page = () => {
+  const [ current, setCurrent ] = useState(0)
   return  <div className="w-screen h-screen pt-8 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")'}}>
       <div className="md:w-4/5 w-full m-auto z-10">
         <Navbar current={1} />
@@ -15,11 +19,15 @@ const Page = () => {
             <ProfileCard profile={artistProfile} />
             <ProfileStat profile={artistProfile} />
             {/* Creator's Profile Tabs */}
-            <div className="flex justify-center">
-              <div className="p-1 bg-white rounded-full shadow-nft flex justify-center w-min  my-10" >
-                <button className={`focus:outline-none py-2 text-sm rounded-full px-5 `}>Creations</button>
-                <button className={`focus:outline-none py-2 text-sm rounded-full px-5 `}>Owned</button>
-                <button className={`focus:outline-none py-2 text-sm rounded-full px-5 `}>Saved</button>
+            <div className="text-center">
+              <div className="mt-8 mb-6 py-1 inline-block bg-white rounded-full text-center px-1 shadow-nft" >
+                {charactorList.map((tag,index) =>
+                  <button
+                    onClick={() => { setCurrent(index)}}
+                    className={`py-2 px-3 font-semibold text-sm focus:outline-none appearance-none rounded-full px-2 ${current == index ?  'bg-black text-white': 'text-black' }`}>
+                    {tag} <span className="p-1 ml-1 rounded-full bg-gray-main text-gray-400">44</span>
+                  </button>
+                )}
               </div>
             </div>
         </div>
