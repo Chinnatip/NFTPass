@@ -34,13 +34,13 @@ const Modal = ({ src , action}: Props) => {
       </div>
       <div className="absolute bottom-0 right-0 m-4">
       <button className="focus:outline-none shadow-nft rounded-full mr-4">
-        <img src="image/expand_icon.png" className="h-10"/>
+        <img src="image/ic_heart_line.png" className="h-10"/>
       </button>
       <button className="focus:outline-none shadow-nft rounded-full mr-4">
         <img src="image/expand_icon.png" className="h-10"/>
       </button>
       </div>
-    </div>
+  </div>
 
     {/* Content */}
     <div className="p-16 px-2 md:px-24 pb-0 flex md:flex-row flex-col-reverse">
@@ -49,16 +49,21 @@ const Modal = ({ src , action}: Props) => {
         <div className="flex w-full mb-6">
           <div className="flex-grow">
             <p className="font-thin">Created by</p>
-            <p className="font-bold">
+            <p className="text-lg font-semibold">
               {title}
+              <img src="image/verify_logo.png" className="inline h-6 ml-1"/>
             </p>
+            <div className="flex items-center text-gray-main mt-2">
+              <img src="image/ic_heart_gray.png" className="w-5 inline mr-2"/> 3134
+              <img src="image/ic_eye_gray.png" className="w-5 inline ml-4 mr-2"/> 3134
+            </div>
           </div>
           <div className="text-right">
             <p className="font-thin">Edition of</p>
-            <p className="font-bold">5</p>
+            <p className="font-bold text-lg">5</p>
           </div>
         </div>
-        <div className="inline">{descText}</div>
+        <div className="inline text-lg">{descText}</div>
         <div className="shadow-nft flex w-full rounded-24 h-24 items-center justify-center px-6 mt-8">
           <div className="flex-grow">View on Rarible</div>
           <a href="/">
@@ -67,19 +72,19 @@ const Modal = ({ src , action}: Props) => {
         </div>
       </div>
 
-      
+
 
       {/* Side content */}
       <div className="w-full md:w-1/4 md:ml-12 ml-0">
         <div className="shadow-nft rounded-24 p-5 flex w-full">
           <div className="flex-grow">
             <p className="font-thin">Owned by</p>
-            <p className="font-bold">{owner}</p>
+            <p className="font-bold text-lg">{owner}</p>
           </div>
           <div className="text-right">
             <img src={`image/${provider}_icon.png`} className="h-8 inline"/>
-            <div className="text-xl font-bold">{price} ETH</div>
-            <div className="">${getPrice * rate_eth_usd}</div>
+            <div className="text-2xl mt-2 font-bold">{price} ETH</div>
+            <div className="text-gray-main">${getPrice * rate_eth_usd}</div>
           </div>
         </div>
         { bid && <>
