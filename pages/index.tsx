@@ -15,7 +15,7 @@ const Page = () => {
       {/* Content */}
       <div className="rounded-24 mt-16 border border-white shadow-nft flex" style={{ height: "70vh" }}>
         <div className="px-20 py-12 w-1/2 flex" style={{background: 'rgb(185 184 184 / 32%)', borderRadius: '24px 0px 0px 24px'}}>
-          <h1 className="text-6xl font-semibold w-full opacity-75 text-white" style={{ lineHeight: '4.8rem' }}>NFT Pass <br/> An Only Passport, Creator <br/> Will Ever <br/> Need</h1>
+          <h1 className="text-6xl font-semibold w-full opacity-75 text-white" style={{ lineHeight: '4.8rem' }}>NFT Pass Hello!<br/> An Only Passport, Creator <br/> Will Ever <br/> Need</h1>
         </div>
 
         <div className="bg-white flex-grow p-8 flex items-center justify-center flex-col" style={{borderRadius: '0 24px 24px 0px'}}>
