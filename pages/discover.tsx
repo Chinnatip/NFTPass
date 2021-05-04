@@ -20,7 +20,7 @@ const Page = () => {
         <div className="text-center">
           <div className="py-1 inline-block bg-white rounded-full text-center px-1 shadow-nft" >
             {tagList.map((tag,index) =>
-              <button onClick={() => setCurrent(index)} className={`py-2 px-3 font-semibold text-sm focus:outline-none appearance-none rounded-full px-2 ${current == index ?  'bg-black text-white': 'text-black' }`}>{tag}</button>
+              <button onClick={() => { setCurrent(index)}} className={`py-2 px-3 font-semibold text-sm focus:outline-none appearance-none rounded-full px-2 ${current == index ?  'bg-black text-white': 'text-black' }`}>{tag}</button>
             )}
           </div>
         </div>

@@ -26,7 +26,7 @@ export const ProfileCard = ({ profile }: { profile: Artist}) => {
     <div className="text-center">
       <img
         src={profile?.img}
-        className="inline-block h-20 w-20 border-4 border-white shadow-nft rounded-28 -mt-12"
+        className="inline-block h-32 w-32 border-4 border-white shadow-nft rounded-48 -mt-12"
         alt=""/>
     </div>
     <div className="m-auto text-center mt-3">
@@ -40,7 +40,7 @@ export const ProfileCard = ({ profile }: { profile: Artist}) => {
           #{profile?.address}
           <img src="image/copy_icon.png" className="inline ml-2 -mr-2 -mt-1 h-5" />
         </span>
-        
+
       </div>
       <div className="ml-2">
       <LinkButton text="Edit" icon="image/edit_icon_dark.png" link="/dashboard" />

@@ -1473,6 +1473,10 @@ body.video-react-full-window .video-react-fullscreen {
   border-radius: 28px;
 }
 
+.rounded-48 {
+  border-radius: 48px;
+}
+
 .masonry {
   column-count: 2;
   column-gap: 2rem;

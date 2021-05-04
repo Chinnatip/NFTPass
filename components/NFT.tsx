@@ -15,7 +15,7 @@ const NFT = ({ src }:{
   return <div className="m-auto rounded-16 mt-4 mb-6 bg-white shadow-nft p-4 flex flex-col md:flex-row h-52" style={{width: '84%'}}>
     <img src={src.img} className="h-40 md:w-40 w-full rounded-lg" alt=""/>
     <div className="flex flex-col md:flex-row w-full">
-    <div className="ml-8 flex-grow">
+    <div className="ml-8 flex-grow flex flex-col">
       { src.bid != undefined && <p className="text-sm">
         <span className={`text-${src.bid.change > 0 ? 'green' : 'red'}-500 mr-2`}>
           { src.bid?.change > 0 ? '▲' : '▼' } {src.bid?.change}%
@@ -23,12 +23,13 @@ const NFT = ({ src }:{
         Bid placed at
       </p> }
       <p>{src.bid?.lastest}</p>
-      <a href="/" className="inline-block mt-6 text-gray-500 underline">see current bidding</a>
+      <div className="flex-grow"></div>
+      <a href="/" className="text-gray-main uppercase text-xs inline-block mt-6 text-gray-500 underline">see current bidding</a>
     </div>
     <div className="text-right">
       <img src={`image/${src.provider}_icon.png`} className="inline h-8"/>
       <div className="text-xl font-semibold mt-1">{src.price} ETH</div>
-      <div className="text-sm">$ {current_price * rate_eth_usd}</div>
+      <div className="text-gray-main text-md">$ {current_price * rate_eth_usd}</div>
     </div>
     </div>
   </div>
