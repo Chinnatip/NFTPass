@@ -39,11 +39,11 @@ const Carousel = ({ nfts }:{ nfts: NFT[] }) => {
         const current_price = src?.price != undefined ? src.price : 0
         return <>
         <input className="carousel-open" type="radio" hidden={true} checked={ slide == (index+1) } />
-        <div className="carousel-item absolute opacity-0" style={{ height: '264px' }}>
+        <div className="carousel-item absolute opacity-0 h-80 md:h-64">
         <div className="m-auto rounded-16 mt-4 mb-6 bg-white shadow-nft p-4 flex flex-col md:flex-row h-52" style={{width: '84%'}}>
           <img src={src.img} className="h-40 md:w-40 w-full rounded-lg" alt=""/>
           <div className="flex flex-col md:flex-row w-full">
-          <div className="ml-8 flex-grow flex flex-col">
+          <div className="md:ml-8 ml-0 mt-2 flex-grow flex flex-col">
             { src.bid != undefined && <p className="text-sm">
               <span className={`text-${src.bid.change > 0 ? 'green' : 'red'}-500 mr-2`}>
                 { src.bid?.change > 0 ? '▲' : '▼' } {src.bid?.change}%

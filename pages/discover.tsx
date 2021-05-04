@@ -10,10 +10,10 @@ const tagList = [
 const Page = () => {
   const [ current, setCurrent ] = useState(0)
   return  <div className="w-screen h-screen pt-8 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")'}}>
-    <div className="w-4/5 m-auto z-10">
+    <div className="md:w-4/5 w-full m-auto z-10">
       <Navbar current={0} />
       {/* container */}
-      <div className="rounded-24 mb-20 px-12 py-16 border border-white shadow-nft" style={{background: 'rgba(185, 184, 184, 0.32)'}}>
+      <div className="rounded-24 mb-20 md:px-5 px-2 py-16 border border-white shadow-nft" style={{background: 'rgba(185, 184, 184, 0.32)'}}>
         {/* search box */}
         <input className="placeholder-gray block w-3/5 bg-white m-auto rounded-full h-10 px-5 font-thin appearance-none outline-none" placeholder="Press creator ID and see the magic!" />
         <div className="h-8"></div>
@@ -25,7 +25,7 @@ const Page = () => {
           </div>
         </div>
         <div className="h-8"></div>
-        <div className="masonry p-4">
+        <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 p-4">
           {[...nfts, ...nfts].map((item) => (
             <Card src={item}/>
           ))}

@@ -17,7 +17,7 @@ const Navbar = ({ current , show=true }: {current: number, show?: boolean}) => {
   const [ modal, setModal ] = useState(false)
   return <div className="flex items-center mb-10">
     <button className="focus:outline-none" onClick={() => Router.push('/')}>
-      <img className="h-8" src="image/ic_galleryst_logo.png" alt=""/>
+      <img className="md:h-8 h-6 ml-2" src="image/ic_galleryst_logo.png" alt=""/>
     </button>
     { show && <div className="absolute p-1 bg-white rounded-full shadow-nft text-center float-central" >
       <button onClick={() => Router.push('/discover')} className={`focus:outline-none py-2 text-sm rounded-full px-5 ${current == 0 ?  'bg-black text-white': 'text-black' }`}>Discovery</button>
@@ -26,7 +26,7 @@ const Navbar = ({ current , show=true }: {current: number, show?: boolean}) => {
     <div className="flex-grow"/>
     <button className="focus:outline-none relative" onClick={() => setModal(!modal)}>
       { modal && <ProfileModal />}
-      <img className="-mt-4 h-12 w-12 rounded-full border-4 border-white shadow-nft" src="image/beeple_profile.png" alt=""/>
+      <img className="mt-4 h-12 w-12 rounded-full border-4 border-white shadow-nft" src="image/beeple_profile.png" alt=""/>
     </button>
   </div>
 }

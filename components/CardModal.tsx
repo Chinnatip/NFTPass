@@ -29,31 +29,31 @@ const Modal = ({ src , action}: Props) => {
       <button onClick={() => action(false)} className="focus:outline-none shadow-nft rounded-full absolute top-0 right-0 m-4">
         <img src="image/close_icon.png" className="h-10"/>
       </button>
-      <div className="p-4" style={{ height: '85%' }} >
+      <div className="p-4 flex items-center" style={{ height: '85%' }} >
       <img src={img} className="shadow-nft-img rounded-lg fit-wh-img"  alt=""/>
       </div>
       <div className="absolute bottom-0 right-0 m-4">
-      <button className="focus:outline-none shadow-nft rounded-full mr-4">
+      <button className="focus:outline-none shadow-nft rounded-full mr-4 hidden">
         <img src="image/ic_heart_line.png" className="h-10"/>
       </button>
-      <button className="focus:outline-none shadow-nft rounded-full mr-4">
+      <button className="focus:outline-none shadow-nft rounded-full mr-4 hidden">
         <img src="image/expand_icon.png" className="h-10"/>
       </button>
       </div>
   </div>
 
     {/* Content */}
-    <div className="p-16 px-2 md:px-24 pb-0 flex md:flex-row flex-col-reverse">
+    <div className=" p-10 md:p-24 sm:p-16 pb-0 flex md:flex-row flex-col-reverse">
       {/* Description */}
       <div className="md:w-2/3 w-full">
-        <div className="flex w-full mb-6">
+        <div className="flex w-full mb-6 mt-10">
           <div className="flex-grow">
             <p className="font-thin">Created by</p>
             <p className="text-lg font-semibold">
               {title}
-              <img src="image/verify_logo.png" className="inline h-6 ml-1"/>
+              <img src="image/verify_logo.png" className="inline h-6 ml-1 hidden"/>
             </p>
-            <div className="flex items-center text-gray-main mt-2">
+            <div className="flex items-center text-gray-main mt-2 hidden">
               <img src="image/ic_heart_gray.png" className="w-5 inline mr-2"/> 3134
               <img src="image/ic_eye_gray.png" className="w-5 inline ml-4 mr-2"/> 3134
             </div>
@@ -107,10 +107,10 @@ const Modal = ({ src , action}: Props) => {
     </div>
 
     {/*  */}
-    <div className="p-16 px-24">
+    <div className="p-16 md:px-20">
       <h1 className="font-thin text-gray-600 text-2xl">More Like This</h1>
 
-      <div className="masonry p-4">
+      <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 p-4">
         {nfts.map((item,index) => (
           <div className="rounded-16 shadow-nft mb-8" key={index}>
             <Card src={item}/>

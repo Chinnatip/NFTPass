@@ -34,7 +34,7 @@ const Page = () => {
 
         {/* Tab Contents */}
         <div
-          className="h-auto flex justify-end flex-col items-center md:px-16 pb-16"
+          className="h-auto flex justify-end flex-col items-center md:px-10 px-4 pb-16"
           style={{borderRadius: '0 0 24px 24px ', background: '#d2cdcd26'}}>
           <div className="flex justify-center flex-col w-full">
             <div className="text-center text-white text-xl mt-6 mb-3">
@@ -58,7 +58,7 @@ const Page = () => {
             })}
           </div>
           <p className="text-lg mt-10 hidden">Works</p>
-          <div className="masonry p-4">
+          <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 p-4 w-full">
             {nfts.map((item) => (
               <Card src={item}/>
             ))}

@@ -26,13 +26,13 @@ export const ProfileCard = ({ profile }: { profile: Artist}) => {
     <div className="text-center">
       <img
         src={profile?.img}
-        className="inline-block h-32 w-32 border-4 border-white shadow-nft rounded-48 -mt-12"
-        alt=""/>
+        className="inline-block h-20 w-20 border-4 border-white shadow-nft rounded-full -mt-12"
+        alt="Profile Image"/>
     </div>
     <div className="m-auto text-center mt-3">
       <div className="mb-4 text-3xl font-semibold">
         {profile?.name}
-        <img src="image/verify_logo.png" className="inline h-6 ml-2 -mt-1"/>
+        <img src="image/verify_logo.png" className="inline h-6 ml-2 -mt-1 hidden"/>
       </div>
       <div className="flex flex-row justify-center">
       <div className="text-sm shadow-nft rounded-full bg-white inline p-2 px-4 font-thin ">
@@ -42,7 +42,7 @@ export const ProfileCard = ({ profile }: { profile: Artist}) => {
         </span>
 
       </div>
-      <div className="ml-2">
+      <div className="ml-2 hidden">
       <LinkButton text="Edit" icon="image/edit_icon_dark.png" link="/dashboard" />
       </div>
       </div>
@@ -52,7 +52,7 @@ export const ProfileCard = ({ profile }: { profile: Artist}) => {
 
 export const ProfileStat = ({ profile }: { profile: Artist}) => {
   const { connection : { twitter , instagram, supporter } } = profile
-  return <div className="flex m-auto justify-center mt-10">
+  return <div className="flex m-auto justify-center mt-10 hidden">
     { twitter && <div className="px-6">
       <p className="text-sm font-thin">
         Twitter
