@@ -13,7 +13,7 @@ const Page = () => {
     <div className="w-4/5 m-auto z-10">
       <Navbar current={0} />
       {/* container */}
-      <div className="rounded-24 mb-20 px-12 py-16 border border-white shadow-nft" style={{background: '#ffffff8c'}}>
+      <div className="rounded-24 mb-20 px-12 py-16 border border-white shadow-nft" style={{background: 'rgba(185, 184, 184, 0.32)'}}>
         {/* search box */}
         <input className="placeholder-gray block w-3/5 bg-white m-auto rounded-full h-10 px-5 font-thin appearance-none outline-none" placeholder="Press creator ID and see the magic!" />
         <div className="h-8"></div>

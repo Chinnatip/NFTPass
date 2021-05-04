@@ -14,7 +14,7 @@ const Page = () => {
       <div className="md:w-4/5 w-full m-auto z-10">
         <Navbar current={1} />
         {/* container */}
-        <div className="rounded-24 border border-white shadow-nft mt-20">
+        <div className="rounded-24 border border-white shadow-nft mt-20" style={{background: 'rgba(185, 184, 184, 0.32)'}}>
           <div className="bg-white" style={{borderRadius: '24px 24px 0px 0px'}}>
             <ProfileCard profile={artistProfile} />
             <ProfileStat profile={artistProfile} />
@@ -25,7 +25,7 @@ const Page = () => {
                   <button
                     onClick={() => { setCurrent(index)}}
                     className={`py-2 px-3 font-semibold text-sm focus:outline-none appearance-none rounded-full px-2 ${current == index ?  'bg-black text-white': 'text-black' }`}>
-                    {tag} <span className="p-1 ml-1 rounded-full bg-gray-main text-gray-400">44</span>
+                    {tag} <span className="p-1 ml-1 rounded-full bg-gray-main text-white">44</span>
                   </button>
                 )}
               </div>
@@ -59,10 +59,8 @@ const Page = () => {
           </div>
           <p className="text-lg mt-10 hidden">Works</p>
           <div className="masonry p-4">
-            {nfts.map((item,index) => (
-              <div className="rounded-16 shadow-nft mb-8" key={index}>
-                <Card src={item}/>
-              </div>
+            {nfts.map((item) => (
+              <Card src={item}/>
             ))}
           </div>
         </div>
