@@ -1,22 +1,28 @@
 import React from 'react'
-// import Router from 'next/router';
+import { useEffect } from 'react'
+import { useRouter } from 'next/router';
 import { AppProps } from 'next/app'
 import { config } from '@fortawesome/fontawesome-svg-core'
 import 'styles/index.css'
 import '@fortawesome/fontawesome-svg-core/styles.css' // Import the CSS
-// import { GTMPageView } from '../components/strategy/gtm';
+import * as ga from '../lib/ga'
 
-config.autoAddCss = false // Tell Font Awesome to skip adding the CSS automatically since it's being imported above
+config.autoAddCss = false
 
 function MyApp({ Component, pageProps }: AppProps) {
-  // Initiate GTM
-//   useEffect(() => {
-//     const handleRouteChange = (url: string) => GTMPageView(url);
-//     Router.events.on('routeChangeComplete', handleRouteChange);
-//     return () => {
-//         Router.events.off('routeChangeComplete', handleRouteChange);
-//     };
-// }, []);
+  const Router = useRouter()
+  useEffect(() => {
+    const handleRouteChange = (url: any) => {
+      ga.pageview(url)
+    }
+    //When the component is mounted, subscribe to router changes then log those page views
+    Router.events.on('routeChangeComplete', handleRouteChange)
+
+    // If the component is unmounted, unsubscribe from the event with the `off` method
+    return () => {
+      Router.events.off('routeChangeComplete', handleRouteChange)
+    }
+  }, [Router.events])
 
   return <Component {...pageProps} />
 }
