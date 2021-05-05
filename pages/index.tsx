@@ -1,48 +1,42 @@
-import { HomeNavbar } from "../components/Navbar"
-import { useRouter } from 'next/router'
-import { artistProfile } from '../static/Artist'
-import { prepNum } from '../method/setNumber'
+import { nfts } from '../static/NFTLists'
+import { useState } from 'react'
+import Card from "../components/Card"
+import Navbar from "../components/Navbar"
 
-const bookmarkLists = [ artistProfile, artistProfile, artistProfile ]
+const tagList = [
+  'All','New Arrival','Pixel Art','2D','3D','Vector','Generative','Raster Painting','Photography','Collage','Algorithmic Art'
+]
 
 const Page = () => {
-  const Router = useRouter()
+  const [ current, setCurrent ] = useState(0)
   return  <div className="w-screen h-screen pt-8 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")'}}>
-    <div className="w-4/5 m-auto z-10">
-      {/* Navbar */}
-      <HomeNavbar current={0} />
-
-      {/* Content */}
-      <div className="rounded-24 mt-16 border border-white shadow-nft flex" style={{ height: "70vh" }}>
-        <div className="px-20 py-12 w-1/2 flex" style={{background: 'rgb(185 184 184 / 32%)', borderRadius: '24px 0px 0px 24px'}}>
-          <h1 className="text-6xl font-semibold w-full opacity-75 text-white" style={{ lineHeight: '4.8rem' }}>NFT Pass<br/> An Only Passport, Creator <br/> Will Ever <br/> Need</h1>
+    <div className="md:w-4/5 w-full m-auto z-10">
+      <Navbar current={0} />
+      {/* container */}
+      <div className="rounded-24 mb-20 md:px-5 px-2 py-8 border border-white shadow-nft" style={{background: 'rgba(185, 184, 184, 0.32)'}}>
+        {/* search box */}
+        <input className="hidden placeholder-gray block w-3/5 bg-white m-auto rounded-full h-10 px-5 font-thin appearance-none outline-none" placeholder="Press creator ID and see the magic!" />
+      
+        <div className="text-center p-4">
+          <div className="py-1 bg-white rounded-full text-center px-1 shadow-nft hidden" >
+            {tagList.map((tag,index) =>
+              <button onClick={() => { setCurrent(index)}} className={`py-2 px-3 font-semibold text-sm focus:outline-none appearance-none rounded-full px-2 ${current == index ?  'bg-black text-white': 'text-black' }`}>{tag}</button>
+            )}
+          </div>
+          <div className="flex flex-row py-1 px-1 rounded-full text-center" >
+          <button className={`py-2 px-3 mr-2 font-sm bg-white text-sm focus:outline-none appearance-none rounded-full px-2  'bg-black text-white': 'text-black' }`}>All Creators</button>
+              <button className={`py-2 px-3 mr-2 font-sm bg-white text-sm focus:outline-none appearance-none rounded-full px-2 items-center	flex 'bg-black text-white': 'text-black' }`}>
+              <img className=" h-6 w-6 rounded-full border-1 border-white shadow-nft inline" src="image/beeple_profile.png" alt=""/> <span className="ml-2">[ Creator Name]</span></button>
+           
+          </div>
         </div>
-
-        <div className="bg-white flex-grow p-8 flex items-center justify-center flex-col" style={{borderRadius: '0 24px 24px 0px'}}>
-          <img src="image/ic_glob_black.png" className="h-10 mt-10"/>
-          <p className="mt-6 text-center text-black font-semibold">Connect to NFTPass <br/> with</p>
-          <button className="text-white text-lg bg-black rounded-full p-2 px-5 mt-20 focus:outline-none" onClick={() => Router.push('/dashboard')}>Connect to MetaMask Wallet</button>
-          <div className="flex-grow"/>
-          <p className="font-semibold text-lg">New to NFTPass?</p>
-          <a href="/" className="text-gray-main text-xl mb-4 font-thin">Sign up with Metamask</a>
+        <div className="h-8"></div>
+        <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 p-4">
+          {[...nfts, ...nfts].map((item) => (
+            <Card src={item}/>
+          ))}
         </div>
       </div>
-
-      <div className="h-24" />
-
-      {/* Bookmark */}
-      <div className="text-center text-black opacity-50 font-thin text-4xl mt-8 mb-6">
-        Top Bookmarked
-      </div>
-      { bookmarkLists.map(item => {
-        return <div className="bg-white mb-8 shadow-nft flex p-4 rounded-24 flex items-center justify-center">
-        <img className="h-24 shadow-nft w-24 rounded-24 border-4 border-white" src={item.img}/>
-        <h1 className="text-xl ml-10 font-semibold">{item.name}</h1>
-        <div className="flex-grow" />
-        <button className="text-xl font-semibold">{prepNum(item?.connection?.supporter?.follower)} bookmarks</button>
-      </div>
-      })}
-      <div className="h-24" />
     </div>
   </div>
 }

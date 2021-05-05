@@ -45,21 +45,21 @@ const Modal = ({ src , action}: Props) => {
     {/* Content */}
     <div className=" p-10 md:p-24 sm:p-16 pb-0 flex md:flex-row flex-col-reverse">
       {/* Description */}
-      <div className="md:w-2/3 w-full">
+      <div className="md:w-1/2 w-full">
         <div className="flex w-full mb-6 mt-10">
           <div className="flex-grow">
-            <p className="font-thin">Created by</p>
-            <p className="text-lg font-semibold">
+            <p className="font-thin text-gray-main">Created by</p>
+            <h2 className="text-2xl font-semibold">
               {title}
               <img src="image/verify_logo.png" className="inline h-6 ml-1 hidden"/>
-            </p>
+            </h2>
             <div className="flex items-center text-gray-main mt-2 hidden">
               <img src="image/ic_heart_gray.png" className="w-5 inline mr-2"/> 3134
               <img src="image/ic_eye_gray.png" className="w-5 inline ml-4 mr-2"/> 3134
             </div>
           </div>
           <div className="text-right">
-            <p className="font-thin">Edition of</p>
+            <p className="font-thin text-gray-main">Edition of</p>
             <p className="font-bold text-lg">5</p>
           </div>
         </div>
@@ -75,7 +75,7 @@ const Modal = ({ src , action}: Props) => {
 
 
       {/* Side content */}
-      <div className="w-full md:w-1/4 md:ml-12 ml-0">
+      <div className="w-full md:w-1/2 md:ml-12 ml-0">
         <div className="shadow-nft rounded-24 p-5 flex w-full">
           <div className="flex-grow">
             <p className="font-thin">Owned by</p>
@@ -88,7 +88,7 @@ const Modal = ({ src , action}: Props) => {
           </div>
         </div>
         { bid && <>
-          <p className="text-gray-500 text-sm mt-6 mb-4">history</p>
+          <p className="text-gray-main text-sm mt-6 mb-4">history</p>
           <div className="shadow-nft rounded-24 p-5 flex w-full">
             <div className="flex-grow">
               <p className="font-thin">Bid place by</p>
@@ -108,7 +108,7 @@ const Modal = ({ src , action}: Props) => {
 
     {/*  */}
     <div className="p-16 md:px-20">
-      <h1 className="font-thin text-gray-600 text-2xl">More Like This</h1>
+      <h1 className="px-4 font-thin text-gray-600 text-2xl">More Like This</h1>
 
       <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 p-4">
         {nfts.map((item,index) => (
