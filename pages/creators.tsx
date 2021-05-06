@@ -1,42 +1,12 @@
 import { useState, useEffect } from 'react'
-
-type Collection = {
-  storeURL: string
-  storeName: string
-  project_cover_photo_url: string
-  contractAddress: string
-  drops_amount: number
-  opensea_slug: string
-}
-
-type Creator = {
-  creator_name: string
-  creator_url: string
-  creator_nifty_url: string
-  creator_image: string
-  collections: Collection[]
-  total_drops: number
-  opensea_slug: string[]
-}
+import { getCreator, getNFTS, Creator } from '../method/fetchJSON'
 
 const Page = () => {
   const [creators, setCreators] = useState<Creator[]>([])
   const [nfts_lists, setNFTS] = useState([])
-  const getCreator=()=>{
-    fetch('https://koh-assets.s3-ap-southeast-1.amazonaws.com/galleryst/creator_df.json'
-    ,{ headers : { 'Content-Type': 'application/json', 'Accept': 'application/json'}})
-    .then((response) => { return response.json() })
-    .then((data: any) => { setCreators(data)})
-  }
-  const getNFTS=()=>{
-    fetch('static/opensea_asset.json'
-    ,{ headers : { 'Content-Type': 'application/json', 'Accept': 'application/json'}})
-    .then((response) => { return response.json() })
-    .then((data: any) => { setNFTS(data)})
-  }
   useEffect(()=>{
-    getCreator()
-    getNFTS()
+    getCreator(setCreators)
+    getNFTS(setNFTS)
   },[])
   return <div className="p-20">
     <h1 className="text-center text-2xl ">Top Creator in Nifty</h1>
