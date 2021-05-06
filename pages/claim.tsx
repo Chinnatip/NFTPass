@@ -1,15 +1,15 @@
-import Card from "../components/Card"
+// import Card from "../components/Card"
 import Navbar from "../components/Navbar"
-import { useState } from 'react'
+// import { useState } from 'react'
 import { nfts } from '../static/NFTLists'
-import { artistProfile } from '../static/Artist'
-import { ProfileCard, ProfileStat } from '../components/Profile'
+// import { artistProfile } from '../static/Artist'
+// import { ProfileCard, ProfileStat } from '../components/Profile'
 import Carousel from '../components/Carousel'
 
-const charactorList = ['Creations','Owned','Saved']
+// const charactorList = ['Creations','Owned','Saved']
 
 const Page = () => {
-  const [ current, setCurrent ] = useState(0)
+  // const [ current, setCurrent ] = useState(0)
   return  <div className="w-screen h-screen pt-8 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")'}}>
       <div className="md:w-4/5 w-full m-auto z-10">
         <Navbar current={1} />
@@ -30,17 +30,17 @@ const Page = () => {
       <div className="flex flex-row justify-center">
       <div className="text-sm shadow-nft rounded-full bg-transparent inline p-2 px-4 font-thin ">
         <span>
-         
+
           #S4T05hi...N4kaM0tO
         </span>
 
       </div>
-      
+
       </div>
     </div>
-            
+
             {/* Creator's Profile Tabs */}
-           
+
         </div>
 <div className="relative flex flex-col w-full h-60 md:px-24 md:py-8 p-4">
   <div className="flex flex-col m-auto w-full">
@@ -87,12 +87,12 @@ const Page = () => {
               </button>
             })}
           </div>
-          <p className="text-lg mt-10 hidden">Works</p>
-          <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 gap-2 md:p-4 p-0 w-full">
+          {/* <p className="text-lg mt-10 hidden">Works</p> */}
+          {/* <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 gap-2 md:p-4 p-0 w-full">
             {nfts.map((item) => (
               <Card src={item}/>
             ))}
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="h-10"/>

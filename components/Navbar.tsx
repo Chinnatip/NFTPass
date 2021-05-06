@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { LinkButton } from '../components/Button'
-import { artistProfile } from '../static/Artist'
+// import { artistProfile } from '../static/Artist'
 
 const ProfileModal = () => {
   return <div className="w-64 bg-white absolute top-5 right-0 z-20 mt-10 rounded-24 p-6 shadow-nft border border-white" style={{background: '#fffffff7'}}>

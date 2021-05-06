@@ -1,4 +1,4 @@
-import Card from "../components/Card"
+// import Card from "../components/Card"
 import Navbar from "../components/Navbar"
 import { useState } from 'react'
 import { nfts } from '../static/NFTLists'
@@ -58,11 +58,11 @@ const Page = () => {
             })}
           </div>
           <p className="text-lg mt-10 hidden">Works</p>
-          <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 gap-2 md:p-4 p-0 w-full">
+          {/* <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 p-4 w-full">
             {nfts.map((item) => (
               <Card src={item}/>
             ))}
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="h-10"/>
