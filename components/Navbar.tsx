@@ -33,7 +33,7 @@ const Navbar = ({ current , show=true }: {current: number, show?: boolean}) => {
 
 export const HomeNavbar = ({ current , show=true }: {current: number, show?: boolean}) => {
   const Router = useRouter()
-  return <div className="flex items-center mb-10">
+  return <div className="flex items-center mb-5">
     <button className="focus:outline-none" onClick={() => Router.push('/')}>
       <img className="h-8" src="image/ic_galleryst_logo.png" alt=""/>
     </button>

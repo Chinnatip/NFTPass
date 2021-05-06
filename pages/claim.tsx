@@ -44,7 +44,7 @@ const Page = () => {
         </div>
 <div className="relative flex flex-col w-full h-60 md:px-24 md:py-8 p-4">
   <div className="flex flex-col m-auto w-full">
-  <form className="m-auto w-2/4">
+  <form className="m-auto md:w-2/4 w-full">
     <label className="text-lg	text-white">Email</label>
     <input className="h-6 w-full mb-6 rounded-full p-6" placeholder="Your Email Address"></input>
     <label className="text-lg	text-white">ID Address</label>

@@ -4,9 +4,10 @@
 @tailwind utilities;
 @import url('https://fonts.googleapis.com/css?family=Lexend:500,600,700&display=swap');
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap');
 
 body {
-  font-family: 'Lexend', sans-serif;
+  font-family: 'Lexend','DM Serif Display' , sans-serif, serif;
   overflow-y: auto;
 }
 
@@ -22,6 +23,10 @@ button {
 
 .text-gray-main {
   color: #989898;
+}
+
+.font-serif {
+  font-family: 'DM Serif Display', serif !important;
 }
 
 .placeholder-gray::placeholder {

@@ -12,6 +12,9 @@ const Page = () => {
   return  <div className="w-screen h-screen pt-8 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")'}}>
     <div className="md:w-4/5 w-full m-auto z-10">
       <Navbar current={0} />
+      <div className="bg-transparent m-auto md:px-24 p-4 text-5xl text-white text-center font-serif">
+Discover Your Dearest Crypto <nobr>Art Pieces</nobr>
+      </div>
       {/* container */}
       <div className="rounded-24 mb-20 md:px-5 px-2 py-4 border border-white shadow-nft" style={{background: 'rgba(185, 184, 184, 0.32)'}}>
         {/* search box */}
