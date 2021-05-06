@@ -4,8 +4,8 @@ import { LinkButton } from '../components/Button'
 import { artistProfile } from '../static/Artist'
 
 const ProfileModal = () => {
-  return <div className="w-64 bg-white absolute top-0 right-0 z-10 mt-10 rounded-24 p-6 shadow-nft border border-white" style={{background: '#fffffff7'}}>
-    <div className="mb-4"><LinkButton fit text="Discovery" icon="image/dashboard_icon.png" link="/discover" /></div>
+  return <div className="w-64 bg-white absolute top-0 right-0 z-20 mt-10 rounded-24 p-6 shadow-nft border border-white" style={{background: '#fffffff7'}}>
+    <div className="mb-4"><LinkButton fit text="Discovery" icon="image/dashboard_icon.png" link="/index" /></div>
     <div className="mb-4"><LinkButton fit text="Your Page" icon={artistProfile.img} link="/profile" /></div>
     <div className="mb-4"><LinkButton fit active={true} text="Account" icon="image/edit_icon.png" link="/dashboard" /></div>
     <div className=""><LinkButton fit text="Logout" icon="image/logout_icon.png" link="/" /></div>
@@ -19,8 +19,8 @@ const Navbar = ({ current , show=true }: {current: number, show?: boolean}) => {
     <button className="focus:outline-none" onClick={() => Router.push('/')}>
       <img className="md:h-8 h-6 ml-2" src="image/ic_galleryst_logo.png" alt=""/>
     </button>
-    { show && <div className="absolute p-1 bg-white rounded-full shadow-nft text-center float-central" >
-      <button onClick={() => Router.push('/discover')} className={`focus:outline-none py-2 text-sm rounded-full px-5 ${current == 0 ?  'bg-black text-white': 'text-black' }`}>Discovery</button>
+    { show && <div className="absolute p-1 bg-white rounded-full shadow-nft text-center float-central md:flex hidden" >
+      <button onClick={() => Router.push('/')} className={`focus:outline-none py-2 text-sm rounded-full px-5 ${current == 0 ?  'bg-black text-white': 'text-black' }`}>Discovery</button>
       <button onClick={() => Router.push('/profile')} className={`focus:outline-none py-2 text-sm rounded-full px-5 ${current == 1 ?  'bg-black text-white': 'text-black' }`}>Your Page</button>
     </div>}
     <div className="flex-grow"/>
@@ -38,8 +38,8 @@ export const HomeNavbar = ({ current , show=true }: {current: number, show?: boo
       <img className="h-8" src="image/ic_galleryst_logo.png" alt=""/>
     </button>
     { show && <div className="absolute p-1 bg-white rounded-full shadow-nft text-center float-central" >
-      <button onClick={() => Router.push('/')} className={`focus:outline-none py-2 text-sm rounded-full px-5 ${current == 0 ?  'bg-black text-white': 'text-black' }`}>Home</button>
-      <button onClick={() => Router.push('/discover')} className={`focus:outline-none py-2 text-sm rounded-full px-5 ${current == 1 ?  'bg-black text-white': 'text-black' }`}>Discovery</button>
+      <button onClick={() => Router.push('/index')} className={`focus:outline-none py-2 text-sm rounded-full px-5 ${current == 0 ?  'bg-black text-white': 'text-black' }`}>Home</button>
+      <button onClick={() => Router.push('/index')} className={`focus:outline-none py-2 text-sm rounded-full px-5 ${current == 1 ?  'bg-black text-white': 'text-black' }`}>Discovery</button>
     </div>}
     <div className="flex-grow"/>
   </div>
