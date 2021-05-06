@@ -17,6 +17,8 @@
     "paths": {
       "stuff/*": ["components/stuff/*"],
       "static": ["components/static/index"],
+      "static/*": ["components/static/*"],
+      "method/*": ["method/*"],
       "@/*": ["components/*"]
     },
     "resolveJsonModule": true,

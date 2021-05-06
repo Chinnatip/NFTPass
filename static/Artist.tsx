@@ -1,5 +1,5 @@
 export const artistProfile = {
-  img: "image/beeple_profile.png",
+  img: "/image/beeple_profile.png",
   name: 'Beeple',
   address: '9531985...nvfnv4',
   verfiy: true,

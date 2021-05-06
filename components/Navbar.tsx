@@ -17,7 +17,7 @@ const Navbar = ({ current , show=true }: {current: number, show?: boolean}) => {
   const [ modal, setModal ] = useState(false)
   return <div className="flex items-center mb-10">
     <button className="focus:outline-none" onClick={() => Router.push('/')}>
-      <img className="md:h-8 h-6 ml-2" src="image/ic_galleryst_logo.png" alt=""/>
+      <img className="md:h-8 h-6 ml-2" src="/image/ic_galleryst_logo.png" alt=""/>
     </button>
     { show && <div className="absolute p-1 bg-white rounded-full shadow-nft text-center float-central md:flex hidden" >
       <button onClick={() => Router.push('/')} className={`focus:outline-none py-2 text-sm rounded-full px-5 ${current == 0 ?  'bg-black text-white': 'text-black' }`}>Discovery</button>
@@ -26,7 +26,7 @@ const Navbar = ({ current , show=true }: {current: number, show?: boolean}) => {
     <div className="flex-grow"/>
     <button className="mt-3 mr-1 h-12 w-12 rounded-full border-4 bg-white border-white shadow-nft relative" onClick={() => setModal(!modal)}>
       { modal && <ProfileModal />}
-      <img className="rounded-full" src="image/hamburger.svg" alt="hamburger menu"/>
+      <img className="rounded-full" src="/image/hamburger.svg" alt="hamburger menu"/>
     </button>
   </div>
 }

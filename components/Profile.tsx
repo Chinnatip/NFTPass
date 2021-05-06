@@ -1,5 +1,6 @@
 import { prepNum } from '../method/setNumber'
 import { LinkButton } from '../components/Button'
+import { Creator } from 'method/fetchJSON'
 
 type Artist = {
   img: string
@@ -21,29 +22,28 @@ type Artist = {
   }
 }
 
-export const ProfileCard = ({ profile }: { profile: Artist}) => {
+export const ProfileCard = ({ profile }: { profile: Creator}) => {
   return <>
     <div className="text-center">
       <img
-        src={profile?.img}
+        src={profile?.creator_image}
         className="inline-block h-20 w-20 border-4 border-white shadow-nft rounded-full -mt-12"
         alt="Profile Image"/>
     </div>
     <div className="m-auto text-center mt-3">
       <div className="mb-4 text-3xl font-semibold">
-        {profile?.name}
-        <img src="image/verify_logo.png" className="inline h-6 ml-2 -mt-1 hidden"/>
+        {profile?.creator_name}
+        <img src="/image/verify_logo.png" className="inline h-6 ml-2 -mt-1 hidden"/>
       </div>
       <div className="flex flex-row justify-center">
-      <div className="text-sm shadow-nft rounded-full bg-white inline p-2 px-4 font-thin ">
+      {/* <div className="text-sm shadow-nft rounded-full bg-white inline p-2 px-4 font-thin ">
         <span>
           #{profile?.address}
-          <img src="image/copy_icon.png" className="inline ml-2 -mr-2 -mt-1 h-5" />
+          <img src="/image/copy_icon.png" className="inline ml-2 -mr-2 -mt-1 h-5" />
         </span>
-
-      </div>
+      </div> */}
       <div className="ml-2 hidden">
-      <LinkButton text="Edit" icon="image/edit_icon_dark.png" link="/dashboard" />
+        <LinkButton text="Edit" icon="/image/edit_icon_dark.png" link="/dashboard" />
       </div>
       </div>
     </div>
@@ -56,14 +56,14 @@ export const ProfileStat = ({ profile }: { profile: Artist}) => {
     { twitter && <div className="px-6">
       <p className="text-sm font-thin">
         Twitter
-        <img src="image/correct_icon.png" alt="" className="inline h-3 ml-1 -mt-1"/>
+        <img src="/image/correct_icon.png" alt="" className="inline h-3 ml-1 -mt-1"/>
       </p>
       <p className=" text-xl font-semibold">{prepNum(twitter.follower)} Followers</p>
     </div>}
     { instagram && <div className="border-l-4 px-6">
       <p className="text-sm font-thin">
         Instagram
-        <img src="image/correct_icon.png" alt="" className="inline h-3 ml-1 -mt-1"/>
+        <img src="/image/correct_icon.png" alt="" className="inline h-3 ml-1 -mt-1"/>
       </p>
       <p className=" text-xl font-semibold">{prepNum(instagram.follower)} Followers</p>
     </div>}

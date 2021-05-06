@@ -1,7 +1,7 @@
-import { NFT, Creator, priceCal,profleNFT } from '../method/fetchJSON'
+import { NFT, Creator, priceCal,profileNFT } from '../method/fetchJSON'
 import Card from './Card'
 
-const Modal = ({ src , action, nfts_lists, creators }: { action?: any , src: NFT , nfts_lists: NFT[], creators: Creator[]}) => {
+const Modal = ({ src , action, nfts_lists, creator }: { action?: any , src: NFT , nfts_lists: NFT[], creator: Creator}) => {
   return <div className="w-screen h-screen z-20 bg-white fixed top-0 left-0 overflow-y-scroll overflow-x-hidden">
     {/* Image content */}
     <div className="w-full relative flex items-center justify-center" style={{ background: '#5c56567a' , height: '75vh' }}>
@@ -72,7 +72,6 @@ const Modal = ({ src , action, nfts_lists, creators }: { action?: any , src: NFT
               <p className="font-thin">Bid place by</p>
               <p className="font-bold">{bid.by}</p>
               <p className="font-thin mt-4 text-xs">bid.lastest}</p>
-
             </div>
             <div className="text-right">
               <img src={`image/opensea_icon.png`} className="h-8 inline"/>
@@ -89,9 +88,9 @@ const Modal = ({ src , action, nfts_lists, creators }: { action?: any , src: NFT
       <h1 className="px-4 font-thin text-gray-600 text-2xl">More Like This</h1>
 
       <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 p-4">
-        { profleNFT(nfts_lists, creators, src.nifty_creator_url).map((item,index) => (
+        { profileNFT(nfts_lists, creator).map((item,index) => (
           <div className="rounded-16 shadow-nft mb-8" key={index}>
-            <Card src={item} nfts_lists={nfts_lists} creators={creators}/>
+            <Card src={item} nfts_lists={nfts_lists} creator={creator}/>
           </div>
         ))}
       </div>

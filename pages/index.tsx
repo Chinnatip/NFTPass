@@ -43,9 +43,11 @@ const Page = () => {
         </div>
         <div className="h-8"></div>
         <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 p-4">
-          {shuffle(randomNFT(nfts_lists, creators)).map((item: any) => (
-            <Card src={item} nfts_lists={nfts_lists} creators={creators}/>
-          ))}
+          {shuffle(randomNFT(nfts_lists, creators)).map((item: NFT) => {
+            const creator = creators.find(creat => creat.creator_url == item.nifty_creator_url)
+            const parse : any = creator
+            return <Card src={item} nfts_lists={nfts_lists} creator={parse}/>
+          })}
         </div>
       </div>
     </div>

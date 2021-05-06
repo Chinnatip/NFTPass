@@ -57,6 +57,13 @@ export const getCreator=(action: any)=>{
   .then((data: any) => { action(data)})
 }
 
+export const loadCreator=(action: any, slug: string)=>{
+  fetch('https://koh-assets.s3-ap-southeast-1.amazonaws.com/galleryst/creator_df.json'
+  ,{ headers : { 'Content-Type': 'application/json', 'Accept': 'application/json'}})
+  .then((response) => { return response.json() })
+  .then((data: any) => {  action(data.find((item: any) => item.creator_url == slug))  })
+}
+
 export const getNFTS=(action: any)=>{
   fetch('https://koh-assets.s3-ap-southeast-1.amazonaws.com/galleryst/opensea_asset.json'
   ,{ headers : { 'Content-Type': 'application/json', 'Accept': 'application/json'}})
@@ -79,8 +86,8 @@ export const randomNFT = ( lists: NFT[], creators: Creator[] ) => {
   return result?.filter(r => r != undefined)
 }
 
-export const profleNFT = ( lists: NFT[], creators: Creator[], creator_url: string ) => {
-  const creator = creators.find(creat => creat.creator_url == creator_url)
+export const profileNFT = ( lists: NFT[], creator: Creator) => {
+  // const creator = creators.find(creat => creat.creator_url == creator_url)
   return lists.filter(item => item.nifty_creator_url == creator?.creator_url).map(item => {
     return {
       ...item,
