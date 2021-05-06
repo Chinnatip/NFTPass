@@ -1572,3 +1572,8 @@ img.fit-wh-img {
   -ms-border-radius: 0 0 10px 10px;
   -o-border-radius: 0 0 10px 10px;
 }
+
+
+button:focus {
+  outline: none !important;
+}

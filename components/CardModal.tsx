@@ -46,13 +46,14 @@ const Modal = ({ src , action}: Props) => {
     <div className=" p-10 md:p-24 sm:p-16 pb-0 flex md:flex-row flex-col-reverse">
       {/* Description */}
       <div className="md:w-1/2 w-full">
-        <div className="flex w-full mb-6 mt-10">
+        <div className="flex w-full mb-6 mt-10 md:mt-0">
           <div className="flex-grow">
             <p className="font-thin text-gray-main">Created by</p>
-            <h2 className="text-2xl font-semibold">
-              {title}
+            <div className="">
+              <a href="/profile" className="text-2xl font-semibold"> {title}</a>
+             
               <img src="image/verify_logo.png" className="inline h-6 ml-1 hidden"/>
-            </h2>
+            </div>
             <div className="flex items-center text-gray-main mt-2 hidden">
               <img src="image/ic_heart_gray.png" className="w-5 inline mr-2"/> 3134
               <img src="image/ic_eye_gray.png" className="w-5 inline ml-4 mr-2"/> 3134

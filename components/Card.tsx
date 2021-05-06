@@ -22,9 +22,9 @@ export default ({ src }: Props) => {
   const [modal, setModal] = useState(false)
   return <>
     { modal && <Modal src={src} action={setModal} />}
-    <div onClick={() => setModal(!modal)} className=" cursor-pointer bg-white rounded-16 mb-2">
-    <div className="bottom-0 left-0 bg px-2 pt-2 md:text-s text-xs font-sm" style={{borderRadius: '0px 0px 8px 8px'}}> <img className=" h-6 w-6 rounded-full border-1 border-white shadow-nft inline" src="image/beeple_profile.png" alt=""/><span className="ml-2">[CreatorName]</span></div>
-     <div className="thumbnail-wrapper w-full">
+    <div className=" cursor-pointer bg-white rounded-16 mb-2 pt-1">
+    <a href="/profile" className="bottom-0 left-0 bg px-2 pt-2 md:text-s text-xs font-sm" style={{borderRadius: '0px 0px 8px 8px'}}> <img className=" h-6 w-6 rounded-full border-1 border-white shadow-nft inline" src="image/beeple_profile.png" alt=""/><span className="ml-2">[CreatorName]</span></a>
+     <div className="thumbnail-wrapper w-full" onClick={() => setModal(!modal)} >
       <img src={`image/${provider}_icon.png`} className="absolute z-10 top-0 right-0 mt-4 mr-4 h-6"/>
       {/* <div className="relative"> */}
       <img className="rounded-16 border-8 border-white thumbnail-height"  src={img} />
