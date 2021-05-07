@@ -30,7 +30,7 @@ const Page = () => {
     getNFTS(setNFTS)
   },[])
 
-  return <div className="w-screen h-screen pt-8 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")'}}>
+  return <div className="w-screen h-screen pt-8 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("/image/bg_blur.jpg")'}}>
   <div className="md:w-4/5 w-full m-auto z-10">
     <Navbar current={1} />
     {/* container */}

@@ -50,12 +50,15 @@ const Page = () => {
             const creator = creators.find(creat => creat.creator_url == item.nifty_creator_url)
             const parse : any = creator
             return <Card src={item} nfts_lists={nfts_lists} creator={parse}/>
-          }) : profileNFT(nfts_lists, creators.find(creat => creat.creator_url == current)).map((item,index) => {
-            const creator = creators.find(creat => creat.creator_url == current)
-            return <div className="rounded-16 shadow-nft mb-8" key={index}>
-              <Card src={item} nfts_lists={nfts_lists} creator={creator}/>
-          </div>
-          } )}
+          }) : profileNFT(nfts_lists, creators.find(creat => creat.creator_url == current)).length > 0 ?
+            profileNFT(nfts_lists, creators.find(creat => creat.creator_url == current)).map((item,index) => {
+              const creator = creators.find(creat => creat.creator_url == current)
+              return <div className="rounded-16 shadow-nft mb-8" key={index}>
+                <Card src={item} nfts_lists={nfts_lists} creator={creator}/>
+              </div>
+            }):
+            <div className="text-center opacity-50 col-span-4"> Not found NFTS in marketplace.</div>
+            }
         </div>
       </div>
     </div>

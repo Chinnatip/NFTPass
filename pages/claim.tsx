@@ -3,6 +3,7 @@ import Navbar from "@/Navbar"
 import Carousel from '@/Carousel'
 import { nfts } from '../static/NFTLists'
 import { useState } from 'react'
+import axios from "axios"
 
 type Contact = {
   email?: string
@@ -13,14 +14,35 @@ type Contact = {
 
 const Page = () => {
   const [ contact, setContact ] = useState<Contact>({})
+  const [ modal, setLoadModal ] = useState(false)
+  const [ loaded, setLoaded ] = useState(false)
   const submit = () => {
     if(contact.email == undefined || contact.address == undefined){
       alert('Email and Blockchain address cannot empty')
     }else{
-      alert(JSON.stringify(contact))
+      setLoadModal(true)
+      axios.post('http://localhost:3000/api/claim' , contact).then(res => {
+        if(res.data.status == 'success'){
+          setLoaded(true)
+        }
+      })
     }
   }
   return  <div className="w-screen h-screen pt-8 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")'}}>
+    { modal && <div className="w-screen h-screen top-0 left-0 fixed flex items-center justify-center z-10" style={{ background: '#000000a6'}}>
+      { loaded ? <div className="bg-white rounded-xl shadow-nft text-center text-md relative flex flex-col items-center justify-center" style={{height: '240px',width: '320px'}}>
+        <div className="w-full text-center">
+          <img src="/image/ic_correct.png" className="h-20 inline mb-6"/>
+          <p className="opacity-50 mb-2">Contact will send to you later</p>
+          <button className="bg-blue-500 text-white rounded-full p-2 w-24" onClick={() => {setLoadModal(false);setLoaded(false)}}>Close</button>
+        </div>
+      </div> :
+      <div className="bg-white rounded-xl shadow-nft text-center text-md relative" style={{height: '240px'}}>
+        <img src="/image/loading.gif" className="rounded-full" style={{width: '320px'}}/>
+        <p className="absolute w-full -mt-10 opacity-50">... loading ...</p>
+      </div>
+      }
+    </div> }
     <div className="md:w-4/5 w-full m-auto z-10">
       <Navbar current={1} />
       {/* container */}
@@ -88,7 +110,7 @@ const Page = () => {
           <div className="flex flex-row mb-6">
             {[...new Set(nfts.map(item => item.provider)) ].map((item, index) => {
               return <button className={`${index > 0 && 'ml-3'} bg-white shadow-nft rounded-full h-10 inline-flex px-1 pr-3 items-center`}>
-                <img src={`image/${item}_icon.png`} className="h-8  inline mr-2"/> {item}
+                <img src={`/image/${item}_icon.png`} className="h-8  inline mr-2"/> {item}
               </button>
             })}
           </div>
