@@ -1,67 +1,72 @@
-// import Card from "../components/Card"
-import Navbar from "../components/Navbar"
-// import { useState } from 'react'
-import { nfts } from '../static/NFTLists'
-// import { artistProfile } from '../static/Artist'
-// import { ProfileCard, ProfileStat } from '../components/Profile'
-import Carousel from '../components/Carousel'
 
-// const charactorList = ['Creations','Owned','Saved']
+import Navbar from "@/Navbar"
+import Carousel from '@/Carousel'
+import { nfts } from '../static/NFTLists'
+import { useState } from 'react'
+
+type Contact = {
+  email?: string
+  address?: string
+  opensea_url?: string
+  rarible_url?: string
+}
 
 const Page = () => {
-  // const [ current, setCurrent ] = useState(0)
+  const [ contact, setContact ] = useState<Contact>({})
+  const submit = () => {
+    if(contact.email == undefined || contact.address == undefined){
+      alert('Email and Blockchain address cannot empty')
+    }else{
+      alert(JSON.stringify(contact))
+    }
+  }
   return  <div className="w-screen h-screen pt-8 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")'}}>
-      <div className="md:w-4/5 w-full m-auto z-10">
-        <Navbar current={1} />
-        {/* container */}
-        <div className="rounded-24 border border-white shadow-nft mt-20" style={{background: 'rgba(185, 184, 184, 0.32)'}}>
-          <div className="bg-white pb-8" style={{borderRadius: '24px 24px 0px 0px'}}>
+    <div className="md:w-4/5 w-full m-auto z-10">
+      <Navbar current={1} />
+      {/* container */}
+      <div className="rounded-24 border border-white shadow-nft mt-20" style={{background: 'rgba(185, 184, 184, 0.32)'}}>
+        <div className="bg-white pb-8" style={{borderRadius: '24px 24px 0px 0px'}}>
           <div className="text-center">
-      <img
-        src="image/empty_logo.png"
-        className="inline-block h-20 w-20 border-4 border-white shadow-nft rounded-full -mt-12"
-        alt="Profile Image"/>
-    </div>
-    <div className="m-auto text-center mt-3">
-      <div className="mb-4 text-3xl font-semibold">
-       Your NFT Porfolio
-        <img src="image/verify_logo.png" className="inline h-6 ml-2 -mt-1 hidden"/>
-      </div>
-      <div className="flex flex-row justify-center">
-      <div className="text-sm shadow-nft rounded-full bg-transparent inline p-2 px-4 font-thin ">
-        <span>
-
-          #S4T05hi...N4kaM0tO
-        </span>
-
-      </div>
-
-      </div>
-    </div>
-
-            {/* Creator's Profile Tabs */}
-
+            <img
+              src="image/empty_logo.png"
+              className="inline-block h-20 w-20 border-4 border-white shadow-nft rounded-full -mt-12"
+              alt="Profile Image"/>
+          </div>
+          <div className="m-auto text-center mt-3">
+            <div className="mb-4 text-3xl font-semibold">
+              Your NFT Porfolio
+              <img src="image/verify_logo.png" className="inline h-6 ml-2 -mt-1 hidden"/>
+            </div>
+            <div className="flex flex-row justify-center">
+              <div className="text-sm shadow-nft rounded-full bg-transparent inline p-2 px-4 font-thin ">
+                <span> #S4T05hi...N4kaM0tO </span>
+              </div>
+            </div>
+          </div>
         </div>
-<div className="relative flex flex-col w-full h-60 md:px-24 md:py-8 p-4">
-  <div className="flex flex-col m-auto w-full">
-  <form className="m-auto md:w-2/4 w-full">
-    <label className="text-lg	text-white">Email</label>
-    <input className="h-6 w-full mb-6 rounded-full p-6" placeholder="Your Email Address"></input>
-    <label className="text-lg	text-white">ID Address</label>
-    <input className="h-6 w-full mb-6 rounded-full p-6" placeholder="Your Opensea ID Address"></input>
-    <label className="text-lg	text-white">Opensea Profile URL (optional)</label>
-    <input className="h-6 w-full mb-6 rounded-full p-6" placeholder="Your Opensea ID Address"></input>
-    <label className="text-lg	text-white">Rarible Profile URL (optional)</label>
-    <input className="h-6 w-full mb-6 rounded-full p-6" placeholder="Your Opensea ID Address"></input>
-    <button className=" w-full bg-black text-white rounded-full p-4">Get Early Access</button>
-  </form>
-  </div>
-  <div className="flex flex-row justify-center mt-8">
-    <div>
-      Follow Us on <a href="https://twitter.com/gallerystco" target="_blank">Twitter</a>
-    </div>
-  </div>
-</div>
+        <div className="relative flex flex-col w-full h-60 md:px-24 md:py-8 p-4">
+          <div className="flex flex-col m-auto w-full">
+            <div className="m-auto md:w-2/4 w-full">
+              <label className="text-lg	text-white">Email</label>
+              <input className="h-6 w-full mb-6 rounded-full p-6" onChange={e => setContact({ ...contact, email: e.target.value })} value={contact.email} type="email" placeholder="Your Email Address"></input>
+              <label className="text-lg	text-white">ID Address</label>
+              <input className="h-6 w-full mb-6 rounded-full p-6" onChange={e => setContact({ ...contact, address: e.target.value })} value={contact.address} placeholder="Your Opensea ID Address"></input>
+              <label className="text-lg	text-white">Opensea Profile URL (optional)</label>
+              <input className="h-6 w-full mb-6 rounded-full p-6" onChange={e => setContact({ ...contact, opensea_url: e.target.value })} value={contact.opensea_url} placeholder="Your Opensea ID Address"></input>
+              <label className="text-lg	text-white">Rarible Profile URL (optional)</label>
+              <input className="h-6 w-full mb-6 rounded-full p-6" onChange={e => setContact({ ...contact, rarible_url: e.target.value })} value={contact.rarible_url} placeholder="Your Opensea ID Address"></input>
+              <button className=" w-full bg-black text-white rounded-full p-4" onClick={() => submit()}>Get Early Access</button>
+            </div>
+          </div>
+          <div className="flex flex-row justify-center mt-8">
+            <div>
+              Follow Us on
+              <a href="https://twitter.com/gallerystco" target="_blank">
+                <span className="font-semibold">Twitter</span>
+              </a>
+            </div>
+          </div>
+        </div>
         {/* Tab Contents */}
         <div
           className="hidden h-auto flex justify-end flex-col items-center md:px-10 px-2 pb-16"
@@ -87,14 +92,9 @@ const Page = () => {
               </button>
             })}
           </div>
-          {/* <p className="text-lg mt-10 hidden">Works</p> */}
-          {/* <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 gap-2 md:p-4 p-0 w-full">
-            {nfts.map((item) => (
-              <Card src={item}/>
-            ))}
-          </div> */}
         </div>
       </div>
+      {/* footer space */}
       <div className="h-10"/>
     </div>
   </div>

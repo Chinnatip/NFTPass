@@ -1,4 +1,3 @@
-// import { nfts } from '../static/NFTLists'
 import { useState, useEffect } from 'react'
 import Card from "../components/Card"
 import Navbar from "../components/Navbar"
