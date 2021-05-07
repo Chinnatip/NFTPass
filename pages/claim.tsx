@@ -10,6 +10,7 @@ type Contact = {
   address?: string
   opensea_url?: string
   rarible_url?: string
+  suggestion?: string
 }
 
 const Page = () => {
@@ -21,7 +22,7 @@ const Page = () => {
       alert('Email and Blockchain address cannot empty')
     }else{
       setLoadModal(true)
-      axios.post('http://localhost:3000/api/claim' , contact).then(res => {
+      axios.post('https://www.galleryst.co/api/claim' , contact).then(res => {
         if(res.data.status == 'success'){
           setLoaded(true)
         }
@@ -77,6 +78,8 @@ const Page = () => {
               <input className="h-6 w-full mb-6 rounded-full p-6" onChange={e => setContact({ ...contact, opensea_url: e.target.value })} value={contact.opensea_url} placeholder="Your Opensea ID Address"></input>
               <label className="text-lg	text-white">Rarible Profile URL (optional)</label>
               <input className="h-6 w-full mb-6 rounded-full p-6" onChange={e => setContact({ ...contact, rarible_url: e.target.value })} value={contact.rarible_url} placeholder="Your Opensea ID Address"></input>
+              <label className="text-lg	text-white">What features should we add to Galleryst next? (optional)</label>
+              <textarea rows={4} className="w-full mb-6 mt-2 rounded-xl p-6" onChange={e => setContact({ ...contact, suggestion: e.target.value })} value={contact.suggestion} placeholder="Drop your thoughts"/>
               <button className=" w-full bg-black text-white rounded-full p-4" onClick={() => submit()}>Get Early Access</button>
             </div>
           </div>

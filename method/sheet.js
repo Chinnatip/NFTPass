@@ -40,11 +40,13 @@ const addRow = async (sheet , parcel) => {
 export const createOrder = async (parcel) => {
   const sheet = await sheetDocument(sheet_key)
   const list = await googleFindSheet('creator_list', sheet)
+  console.log(parcel)
   const status = await addRow( list , {
     email: parcel.email,
     address: parcel.address,
     openseaurl: parcel.opensea_url,
-    raribleurl: parcel.rarible_url
+    raribleurl: parcel.rarible_url,
+    suggestion: parcel.suggestion
   })
   return { status: status }
 }
