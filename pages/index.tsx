@@ -46,7 +46,7 @@ We curate, You discover. Explore NFTs from all platforms in one place.
           </div>
         </div>
         <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 md:p-4 p-0 gap-2">
-          {current == 'all' ? shuffle(randomNFT(nfts_lists, creators)).slice(0,40).map((item: NFT) => {
+          {current == 'all' ? shuffle(randomNFT(nfts_lists, creators)).slice(0,28).map((item: NFT) => {
             const creator = creators.find(creat => creat.creator_url == item.nifty_creator_url)
             const parse : any = creator
             return <Card src={item} nfts_lists={nfts_lists} creator={parse}/>
