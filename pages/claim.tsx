@@ -52,7 +52,7 @@ const Page = () => {
           <div className="text-center">
             <img
               src="image/empty_logo.png"
-              className="inline-block h-20 w-20 border-4 border-white shadow-nft rounded-full -mt-12"
+              className="inline-block h-20 w-20 border-4 border-white shadow-nft rounded-full -mt-12 object-cover"
               alt="Profile Image"/>
           </div>
           <div className="m-auto text-center mt-3">

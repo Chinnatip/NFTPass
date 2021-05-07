@@ -77,9 +77,9 @@ const Page = () => {
         </button>
       </div>
       <p className="text-lg mt-10 hidden">Works</p>
-      <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 p-4 w-full">
+      <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 md:p-4 p-0 gap-2">
         {profileNFT(nfts_lists, creator).map((item,index) => (
-          <div className="rounded-16 shadow-nft mb-8" key={index}>
+          <div className="rounded-16 bg-white mb-8" key={index}>
             <Card src={item} nfts_lists={nfts_lists} creator={creator}/>
           </div>
         ))}
