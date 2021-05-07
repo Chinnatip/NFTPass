@@ -12,7 +12,7 @@ const Page = () => {
       <div className="rounded-24 border border-white shadow-nft flex">
         <div className="p-6 px-8" style={{width: '20rem', background: '#f3f3f352', borderRadius: '24px 0px 0px 24px'}}>
           <div className="mb-5"><LinkButton fit text="Discovery" icon="image/dashboard_icon.png" link="/index" /></div>
-          <div className="mb-5"><LinkButton fit text="Your Page" icon={artistProfile.img} link="/profile" /></div>
+          <div className="mb-5"><LinkButton fit text="Get Early Access" icon={artistProfile.img} link="/profile" /></div>
           <div className="mb-5"><LinkButton fit active={true} text="Account" icon="image/edit_icon.png" link="/dashboard" /></div>
           <div className="mb-5"><LinkButton fit text="Logout" icon="image/logout_icon.png" link="/" /></div>
         </div>
