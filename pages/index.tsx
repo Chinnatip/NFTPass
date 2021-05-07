@@ -19,9 +19,9 @@ const Page = () => {
     <div className="md:w-4/5 w-full m-auto z-10">
       <Navbar current={0} />
       <div
-        className="bg-transparent m-auto md:px-24 p-4 pt-8 pb-12 text-5xl text-white text-center font-serif"
+        className="bg-transparent m-auto md:px-24 p-4 pt-8 pb-12 md:text-5xl text-3xl text-white text-center font-serif"
         style={{ letterSpacing: '0.04rem', textShadow: '0 0 40px #884d4d52', opacity: '90%' }}>
-        Discover Your Dearest Crypto Art Pieces
+We curate, You discover. Explore NFTs from all platforms in one place.
       </div>
       {/* container */}
       <div className="rounded-24 mb-20 md:px-5 px-2 py-4 border border-white shadow-nft" style={{background: 'rgba(185, 184, 184, 0.32)'}}>
@@ -34,7 +34,7 @@ const Page = () => {
             )}
           </div> */}
           <div className="flex p-1 rounded-full" >
-            <button onClick={() => setCurrent('all')} className={`h-10 w-1/6 py-2 px-3 mr-2 font-sm text-sm focus:outline-none appearance-none rounded-full px-2  ${ current == 'all' ? 'bg-black text-white' : 'bg-white text-black'}`}>All Creators</button>
+            <button onClick={() => setCurrent('all')} className={`h-10 w-auto py-2 md:px-6 mr-2 font-sm text-sm focus:outline-none appearance-none rounded-full px-4  ${ current == 'all' ? 'bg-black text-white' : 'bg-white text-black'}`}>All</button>
             <div className="overflow-x-auto overflow-y-hidden rounded-r-full w-5/6 " style={{whiteSpace: 'nowrap'}}>
               { creators.map(creat => {
                 return <button onClick={() => setCurrent(creat.creator_url)} className={`inline p-2 mr-2 font-sm text-sm rounded-full items-center ${current == creat.creator_url ? 'bg-black text-white' : 'bg-white'}`}>
@@ -45,7 +45,7 @@ const Page = () => {
             </div>
           </div>
         </div>
-        <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 p-4">
+        <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 md:p-4 p-0 gap-2">
           {current == 'all' ? shuffle(randomNFT(nfts_lists, creators)).map((item: NFT) => {
             const creator = creators.find(creat => creat.creator_url == item.nifty_creator_url)
             const parse : any = creator

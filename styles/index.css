@@ -4,7 +4,7 @@
 @tailwind utilities;
 @import url('https://fonts.googleapis.com/css?family=Lexend:500,600,700&display=swap');
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css');
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Krona+One&display=swap');
 
 body {
   font-family: 'Lexend', 'DM Serif Display', sans-serif, serif;
@@ -26,7 +26,7 @@ button {
 }
 
 .font-serif {
-  font-family: 'DM Serif Display', serif !important;
+  font-family: 'Krona One', sans-serif !important;
 }
 
 .placeholder-gray::placeholder {

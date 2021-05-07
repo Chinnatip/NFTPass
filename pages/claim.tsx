@@ -82,7 +82,7 @@ const Page = () => {
           </div>
           <div className="flex flex-row justify-center mt-8">
             <div>
-              Follow Us on
+              <span className="mr-1">Follow Us on</span>
               <a href="https://twitter.com/gallerystco" target="_blank">
                 <span className="font-semibold">Twitter</span>
               </a>

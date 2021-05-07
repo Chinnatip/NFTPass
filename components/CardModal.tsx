@@ -26,7 +26,7 @@ const Modal = ({ src , action, nfts_lists, creator }: { action?: any , src: NFT 
     {/* Content */}
     <div className=" p-10 md:p-24 sm:p-16 pb-0 flex md:flex-row flex-col-reverse">
       {/* Description */}
-      <div className="md:w-1/2 w-full">
+      <div className="md:w-1/2 w-full md:mt-0 mt-4">
         <h1 className="text-2xl font-bold">{src?.name}</h1>
         <div className="flex w-full mb-6 mt-5">
           <div className="flex-grow">
@@ -46,12 +46,12 @@ const Modal = ({ src , action, nfts_lists, creator }: { action?: any , src: NFT 
           </div> */}
         </div>
         <div className="inline text-lg">{src?.description}</div>
-        <div className="shadow-nft flex w-full rounded-24 h-24 items-center justify-center px-6 mt-8">
+      
+        <a href={src?.permalink} target="_blank" className="shadow-nft flex w-full rounded-24 h-24 items-center justify-center px-6 mt-8">
           <div className="flex-grow">View on Opensea</div>
-          <a href={src?.permalink} target="_blank">
+          
             <img src="/image/opensea_icon.png" className="h-12"/>
           </a>
-        </div>
       </div>
 
       {/* Side content */}
@@ -86,10 +86,10 @@ const Modal = ({ src , action, nfts_lists, creator }: { action?: any , src: NFT 
     </div>
 
     {/*  */}
-    <div className="p-16 md:px-20">
+    <div className="py-16 md:px-20 px-2">
       <h1 className="px-4 font-thin text-gray-600 text-2xl">More Like This</h1>
 
-      <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 p-4">
+      <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 md:p-4 p-0 gap-2">
         { profileNFT(nfts_lists, creator).map((item,index) => (
           <div className="rounded-16 shadow-nft mb-8" key={index}>
             <Card src={item} nfts_lists={nfts_lists} creator={creator}/>
