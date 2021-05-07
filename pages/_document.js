@@ -1,7 +1,5 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document'
 
-// const GTM_ID = '266974092'
-
 export default class MyDocument extends Document {
   render() {
     return (
@@ -26,17 +24,14 @@ export default class MyDocument extends Document {
           <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
           <link rel="manifest" href="/favicon/manifest.json" />
           <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5" />
-          <script
-            async
-            src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}`}
-          />
+          <script async src={`https://www.googletagmanager.com/gtag/js?id=G-YY6WQFZ9PK`} />
           <script
             dangerouslySetInnerHTML={{
               __html: `
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}', {
+            gtag('config', 'G-YY6WQFZ9PK', {
               page_path: window.location.pathname,
             });
           `,
