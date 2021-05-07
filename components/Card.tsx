@@ -6,7 +6,7 @@ import Modal from './CardModal'
 export default ({ src, nfts_lists, creator }: {
   src: NFT,
   nfts_lists: NFT[],
-  creator: Creator
+  creator: Creator | undefined
 }) => {
   const [modal, setModal] = useState(false)
   const Router = useRouter()

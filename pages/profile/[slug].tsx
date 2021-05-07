@@ -4,7 +4,6 @@ import { useRouter } from 'next/router'
 import { ProfileCard } from '@/Profile'
 import Card from '@/Card'
 import Navbar from "@/Navbar"
-
 // import Carousel from '@/Carousel'
 // import { nfts } from 'static/NFTLists'
 

@@ -86,8 +86,7 @@ export const randomNFT = ( lists: NFT[], creators: Creator[] ) => {
   return result?.filter(r => r != undefined)
 }
 
-export const profileNFT = ( lists: NFT[], creator: Creator) => {
-  // const creator = creators.find(creat => creat.creator_url == creator_url)
+export const profileNFT = ( lists: NFT[], creator: Creator | undefined) => {
   return lists.filter(item => item.nifty_creator_url == creator?.creator_url).map(item => {
     return {
       ...item,
@@ -113,7 +112,17 @@ export const shuffle = (array: any) => {
 
 export const priceCal = (last_sale: Sale | undefined) => {
   if(last_sale != undefined){
-    return parseInt(last_sale.total_price) / 10**last_sale.decimals
+    const price = parseInt(last_sale.total_price) / 10**last_sale.decimals
+    return price > 0.99 ? price : price.toFixed(2)
+  }else{
+    return 0
+  }
+}
+
+export const usdPriceCal = (last_sale: Sale | undefined) => {
+  if(last_sale != undefined){
+    const price = parseInt(last_sale.total_price) / 10**last_sale.decimals
+    return (price * parseInt(last_sale.usd_price)).toFixed(2)
   }else{
     return 0
   }

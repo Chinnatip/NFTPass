@@ -4,7 +4,7 @@ import { LinkButton } from '../components/Button'
 // import { artistProfile } from '../static/Artist'
 
 const ProfileModal = () => {
-  return <div className="w-64 bg-white absolute top-5 right-0 z-20 mt-10 rounded-24 p-6 shadow-nft border border-white" style={{background: '#fffffff7'}}>
+  return <div className="w-64 bg-white absolute top-5 right-0 z-20 mt-16 rounded-24 p-6 shadow-nft border border-white" style={{background: '#fffffff7'}}>
     <div className="mb-4"><LinkButton fit text="Discovery" icon="" link="/" /></div>
     <div className=""><LinkButton fit text="Your Page" icon="" link="/claim" /></div>
     <div className="mb-4 hidden"><LinkButton fit active={true} text="Account" icon="image/edit_icon.png" link="/dashboard" /></div>
