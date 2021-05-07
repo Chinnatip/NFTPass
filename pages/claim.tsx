@@ -21,7 +21,7 @@ const Page = () => {
       alert('Email and Blockchain address cannot empty')
     }else{
       setLoadModal(true)
-      axios.post('http://localhost:3000/api/claim' , contact).then(res => {
+      axios.post('https://www.galleryst.co/api/claim' , contact).then(res => {
         if(res.data.status == 'success'){
           setLoaded(true)
         }
