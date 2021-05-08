@@ -11,4 +11,5 @@ export const sendnotify = async (parcel: any) => {
   const sendgrid_env = process.env.NEXT_PUBLIC_SENDGRID_KEY ? process.env.NEXT_PUBLIC_SENDGRID_KEY : ''
   sendgrid.setApiKey(sendgrid_env);
   await sendgrid.send(msg)
+  return { status: 'success' }
 }
