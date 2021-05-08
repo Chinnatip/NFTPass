@@ -48,7 +48,7 @@ const Page = () => {
       <Navbar current={1} />
       {/* container */}
       <div className="rounded-24 border border-white shadow-nft mt-20" style={{background: 'rgba(185, 184, 184, 0.32)'}}>
-        <div className="bg-white pb-8" style={{borderRadius: '24px 24px 0px 0px'}}>
+        <div className="bg-white pb-2" style={{borderRadius: '24px 24px 0px 0px'}}>
           <div className="text-center">
             <img
               src="image/empty_logo.png"
@@ -57,10 +57,10 @@ const Page = () => {
           </div>
           <div className="m-auto text-center mt-3">
             <div className="mb-4 text-3xl font-semibold">
-              Your NFT Porfolio
+              Notify Me
               <img src="image/verify_logo.png" className="inline h-6 ml-2 -mt-1 hidden"/>
             </div>
-            <div className="flex flex-row justify-center">
+            <div className="flex-row justify-center hidden">
               <div className="text-sm shadow-nft rounded-full bg-transparent inline p-2 px-4 font-thin ">
                 <span> #S4T05hi...N4kaM0tO </span>
               </div>
