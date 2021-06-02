@@ -201,11 +201,11 @@ const Page = ({ address }: {address: string}) => {
     {/* <img className="fixed top-0 left-0 w-full z-0" src={raribleImg(profile?.cover)} alt="" /> */}
     <div className="w-1/2 m-auto my-12 border-2 p-4 ">
       <div className="text-3xl">{profile?.username}</div>
-      <div>Address: {address}</div>
+      <div className="text-gray-500 text-sm mb-2">{address}</div>
       <hr />
-      <div className="flex">
-        <img src={raribleImg(profile?.pic)} alt="" />
-        <div className="p-4">
+      <div className="flex py-3">
+        <img src={raribleImg(profile?.pic)} className="h-32 rounded-full" />
+        <div className="p-4 pt-0">
           <div>{profile?.description}</div>
           <a className="my-2 block text-blue-700" href={profile?.website}>{profile?.website}</a>
         </div>
@@ -221,29 +221,36 @@ const Page = ({ address }: {address: string}) => {
       </ul>
       <br />
 
-      <h2 className="text-xl">On sale ({onsaleLists.length} items)</h2>
-      <div className=" w-full">
-        { NFTLists.filter(item => onsaleLists.includes(item.id)).map(item => {
-          return <img className="inline-block h-32 m-3" src={item.properties?.imagePreview} />
-        })}
-      </div>
-      <br />
+      { onsaleLists.length > 0 && <>
+        <h2 className="text-xl">On sale ({onsaleLists.length} items)</h2>
+        <div className=" w-full">
+          { NFTLists.filter(item => onsaleLists.includes(item.id)).map(item => {
+            return <img className="inline-block rounded-md h-32 m-3" src={item.properties?.imagePreview} />
+          })}
+        </div>
+        <br />
+      </> }
 
-      <h2 className="text-xl">Own by {profile?.username} ({ownLists.length} items)</h2>
-      <div className=" w-full">
-        { NFTLists.filter(item => ownLists.includes(item.id)).map(item => {
-          return <img className="inline-block h-32 m-3" src={item.properties?.imagePreview} />
-        })}
-      </div>
-      <br />
+      { ownLists.length > 0 && <>
+        <h2 className="text-xl">Own by {profile?.username} ({ownLists.length} items)</h2>
+        <div className=" w-full">
+          { NFTLists.filter(item => ownLists.includes(item.id)).map(item => {
+            return <img className="inline-block rounded-md h-32 m-3" src={item.properties?.imagePreview} />
+          })}
+        </div>
+        <br />
+      </> }
 
-      <h2 className="text-xl">Created ({createdLists.length} items)</h2>
-      <div className=" w-full">
-        { NFTLists.filter(item => createdLists.includes(item.id)).map(item => {
-          return <img className="inline-block h-32 m-3" src={item.properties?.imagePreview} />
-        })}
-      </div>
-      <br />
+      { createdLists.length > 0 && <>
+        <h2 className="text-xl">Created ({createdLists.length} items)</h2>
+        <div className=" w-full">
+          { NFTLists.filter(item => createdLists.includes(item.id)).map(item => {
+            return <img className="inline-block rounded-md h-32 m-3" src={item.properties?.imagePreview} />
+          })}
+        </div>
+        <br />
+      </>}
+
 
     </div>
 
