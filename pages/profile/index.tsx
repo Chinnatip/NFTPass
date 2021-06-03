@@ -1,120 +1,30 @@
-import axios from 'axios'
 import { useState, useEffect } from 'react'
+import { Profile, RaribleNFTFull } from '../../method/rarible/interface'
+import { raribleImg } from '../../method/rarible/method'
+import * as rarible from '../../method/rarible/fetch'
 
-interface RaribleNFT {
-  id: string
-  token: string
-  tokenId: string
-  owner: string
-  value: number
-  date: string
-  status: string
-  selling: number
-  sold: number
-  stock: number
-  pending: string[]
-  blacklisted: boolean
-  creator: string
-  verified: true,
-  categories: string[]
-  likes: number
-  hide: boolean
+const NFTGroup = ({ lists, nfts, text='', type='' } : { type?: string, text?: string, lists: string[], nfts: RaribleNFTFull[]}) => {
+  return <>
+  { lists.length > 0 && <>
+    <h2 className="text-xl">{text}</h2>
+    <div className=" w-full">
+      { nfts.filter(item => lists.includes(item.id)).map(item => {
+        return <a target="_blank" href={`/nft?address=${item.id}`} className=" relative inline-block rounded-md h-32 m-3 my-5">
+          <img className={`inline-block h-32 ${ type == 'onsale' && 'border-4 border-yellow-500'} `} src={item.properties?.imagePreview} />
+          <span className="text-black absolute bottom-0 rounded-tr-full left-0 text-xs bg-white p-1 pt-2 pr-2 bg-pink-400 text-pink-800" >
+            {item?.item?.likes}
+          </span>
+          {  type == 'onsale' && item.item?.ownership?.priceEth && <span className="text-black rounded-xl shadow-lg absolute top-0 right-0 text-xs bg-white p-1 -mt-3 -mr-3 bg-yellow-500 text-yellow-800" >
+            { item.item?.ownership?.priceEth } ETH
+          </span> }
+          <span className="text-black opacity-50 absolute bottom-0 left-0 -mb-5 text-xs w-full text-center">{item.properties?.name}</span>
+        </a>
+      })}
+    </div>
+    <br />
+  </>}
+  </>
 }
-
-interface Royalty {
-  recipient: string
-  value: number
-}
-
-interface Ownership {
-  id: string
-  token: string
-  tokenId: string
-  owner: string
-  value: number
-  date: string
-  price: number
-  priceEth: number
-  buyToken: string
-  buyTokenId: string
-  status: string
-  selling: number
-  sold:number
-  stock: number
-  signature: string
-  pending: string[],
-  blacklisted: boolean
-  creator: string
-  verified: boolean
-  categories: string[]
-  likes: number
-  hide: boolean
-}
-
-interface RaribleNFTFull {
-  item: {
-    id: string
-    token: string
-    tokenId: string
-    unlockable: boolean
-    creator: string
-    blacklisted: boolean
-    supply: number
-    royalties: Royalty[]
-    likes: number
-    categories: string[]
-    verified: boolean
-    owners: string[]
-    sellers: number
-    ownership: Ownership
-    totalStock: number
-    visits: number
-  }
-  properties: {
-    name: string
-    description: string
-    image: string
-    imagePreview: string
-    imageBig: string
-    attributes: string[]
-  },
-  meta: {
-    imageMeta: {
-      type: string
-      width: number
-      height: number
-    }
-  }
-  id: string
-}
-
-interface Profile {
-  address?: string
-  username?: string
-  shortUrl?: string
-  pic?: string
-  cover?: string
-  followings?: number
-  followers?: number
-  acceptedTerms?: number
-  description?: string
-  website?: string
-  twitterUsername?: string
-  receiveEmailNotifications?: boolean
-  version?: number
-  emailConfirmed?: boolean
-  meta?: {
-    address?: string
-    ownershipsWithStock?: number
-    itemsCreated?: number
-    ownerships?: number
-    hides?: number
-    followers?: number
-    followings?: number
-    likes?: number
-  }
-}
-
 
 const Page = ({ address }: {address: string}) => {
   const [profile, setProfile] = useState<Profile>({})
@@ -126,79 +36,23 @@ const Page = ({ address }: {address: string}) => {
   useEffect(() => {
     (async () => {
       // Creator profile
-      const resp = await axios.get(`https://api-mainnet.rarible.com/marketplace/api/v1/users/${address}`)
-
-      // Creator profile
-      const metaResp = await axios.get(`https://api-mainnet.rarible.com/marketplace/api/v1/profiles/${address}/meta`)
+      const resp = await rarible.userInfo(address)
+      const metaResp = await rarible.userMeta(address)
       setProfile({ ...resp.data, meta: metaResp.data})
 
-      // Ownership Nfts
-      const ownershipResp = await axios.post(`https://api-mainnet.rarible.com/marketplace/api/v1/ownerships/simple`, {
-        "size":1000,
-        "filter":{
-            "@type":"by_owner",
-            "address": address,
-            "incoming":true,
-            "inStockOnly":false,
-            "hideOnly":false
-        }
-      })
-      const ownership : RaribleNFT[] = ownershipResp.data
-      const ownLists =  [...new Set( ownership.map(item => `${item.token}:${item.tokenId}`))]
-      setOwnLists(ownLists)
-
-      // Onsle Nfts
-      const onsaleResp = await axios.post(`https://api-mainnet.rarible.com/marketplace/api/v1/ownerships/simple`, {
-        "size":1000,
-        "filter":{
-          "@type":"by_owner",
-          "address": address,
-          "incoming":true,
-          "inStockOnly":true,
-          "hideOnly":false
-        }
-      })
-      const onsale : RaribleNFT[] = onsaleResp.data
-      const onsaleLists =  [...new Set( onsale.map(item => `${item.token}:${item.tokenId}`))]
-      setOnsaleLists(onsaleLists)
-
-      // Created Nfts
-      const createResp = await axios.post(`https://api-mainnet.rarible.com/marketplace/api/v1/items`, {
-        "size":1000,
-        "filter":{
-          "@type":"by_creator",
-          "creator": address
-      }
-      })
-      const created : RaribleNFT[] = createResp.data
-      const creates =  [...new Set( created.map(item => `${item.token}:${item.tokenId}`))]
-      setCreatedLists(creates)
+      // Nfts
+      const ownLists = await rarible.collectBy(address, 'ownership', setOwnLists)
+      const onsaleLists = await rarible.collectBy(address, 'onsale', setOnsaleLists)
+      const creates =  await rarible.collectBy(address, 'created', setCreatedLists)
 
       // Collect NFTS data
       const uniqueLists = [...new Set([...ownLists, ...onsaleLists, ...creates])]
-      const nftResp = await axios({
-        method: 'post',
-        url: 'https://api-mainnet.rarible.com/marketplace/api/v1/items/map',
-        headers: { 'Content-Type': 'application/json'},
-        data : JSON.stringify(uniqueLists)
-      })
+      const nftResp = await rarible.collectNFTS(uniqueLists)
       setNFTLists(nftResp.data)
-      console.log(nftResp.data)
-
     })()
   }, []);
 
-  const raribleImg = (pic: string | undefined ) => {
-    const parsePic = pic?.split('/ipfs/')
-    if(parsePic != undefined){
-      return `https://images.rarible.com/?fit=outsize&n=-1&url=https://ipfs.rarible.com/ipfs/${parsePic[1]}&w=240`
-    }else{
-      return ''
-    }
-  }
-
   return <div className="relative">
-    {/* <img className="fixed top-0 left-0 w-full z-0" src={raribleImg(profile?.cover)} alt="" /> */}
     <div className="w-1/2 m-auto my-12 border-2 p-4 ">
       <div className="text-3xl">{profile?.username}</div>
       <div className="text-gray-500 text-sm mb-2">{address}</div>
@@ -220,44 +74,12 @@ const Page = ({ address }: {address: string}) => {
         <li className="px-3" >{profile?.meta?.ownershipsWithStock} Onsale</li>
       </ul>
       <br />
-
-      { onsaleLists.length > 0 && <>
-        <h2 className="text-xl">On sale ({onsaleLists.length} items)</h2>
-        <div className=" w-full">
-          { NFTLists.filter(item => onsaleLists.includes(item.id)).map(item => {
-            return <img className="inline-block rounded-md h-32 m-3" src={item.properties?.imagePreview} />
-          })}
-        </div>
-        <br />
-      </> }
-
-      { ownLists.length > 0 && <>
-        <h2 className="text-xl">Own by {profile?.username} ({ownLists.length} items)</h2>
-        <div className=" w-full">
-          { NFTLists.filter(item => ownLists.includes(item.id)).map(item => {
-            return <img className="inline-block rounded-md h-32 m-3" src={item.properties?.imagePreview} />
-          })}
-        </div>
-        <br />
-      </> }
-
-      { createdLists.length > 0 && <>
-        <h2 className="text-xl">Created ({createdLists.length} items)</h2>
-        <div className=" w-full">
-          { NFTLists.filter(item => createdLists.includes(item.id)).map(item => {
-            return <img className="inline-block rounded-md h-32 m-3" src={item.properties?.imagePreview} />
-          })}
-        </div>
-        <br />
-      </>}
-
-
+      <br />
+      <NFTGroup type="onsale" text={`On sale (${onsaleLists.length} items)`} lists={onsaleLists} nfts={NFTLists} />
+      <NFTGroup type="owned" text={`Own by ${profile?.username} (${ownLists.length} items)`} lists={ownLists} nfts={NFTLists} />
+      <NFTGroup type="created" text={`Created (${createdLists.length} items)`} lists={createdLists} nfts={NFTLists} />
     </div>
-
-
   </div>
-
-
 }
 
 
