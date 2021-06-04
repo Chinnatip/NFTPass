@@ -85,6 +85,22 @@ export interface RaribleNFTFull {
   id: string
 }
 
+export interface ProfileList {
+  id: string
+  type: string
+  name: string
+  image: string
+  shortUrl: string
+  website: string
+  description: string
+  has3Box: boolean
+  badges: string[]
+  cover: string
+  followings: number
+  followers: number
+  blacklisted: boolean
+}
+
 export interface Profile {
   address?: string
   username?: string

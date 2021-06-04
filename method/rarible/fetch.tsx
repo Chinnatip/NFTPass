@@ -43,6 +43,13 @@ export const collectNFTS = async (lists: string[]) => axios({
   data : JSON.stringify(lists)
 })
 
+export const collectPROFILE = async (lists: string[]) => axios({
+  method: 'post',
+  url: `${RARIBLE_PREFIX}profiles/list`,
+  headers: { 'Content-Type': 'application/json'},
+  data : JSON.stringify(lists)
+})
+
 export const collectBy = async (address: string, type: string, action: any ) => {
   let response
   switch (type) {

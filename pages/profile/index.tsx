@@ -3,6 +3,7 @@ import { Profile, RaribleNFTFull } from '../../method/rarible/interface'
 import { raribleImg } from '../../method/rarible/method'
 import * as rarible from '../../method/rarible/fetch'
 
+// Group Component
 const NFTGroup = ({ lists, nfts, text='', type='' } : { type?: string, text?: string, lists: string[], nfts: RaribleNFTFull[]}) => {
   return <>
   { lists.length > 0 && <>
