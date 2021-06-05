@@ -115,13 +115,7 @@ const Page = ({ address }: {address: string}) => {
         <div>Like:  {nft?.item?.likes} / Visit: {nft?.item?.visits}</div>
         <div className="flex h-12 items-center">
           <span className="flex-grow">Creator:</span>
-          <a href={`/profile?address=${creator?.id}`} target="_blank">
-            { profileAddress(creator) }
-            {/* { creator?.image != '' ?
-              <img src={creator?.image} className="w-10 rounded-full" />:
-              <span className="inline-block w-10 h-10 rounded-full bg-teal-500 flex items-center justify-center">{creator?.name?.substr(0,1)}</span>
-            } */}
-          </a>
+          { profileAddress(creator) }
         </div>
         { owners.length > 0 && <div className="flex h-12 items-center">
           <span className="flex-grow">Owner:</span>
