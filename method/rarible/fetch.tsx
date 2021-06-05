@@ -50,6 +50,13 @@ export const collectPROFILE = async (lists: string[]) => axios({
   data : JSON.stringify(lists)
 })
 
+export const getBestOffer = async (lists: string[]) => axios({
+  method: 'post',
+  url: `${RARIBLE_PREFIX}items/bestOffers`,
+  headers: { 'Content-Type': 'application/json'},
+  data : JSON.stringify(lists)
+})
+
 export const collectBy = async (address: string, type: string, action: any ) => {
   let response
   switch (type) {
@@ -70,3 +77,13 @@ export const collectBy = async (address: string, type: string, action: any ) => 
   action(unique)
   return unique
 }
+
+export const getNFTactivity = async (token : string, token_id : string) => await axios.post(`${RARIBLE_PREFIX}activity`, {
+  types:["BID","BURN","BUY","CANCEL","CANCEL_BID","ORDER","MINT","TRANSFER","SALE"],
+  filter:{
+      "@type":"by_item",
+      address:token,
+      tokenId:token_id
+  },
+  size:1000
+})

@@ -1,3 +1,34 @@
+export interface Offer {
+  "token": string
+  "tokenId": string
+  "assetType": string
+  "owner": string
+  "salt": {
+      "value": string
+      "type": string
+  },
+  "buyValue": number
+  "buyToken": string
+  "buyTokenId": string
+  "buyAssetType": string
+  "value": number
+  "signature": string
+  "updateDate": string
+  "importantUpdateDate": string
+  "contractVersion": number
+  "fee": number
+  "sold": number
+  "canceled": false,
+  "pending": string[]
+  "buyPriceEth": number
+  "version": number
+  "id": string
+  "active": true,
+  "buyStock": number
+  "sellPrice": number
+  "buyPrice": number
+}
+
 export interface RaribleNFT {
   id: string
   token: string
@@ -126,4 +157,50 @@ export interface Profile {
     followings?: number
     likes?: number
   }
+}
+
+export interface BestOffer {
+  token: string
+  tokenId: string
+  assetType: string
+  owner: string
+  salt: {
+      value: string
+      type: string
+  },
+  buyValue: number
+  buyToken: string
+  buyTokenId: string
+  buyAssetType: string
+  value: number
+  signature: string
+  updateDate: string
+  importantUpdateDate: string
+  contractVersion: number
+  fee: number
+  sold: number
+  canceled: boolean
+  pending: string[],
+  buyPriceEth: number
+  version: number
+  id: string
+  active: boolean
+  buyStock: number
+  sellPrice: number
+  buyPrice: number
+}
+
+export interface Activity {
+  "@type": string
+  date: string
+  id: string
+  owner: string
+  from?: string
+  token: string
+  tokenId: string
+  value: number
+  buyValue?: number
+  price?: number
+  buyToken?: string
+  transactionHash: string
 }
