@@ -24,6 +24,7 @@ export default class MyDocument extends Document {
           <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
           <link rel="manifest" href="/favicon/manifest.json" />
           <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5" />
+
           <script async src={`https://www.googletagmanager.com/gtag/js?id=G-YY6WQFZ9PK`} />
           <script
             dangerouslySetInnerHTML={{
