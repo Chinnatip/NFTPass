@@ -1,0 +1,22 @@
+overwrite: true
+schema:
+  - ${NEXT_PUBLIC_GQL_FND}
+documents: "schema/**/*.graphql"
+generates:
+  generated/graphql.tsx:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-react-apollo
+      - named-operations-object
+    config:
+      apolloClientVersion: 3
+  generated/fragment-matcher.ts:
+    plugins:
+      - fragment-matcher
+  generated/type-policy.ts:
+    plugins:
+      - typescript-apollo-client-helpers
+  ./graphql.schema.json:
+    plugins:
+      - introspection

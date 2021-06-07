@@ -1,0 +1,101 @@
+query userByPublicKey($publicKey: String!) {
+  user(where: { publicKey: { _eq: $publicKey } }) {
+    ...UserFields
+  }
+}
+
+query usersByPublicKeys($publicKeys: [String!]) {
+  user(where: { publicKey: { _in: $publicKeys } }) {
+    ...UserFields
+  }
+}
+
+query userFollowersQuery(
+  $publicKey: String!
+  $currentUserPublicKey: String!
+  $offset: Int!
+  $limit: Int!
+) {
+  follows: follow(
+    where: { followedUser: { _eq: $publicKey }, isFollowing: { _eq: true } }
+    offset: $offset
+    limit: $limit
+  ) {
+    id
+    user: userByFollowingUser {
+      name
+      username
+      profileImageUrl
+      userIndex
+      publicKey
+      follows(
+        where: {
+          user: { _eq: $currentUserPublicKey }
+          isFollowing: { _eq: true }
+        }
+      ) {
+        createdAt
+        isFollowing
+      }
+    }
+  }
+}
+
+query getHasuraUserFollowState(
+  $currentUserPublicKey: String!
+  $publicKey: String!
+) {
+  followerCount: follow_aggregate(
+    where: { followedUser: { _eq: $publicKey }, isFollowing: { _eq: true } }
+  ) {
+    aggregate {
+      count
+    }
+  }
+  followingCount: follow_aggregate(
+    where: { user: { _eq: $publicKey }, isFollowing: { _eq: true } }
+  ) {
+    aggregate {
+      count
+    }
+  }
+  mutualFollowCount: follow_aggregate(
+    where: {
+      isFollowing: { _eq: true }
+      _and: [
+        { followedUser: { _eq: $publicKey } }
+        {
+          userByFollowingUser: {
+            follows: {
+              user: { _eq: $currentUserPublicKey }
+              isFollowing: { _eq: true }
+            }
+          }
+        }
+      ]
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+  follows: follow(
+    where: {
+      user: { _eq: $currentUserPublicKey }
+      followedUser: { _eq: $publicKey }
+      isFollowing: { _eq: true }
+    }
+  ) {
+    ...HasuraFollowFragment
+  }
+}
+
+query hasuraUsernameByPublicKey($publicKey: String!) {
+  user: user_by_pk(publicKey: $publicKey) {
+    publicKey
+    username
+    profileImageUrl
+    userIndex
+    isAdmin
+  }
+}

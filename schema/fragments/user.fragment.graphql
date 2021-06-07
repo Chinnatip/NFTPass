@@ -1,0 +1,15 @@
+fragment UserFields on user {
+  publicKey
+  name
+  username
+  bio
+}
+
+fragment HasuraFollowFragment on follow {
+  id
+  createdAt
+  updatedAt
+  user
+  followedUser
+  isFollowing
+}

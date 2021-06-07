@@ -1,0 +1,5 @@
+query artworksByUserPublicKey($userPublicKey: String!) {
+  artwork(where: { user: { publicKey: { _eq: $userPublicKey } } }) {
+    ...ArtworkFields
+  }
+}
