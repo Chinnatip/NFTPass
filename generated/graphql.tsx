@@ -2753,7 +2753,7 @@ export type UsersByPublicKeysQuery = (
   )> }
 );
 
-export type UserFollowersQueryQueryVariables = Exact<{
+export type UserFollowersQueryVariables = Exact<{
   publicKey: Scalars['String'];
   currentUserPublicKey: Scalars['String'];
   offset: Scalars['Int'];
@@ -2761,7 +2761,7 @@ export type UserFollowersQueryQueryVariables = Exact<{
 }>;
 
 
-export type UserFollowersQueryQuery = (
+export type UserFollowersQuery = (
   { __typename?: 'query_root' }
   & { follows: Array<(
     { __typename?: 'follow' }
@@ -2954,8 +2954,8 @@ export function useUsersByPublicKeysLazyQuery(baseOptions?: Apollo.LazyQueryHook
 export type UsersByPublicKeysQueryHookResult = ReturnType<typeof useUsersByPublicKeysQuery>;
 export type UsersByPublicKeysLazyQueryHookResult = ReturnType<typeof useUsersByPublicKeysLazyQuery>;
 export type UsersByPublicKeysQueryResult = Apollo.QueryResult<UsersByPublicKeysQuery, UsersByPublicKeysQueryVariables>;
-export const UserFollowersQueryDocument = gql`
-    query userFollowersQuery($publicKey: String!, $currentUserPublicKey: String!, $offset: Int!, $limit: Int!) {
+export const UserFollowersDocument = gql`
+    query userFollowers($publicKey: String!, $currentUserPublicKey: String!, $offset: Int!, $limit: Int!) {
   follows: follow(
     where: {followedUser: {_eq: $publicKey}, isFollowing: {_eq: true}}
     offset: $offset
@@ -2978,16 +2978,16 @@ export const UserFollowersQueryDocument = gql`
     `;
 
 /**
- * __useUserFollowersQueryQuery__
+ * __useUserFollowersQuery__
  *
- * To run a query within a React component, call `useUserFollowersQueryQuery` and pass it any options that fit your needs.
- * When your component renders, `useUserFollowersQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useUserFollowersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserFollowersQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useUserFollowersQueryQuery({
+ * const { data, loading, error } = useUserFollowersQuery({
  *   variables: {
  *      publicKey: // value for 'publicKey'
  *      currentUserPublicKey: // value for 'currentUserPublicKey'
@@ -2996,17 +2996,17 @@ export const UserFollowersQueryDocument = gql`
  *   },
  * });
  */
-export function useUserFollowersQueryQuery(baseOptions: Apollo.QueryHookOptions<UserFollowersQueryQuery, UserFollowersQueryQueryVariables>) {
+export function useUserFollowersQuery(baseOptions: Apollo.QueryHookOptions<UserFollowersQuery, UserFollowersQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<UserFollowersQueryQuery, UserFollowersQueryQueryVariables>(UserFollowersQueryDocument, options);
+        return Apollo.useQuery<UserFollowersQuery, UserFollowersQueryVariables>(UserFollowersDocument, options);
       }
-export function useUserFollowersQueryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserFollowersQueryQuery, UserFollowersQueryQueryVariables>) {
+export function useUserFollowersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserFollowersQuery, UserFollowersQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<UserFollowersQueryQuery, UserFollowersQueryQueryVariables>(UserFollowersQueryDocument, options);
+          return Apollo.useLazyQuery<UserFollowersQuery, UserFollowersQueryVariables>(UserFollowersDocument, options);
         }
-export type UserFollowersQueryQueryHookResult = ReturnType<typeof useUserFollowersQueryQuery>;
-export type UserFollowersQueryLazyQueryHookResult = ReturnType<typeof useUserFollowersQueryLazyQuery>;
-export type UserFollowersQueryQueryResult = Apollo.QueryResult<UserFollowersQueryQuery, UserFollowersQueryQueryVariables>;
+export type UserFollowersQueryHookResult = ReturnType<typeof useUserFollowersQuery>;
+export type UserFollowersLazyQueryHookResult = ReturnType<typeof useUserFollowersLazyQuery>;
+export type UserFollowersQueryResult = Apollo.QueryResult<UserFollowersQuery, UserFollowersQueryVariables>;
 export const GetHasuraUserFollowStateDocument = gql`
     query getHasuraUserFollowState($currentUserPublicKey: String!, $publicKey: String!) {
   followerCount: follow_aggregate(
@@ -3110,7 +3110,7 @@ export const namedOperations = {
     artworksByUserPublicKey: 'artworksByUserPublicKey',
     userByPublicKey: 'userByPublicKey',
     usersByPublicKeys: 'usersByPublicKeys',
-    userFollowersQuery: 'userFollowersQuery',
+    userFollowers: 'userFollowers',
     getHasuraUserFollowState: 'getHasuraUserFollowState',
     hasuraUsernameByPublicKey: 'hasuraUsernameByPublicKey'
   },

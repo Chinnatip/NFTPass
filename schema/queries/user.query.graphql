@@ -10,7 +10,7 @@ query usersByPublicKeys($publicKeys: [String!]) {
   }
 }
 
-query userFollowersQuery(
+query userFollowers(
   $publicKey: String!
   $currentUserPublicKey: String!
   $offset: Int!
