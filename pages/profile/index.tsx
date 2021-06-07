@@ -14,11 +14,13 @@ const NFTGroup = ({ lists, nfts, text = '', type = '' }: { type?: string, text?:
           return <a target="_blank" href={`/nft?address=${item.id}`} className="cursor-pointer bg-white rounded-16 mb-2">
 
             <div className="thumbnail-wrapper w-full relative">
-              <div className="absolute z-10 top-0 px-2 rounded-full ml-4 mt-4 mr-4 h-6 w-auto bg-white backdrop-blur-2xl bg-opacity-25 flex items-center justify-center">
-                {type == 'onsale' &&
+              {type == 'onsale' &&
+                <div className="absolute z-10 top-0 px-2 rounded-full ml-4 mt-4 mr-4 h-6 w-auto bg-white backdrop-blur-2xl bg-opacity-25 flex items-center justify-center">
+
                   <div className="w-auto rounded-full text-xs text-white">On Sale</div>
-                }
-              </div>
+
+                </div>
+              }
               <img className="rounded-16 border-8 border-white thumbnail-height" src={item.properties?.imagePreview} />
               <div className="absolute flex justify-end	z-10 bottom-0  w-full mb-2 px-2 pt-6 ">
                 <div className="flex px-2 rounded-b-16 pt-10 justify-end w-full" style={{ background: 'linear-gradient(360deg, rgba(0, 0, 0, 0.52) 10%, rgba(196, 196, 196, 0) 50%)' }}>
@@ -84,8 +86,8 @@ const Page = ({ address }: { address: string }) => {
             <div className="mt-1 mb-6 py-1 inline-block bg-white rounded-full text-center px-1 shadow-nft" >
 
               <button
-                className={`py-2 px-3 font-semibold text-sm focus:outline-none appearance-none rounded-full `}>
-                <span className="p-1 ml-1 w-8 rounded-full bg-gray-main text-white inline-block">num</span>
+                className={`py-2 px-3 font-semibold text-sm focus:outline-none appearance-none rounded-full `}>Collections
+                <span className="p-1 ml-1 w-8 rounded-full bg-gray-main text-white inline-block hidden">num</span>
               </button>
             </div>
           </div>
