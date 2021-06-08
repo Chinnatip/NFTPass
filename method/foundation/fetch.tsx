@@ -1,4 +1,11 @@
 import { ApolloClient, gql, InMemoryCache } from '@apollo/client'
+import {
+  Artwork,
+  ArtworkHistory,
+  HasuraArtwork,
+  User,
+  UserFollower,
+} from './interface'
 import { FOUNDATION_GQL_URI, THE_GRAPH_GQL_URI } from './static'
 
 const foundationApolloClient = new ApolloClient({
@@ -11,7 +18,7 @@ const theGraphApolloClient = new ApolloClient({
   cache: new InMemoryCache(),
 })
 
-export const usersInfo = async (publicKeys: string[]) => {
+export const usersInfo = async (publicKeys: string[]): Promise<User[]> => {
   const USER_QUERY = gql`
     query hasuraUsersByIds(
       $publicKeys: [String!]!
@@ -45,10 +52,16 @@ export const usersInfo = async (publicKeys: string[]) => {
     publicKeys,
     moderationStatuses: ['ACTIVE'],
   }
-  return foundationApolloClient.query({ query: USER_QUERY, variables })
+  const { data } = await foundationApolloClient.query({
+    query: USER_QUERY,
+    variables,
+  })
+  return data.users
 }
 
-export const hasuraArtworks = async (tokenIds: number[]) => {
+export const hasuraArtworks = async (
+  tokenIds: number[]
+): Promise<HasuraArtwork[]> => {
   const ARTWORK_QUERY = gql`
     query hasuraArtworksByTokenIds(
       $tokenIds: [Int!]!
@@ -106,7 +119,6 @@ export const hasuraArtworks = async (tokenIds: number[]) => {
         mintTxHash
         assetId
         assetStatus
-        mintTxHash
         tokenId
         status
         hiddenAt
@@ -138,7 +150,11 @@ export const hasuraArtworks = async (tokenIds: number[]) => {
     moderationStatuses: ['ACTIVE'],
     userModerationStatuses: ['ACTIVE'],
   }
-  return foundationApolloClient.query({ query: ARTWORK_QUERY, variables })
+  const { data } = foundationApolloClient.query({
+    query: ARTWORK_QUERY,
+    variables,
+  })
+  return data
 }
 
 export const userFollowers = async (
@@ -146,7 +162,7 @@ export const userFollowers = async (
   currentUserPublicKey = '',
   limit = 5,
   offset = 0
-) => {
+): Promise<UserFollower> => {
   const FOLLOWER_QUERY = gql`
     query userFollowersQuery(
       $publicKey: String!
@@ -185,7 +201,11 @@ export const userFollowers = async (
     limit,
     offset,
   }
-  return foundationApolloClient.query({ query: FOLLOWER_QUERY, variables })
+  const { data } = await foundationApolloClient.query({
+    query: FOLLOWER_QUERY,
+    variables,
+  })
+  return data.follows
 }
 
 export const userFollowState = async (
@@ -258,7 +278,7 @@ export const userOwnedArtworks = async (
   publicKey: string,
   limit = 48,
   offset = 0
-) => {
+): Promise<Artwork[]> => {
   const OWNED_ARTWORK_QUERY = gql`
     query getOwnedArtworks($publicKey: String!, $limit: Int!, $offset: Int!) {
       artworks: nfts(
@@ -315,14 +335,18 @@ export const userOwnedArtworks = async (
     offset,
     moderationStatuses: ['ACTIVE'],
   }
-  return theGraphApolloClient.query({ query: OWNED_ARTWORK_QUERY, variables })
+  const { data } = await theGraphApolloClient.query({
+    query: OWNED_ARTWORK_QUERY,
+    variables,
+  })
+  return data.artworks
 }
 
 export const userMintedArtworks = async (
   publicKey: string,
   limit = 48,
   offset = 0
-) => {
+): Promise<Artwork[]> => {
   const MINTED_ARTWORK_QUERY = gql`
     query getMintedArtworks($publicKey: String!, $limit: Int!, $offset: Int!) {
       artworks: nfts(
@@ -378,7 +402,11 @@ export const userMintedArtworks = async (
     offset,
     moderationStatuses: ['ACTIVE'],
   }
-  return theGraphApolloClient.query({ query: MINTED_ARTWORK_QUERY, variables })
+  const { data } = await theGraphApolloClient.query({
+    query: MINTED_ARTWORK_QUERY,
+    variables,
+  })
+  return data.artworks
 }
 
 export const userProfileCollectors = async (publicKey: string) => {
@@ -403,10 +431,11 @@ export const userProfileCollectors = async (publicKey: string) => {
     publicKey: publicKey.toLowerCase(),
     timeStampNow: Math.floor(Date.now() / 1000),
   }
-  return theGraphApolloClient.query({
+  const { data } = await theGraphApolloClient.query({
     query: PROFILE_COLLECTOR_QUERY,
     variables,
   })
+  return data.account
 }
 
 export const userArtworksPresence = async (publicKey: string) => {
@@ -499,4 +528,76 @@ export const trendingArtworks = async (limit = 48) => {
     now: Math.floor(Date.now() / 1000),
   }
   return theGraphApolloClient.query({ query: TRENDING_QUERY, variables })
+}
+
+export const getArtworkHistory = async (
+  addressPlusTokenId: string
+): Promise<ArtworkHistory> => {
+  const ARTWORK_HISTORY_QUERY = gql`
+    query getArtworkHistory($addressPlusTokenId: String!) {
+      nft(id: $addressPlusTokenId) {
+        id
+        tokenId
+        dateMinted
+        ownedOrListedBy {
+          id
+        }
+        creator {
+          id
+        }
+        mostRecentActiveAuction {
+          id
+          auctionId
+          duration
+          status
+          reservePriceInETH
+          seller {
+            id
+          }
+          dateEnding
+          dateStarted
+          dateCreated
+          transactionHashCreated
+          bids(orderBy: amountInETH, orderDirection: desc) {
+            amountInETH
+            status
+            datePlaced
+            bidder {
+              id
+            }
+          }
+          highestBid {
+            amountInETH
+            status
+            datePlaced
+            bidder {
+              id
+            }
+          }
+        }
+        nftHistory(orderBy: date, orderDirection: desc) {
+          id
+          event
+          date
+          marketplace
+          transactionHash
+          amountInETH
+          actorAccount {
+            id
+          }
+          nftRecipient {
+            id
+          }
+        }
+      }
+    }
+  `
+  const variables = {
+    addressPlusTokenId: addressPlusTokenId.toLowerCase(),
+  }
+  const { data } = await theGraphApolloClient.query({
+    query: ARTWORK_HISTORY_QUERY,
+    variables,
+  })
+  return data.nft
 }

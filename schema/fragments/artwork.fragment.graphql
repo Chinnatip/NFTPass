@@ -1,7 +1,0 @@
-fragment ArtworkFields on artwork {
-  name
-  publicKey
-  description
-  createdAt
-  deletedAt
-}
