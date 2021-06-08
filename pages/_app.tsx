@@ -6,14 +6,8 @@ import { config } from '@fortawesome/fontawesome-svg-core'
 import 'styles/index.css'
 import '@fortawesome/fontawesome-svg-core/styles.css' // Import the CSS
 import * as ga from '../lib/ga'
-import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 
 config.autoAddCss = false
-
-const foundationApolloClient = new ApolloClient({
-  uri: process.env.NEXT_PUBLIC_GQL_FND,
-  cache: new InMemoryCache(),
-})
 
 function MyApp({ Component, pageProps }: AppProps) {
   const Router = useRouter()
@@ -30,10 +24,6 @@ function MyApp({ Component, pageProps }: AppProps) {
     }
   }, [Router.events])
 
-  return (
-    <ApolloProvider client={foundationApolloClient}>
-      <Component {...pageProps} />
-    </ApolloProvider>
-  )
+  return <Component {...pageProps} />
 }
 export default MyApp
