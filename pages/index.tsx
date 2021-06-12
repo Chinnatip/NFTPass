@@ -8,23 +8,23 @@ import { getCreator, getNFTS, Creator, shuffle, randomNFT, profileNFT, NFT } fro
 // ]
 
 const Page = () => {
-  const [ current, setCurrent ] = useState('all')
+  const [current, setCurrent] = useState('all')
   const [creators, setCreators] = useState<Creator[]>([])
   const [nfts_lists, setNFTS] = useState<NFT[]>([])
-  useEffect(()=>{
+  useEffect(() => {
     getCreator(setCreators)
     getNFTS(setNFTS)
-  },[])
-  return  <div className="w-screen h-screen pt-8 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")'}}>
+  }, [])
+  return <div className="w-screen h-screen pt-8 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")' }}>
     <div className="md:w-4/5 w-full m-auto z-10">
       <Navbar current={0} />
       <div
         className="bg-transparent m-auto md:px-24 p-4 pt-8 pb-12 md:text-5xl text-3xl text-white text-center font-serif"
         style={{ letterSpacing: '0.04rem', textShadow: '0 0 40px #884d4d52', opacity: '90%' }}>
-We curate, You discover. Explore NFTs from all platforms in one place.
+        We curate, You discover. Explore NFTs from all platforms in one place.
       </div>
       {/* container */}
-      <div className="rounded-24 mb-20 md:px-5 px-2 py-4 border border-white shadow-nft" style={{background: 'rgba(185, 184, 184, 0.32)'}}>
+      <div className="rounded-24 mb-20 md:px-5 px-2 py-4 border border-white shadow-nft" style={{ background: 'rgba(185, 184, 184, 0.32)' }}>
         {/* search box */}
         <input className="hidden placeholder-gray block w-3/5 bg-white m-auto rounded-full h-10 px-5 font-thin appearance-none outline-none" placeholder="Press creator ID and see the magic!" />
         <div className="text-center p-4">
@@ -34,31 +34,31 @@ We curate, You discover. Explore NFTs from all platforms in one place.
             )}
           </div> */}
           <div className="flex p-1 rounded-full" >
-            <button onClick={() => setCurrent('all')} className={`h-10 w-auto py-2 md:px-6 mr-2 font-sm text-sm focus:outline-none appearance-none rounded-full px-4  ${ current == 'all' ? 'bg-black text-white' : 'bg-white text-black'}`}>All</button>
-            <div className="overflow-x-auto overflow-y-hidden rounded-r-full w-5/6 " style={{whiteSpace: 'nowrap'}}>
-              { creators.map(creat => {
+            <button onClick={() => setCurrent('all')} className={`h-10 w-auto py-2 md:px-6 mr-2 font-sm text-sm focus:outline-none appearance-none rounded-full px-4  ${current == 'all' ? 'bg-black text-white' : 'bg-white text-black'}`}>All</button>
+            <div className="overflow-x-auto overflow-y-hidden rounded-r-full w-5/6 " style={{ whiteSpace: 'nowrap' }}>
+              {creators.map(creat => {
                 return <button onClick={() => setCurrent(creat.creator_url)} className={`inline p-2 mr-2 font-sm text-sm rounded-full items-center ${current == creat.creator_url ? 'bg-black text-white' : 'bg-white'}`}>
-                  <img className=" h-6 rounded-full border-1 border-white shadow-nft inline" src={creat.creator_image} alt=""/>
-                  <span className="ml-2">{creat.creator_name?.substr(0,4)}...</span>
+                  <img className=" h-6 rounded-full border-1 border-white shadow-nft inline" src={creat.creator_image} alt="" />
+                  <span className="ml-2">{creat.creator_name?.substr(0, 4)}...</span>
                 </button>
               })}
             </div>
           </div>
         </div>
         <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 md:p-4 p-0 gap-2">
-          {current == 'all' ? shuffle(randomNFT(nfts_lists, creators)).slice(0,28).map((item: NFT) => {
+          {current == 'all' ? shuffle(randomNFT(nfts_lists, creators)).slice(0, 28).map((item: NFT) => {
             const creator = creators.find(creat => creat.creator_url == item.nifty_creator_url)
-            const parse : any = creator
-            return <Card src={item} nfts_lists={nfts_lists} creator={parse}/>
+            const parse: any = creator
+            return <Card src={item} nfts_lists={nfts_lists} creator={parse} />
           }) : profileNFT(nfts_lists, creators.find(creat => creat.creator_url == current)).length > 0 ?
-            profileNFT(nfts_lists, creators.find(creat => creat.creator_url == current)).map((item,index) => {
+            profileNFT(nfts_lists, creators.find(creat => creat.creator_url == current)).map((item, index) => {
               const creator = creators.find(creat => creat.creator_url == current)
               return <div className="rounded-16 shadow-nft mb-8" key={index}>
-                <Card src={item} nfts_lists={nfts_lists} creator={creator}/>
+                <Card src={item} nfts_lists={nfts_lists} creator={creator} />
               </div>
-            }):
+            }) :
             <div className="text-center opacity-50 col-span-4"> Not found NFTS in marketplace.</div>
-            }
+          }
         </div>
       </div>
     </div>

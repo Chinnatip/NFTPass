@@ -74,8 +74,36 @@ const NFTGroup = ({ lists, nfts, text='', type='' } : { type?: string, text?: st
         </a>
       })}
     </div>
-    <br />
-  </>}
+      <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 md:p-4 p-0 gap-2 w-full">
+        {nfts.filter(item => lists.includes(item.id)).map(item => {
+          const { imagePreview } = item
+          return <a target="_blank" href={`/nft?address=${item.id}`} className="cursor-pointer bg-white rounded-16 mb-2">
+
+            <div className="thumbnail-wrapper w-full relative">
+              {type == 'onsale' &&
+                <div className="absolute z-10 top-0 px-2 rounded-full ml-4 mt-4 mr-4 h-6 w-auto bg-white backdrop-blur-2xl bg-opacity-25 flex items-center justify-center">
+                  <div className="w-auto rounded-full text-xs text-white">On Sale</div>
+                </div>
+              }
+              <img className="rounded-16 border-8 border-white thumbnail-height" src={imagePreview} />
+              <div className="absolute flex justify-end	z-10 bottom-0  w-full mb-2 px-2 pt-6 ">
+                <div className="flex px-2 rounded-b-16 pt-10 justify-end w-full" style={{ background: 'linear-gradient(360deg, rgba(0, 0, 0, 0.52) 10%, rgba(196, 196, 196, 0) 50%)' }}>
+                  {type == 'onsale' && item.priceETH != undefined &&
+                    <span className="text-white font-bold text-right " >
+                      {item.priceETH} ETH  </span>}</div>
+              </div>
+            </div>
+            <span className="text-black absolute bottom-0 rounded-tr-full left-0 hidden text-xs bg-white p-1 pt-2 pr-2 bg-pink-400 text-pink-800" >
+              {item?.likes}
+            </span>
+
+
+            <span className="hidden text-black opacity-50 absolute bottom-0 left-0 -mb-5 text-xs w-full text-center">{item?.name}</span>
+          </a>
+        })}
+      </div>
+      <br />
+    </>}
   </>
 }
 
@@ -92,7 +120,7 @@ const Page = ({ address, nifty_slug }: {address: string, nifty_slug: string | fa
       // Creator profile
       const resp = await rarible.userInfo(address)
       const metaResp = await rarible.userMeta(address)
-      setProfile({ ...resp.data, meta: metaResp.data})
+      setProfile({ ...resp.data, meta: metaResp.data })
 
       // Rarible NFTs
       let rari : RaribleGetResponse = await rarible.ownByAddress(address, { setOwnLists, setOnsaleLists, setCreatedLists })
@@ -141,16 +169,28 @@ const Page = ({ address, nifty_slug }: {address: string, nifty_slug: string | fa
     })()
   }, []);
 
-  return <div className="relative">
-    <div className="w-1/2 m-auto my-12 border-2 p-4 ">
-      <div className="text-3xl">{profile?.username}</div>
-      <div className="text-gray-500 text-sm mb-2">{address}</div>
-      <hr />
-      <div className="flex py-3">
-        <img src={raribleImg(profile?.pic)} className="h-32 rounded-full" />
-        <div className="p-4 pt-0">
-          <div>{profile?.description}</div>
-          <a className="my-2 block text-blue-700" href={profile?.website}>{profile?.website}</a>
+  return <div className="w-screen h-screen pt-8 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")' }}>
+    <div className="md:w-4/5 w-full m-auto z-10 ">
+      <div className="rounded-24 border border-white shadow-nft mt-20" style={{ background: 'rgba(185, 184, 184, 0.32)', borderRadius: '24px 24px 0px 0px' }}>
+        <div className="bg-white" style={{ borderRadius: '24px 24px 0px 0px' }}>
+          <div className="text-center">
+            <img src={raribleImg(profile?.pic)} className="inline-block h-20 w-20 border-4 border-white shadow-nft rounded-full -mt-12 object-cover" />
+            <div className="text-3xl">{profile?.username}</div>
+            <div className="mt-1 mb-6 px-3 py-2 bg-white rounded-full shadow-nft flex align-middle justify-center w-min m-auto">
+              <div className="text-gray-500 text-sm">{address}</div>
+            </div>
+            <div className="p-4 pt-0">
+              <div className="md:px-8 px-1">{profile?.description}</div>
+              <a className="my-2 block text-blue-700" href={profile?.website}>{profile?.website}</a>
+            </div>
+            <div className="mt-1 mb-6 py-1 inline-block bg-white rounded-full text-center px-1 shadow-nft" >
+
+              <button
+                className={`py-2 px-3 font-semibold text-sm focus:outline-none appearance-none rounded-full `}>Collections
+                <span className="p-1 ml-1 w-8 rounded-full bg-gray-main text-white inline-block hidden">num</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
       <hr />
