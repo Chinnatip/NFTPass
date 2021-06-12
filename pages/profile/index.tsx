@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Profile, RaribleGetResponse } from '../../method/rarible/interface'
 import { OpenseaGetResponse } from '../../method/opensea/interface'
+import { NiftyGetResponse , Drop} from '../../method/nifty/interface'
 import { raribleImg } from '../../method/rarible/method'
 import * as rarible from '../../method/rarible/fetch'
 import * as opensea from '../../method/opensea/fetch'
@@ -9,6 +10,32 @@ import { Galleryst } from '../../interfaces/index'
 
 const lockDigit = (price: number) => {
   return (Math.floor( price * 10000) )/ 10000
+}
+
+const NFTDrop = ({ lists,text='' } : {lists : Drop[],text: string}) => {
+  return <>
+  { lists.length > 0 && <>
+    <h2 className="text-xl">{text}</h2>
+    <div className=" w-full">
+      { lists.map(item => {
+        const { address, title, image} = item
+        return image != undefined && <a target="_blank" href={`/nft?address=${address}`} className=" relative inline-block rounded-md m-3 my-5 mt-6">
+          {image.slice( image.length - 3, image.length) == 'mp4' ?
+            <video className={`inline-block h-32 `} src={image} autoPlay loop muted/>:
+            <img className={`inline-block h-32 `} src={image} />}
+          <span className="absolute bottom-0 left-0 flex flex-col p-1" >
+            <span className="bg-blue-700 text-white mt-1 h-4 w-4 text-xs rounded-full flex items-center justify-center">N</span>
+          </span>
+          <span className="text-black opacity-50 absolute bottom-0 left-0 -mb-8 h-8 flex justify-center items-center text-xs w-full text-center" style={{ lineHeight: 1.2 }}>
+            {title.length > 20 ? `${title.substr(0,20)}...` : title}
+          </span>
+        </a>
+      })}
+    </div>
+    <br />
+  </>}
+  </>
+
 }
 
 // Group Component
@@ -28,7 +55,10 @@ const NFTGroup = ({ lists, nfts, text='', type='' } : { type?: string, text?: st
       { sortNfts.filter(item => lists.includes(item.id)).map(item => {
         const {id, imagePreview, priceETH, name , check} = item
         return imagePreview != undefined && <a target="_blank" href={`/nft?address=${id}`} className=" relative inline-block rounded-md m-3 my-5 mt-6">
-          <img className={`inline-block h-32 ${ type == 'onsale' && 'border-4 border-yellow-500'} `} src={imagePreview} />
+          {imagePreview.slice( imagePreview.length - 3, imagePreview.length) == 'mp4' ?
+            <video className={`inline-block h-32 ${ type == 'onsale' && 'border-4 border-yellow-500'} `} src={imagePreview} autoPlay loop muted/>:
+            <img className={`inline-block h-32 ${ type == 'onsale' && 'border-4 border-yellow-500'} `} src={imagePreview} />}
+
           {type == 'onsale' && priceETH && <span className="text-black shadow-lg absolute top-0 right-0 text-xs bg-white px-1 bg-yellow-500 text-yellow-800" >
             { lockDigit(priceETH) } ETH
           </span> }
@@ -55,6 +85,7 @@ const Page = ({ address, nifty_slug }: {address: string, nifty_slug: string | fa
   const [ownLists, setOwnLists] = useState<string[]>([])
   const [onsaleLists, setOnsaleLists] = useState<string[]>([])
   const [createdLists, setCreatedLists] = useState<string[]>([])
+  const [dropLists, setDropLists] = useState<Drop[]>([])
 
   useEffect(() => {
     (async () => {
@@ -70,17 +101,19 @@ const Page = ({ address, nifty_slug }: {address: string, nifty_slug: string | fa
       const os : OpenseaGetResponse = await opensea.ownByAddress(address)
 
       // Nifty gateway NFTs
-      const nf = await nifty.creatorDetailAndWorks(nifty_slug)
-      console.log(nf)
-
+      let nf : NiftyGetResponse = nifty.construct()
+      if(nifty_slug != false){
+        nf  = await nifty.fetchOwnBySlug(nifty_slug)
+        setDropLists(nf.drops)
+      }
 
       // Collect 3 type of NFTs-ID own by owner
       // address format is ${address:token_id}
-      setOwnLists([...new Set([...rari.owned, ...os.owned])])
-      setOnsaleLists([...new Set([...rari.onsale, ...os.onsale])])
+      setOwnLists([...new Set([...rari.owned, ...os.owned, ...nf.owned])])
+      setOnsaleLists([...new Set([...rari.onsale, ...os.onsale, ...nf.onsale])])
       setCreatedLists([...new Set([...rari.created, ...os.created])])
 
-      const total_ids = [...new Set([...rari.allID , ...os.allID])]
+      const total_ids = [...new Set([...rari.allID , ...os.allID, ...nf.allID])]
       let constructNFTlists : Galleryst[] = []
 
       // Get All rarible items
@@ -89,13 +122,17 @@ const Page = ({ address, nifty_slug }: {address: string, nifty_slug: string | fa
       //
       total_ids.map(id => {
         const findRari = rari.items?.find(item => item.id == id)
-        const findOpensea = os.items.find(item => item.id == id)
+        const findNifty = nf.items?.find(item => item.id == id)
+        const findOpensea = os.items?.find(item => item.id == id)
         const check = {
           rarible: findRari != undefined ,
           opensea: findOpensea != undefined ,
+          nifty: findNifty != undefined
         }
         if(findRari != undefined){
           constructNFTlists.push({...findRari, check})
+        }else if(findNifty != undefined){
+          constructNFTlists.push({...findNifty, check})
         }else if(findOpensea != undefined){
           constructNFTlists.push({...findOpensea, check})
         }
@@ -125,6 +162,7 @@ const Page = ({ address, nifty_slug }: {address: string, nifty_slug: string | fa
         <li className="px-3" >{onsaleLists.length} on-sale</li>
         <li className="px-3" >{ownLists.length} collects</li>
         <li className="px-3" >{createdLists.length} creates</li>
+        <li className="px-3" >{dropLists.length} drops</li>
       </ul>
       <br />
       <br />
@@ -133,6 +171,7 @@ const Page = ({ address, nifty_slug }: {address: string, nifty_slug: string | fa
       <NFTGroup type="onsale" text={`On sale (${onsaleLists.length} items)`} lists={onsaleLists} nfts={NFTLists} />
       <NFTGroup type="owned" text={`Own by ${profile?.username} (${ownLists.length} items)`} lists={ownLists} nfts={NFTLists} />
       <NFTGroup type="created" text={`Created (${createdLists.length} items)`} lists={createdLists} nfts={NFTLists} />
+      <NFTDrop text={`Nifty drops (${dropLists.length} items)`} lists={dropLists} />
     </div>
   </div>
 }

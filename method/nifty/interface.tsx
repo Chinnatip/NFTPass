@@ -7,6 +7,38 @@ interface SocialLink {
   socialMediaLink: string
 }
 
+export interface Drop {
+  address: string
+  collectionName: string
+  title: string
+  description: string
+  image: string
+  type: number
+  edition: number
+  sold: number
+}
+
+interface CreatorInfo {
+  id: number;
+  name: string;
+  bio: string;
+  profile_pic_url: string;
+  profile_url: string;
+  verified: boolean;
+  userCanCreateNiftyStores: boolean;
+  verifiedPurchaseEnabled: boolean;
+  social_links: SocialLink[]
+}
+
+export interface NiftyGetResponse {
+  creator?: CreatorInfo
+  owned: string[]
+  onsale: string[]
+  allID: string[]
+  drops: Drop[]
+  items: Galleryst[]
+}
+
 export interface NiftyCollection {
   Timestamp: string
   contractObj: {
