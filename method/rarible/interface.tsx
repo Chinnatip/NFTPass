@@ -1,3 +1,13 @@
+import { Galleryst } from '../../interfaces/index'
+
+export interface RaribleGetResponse {
+  onsale: string[]
+  created: string[]
+  owned: string[]
+  allID: string[]
+  items?: Galleryst[]
+}
+
 export interface Offer {
   "token": string
   "tokenId": string

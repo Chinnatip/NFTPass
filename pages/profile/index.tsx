@@ -1,24 +1,46 @@
 import { useState, useEffect } from 'react'
-import { Profile, RaribleNFTFull } from '../../method/rarible/interface'
+import { Profile, RaribleGetResponse } from '../../method/rarible/interface'
+import { OpenseaGetResponse } from '../../method/opensea/interface'
 import { raribleImg } from '../../method/rarible/method'
 import * as rarible from '../../method/rarible/fetch'
+import * as opensea from '../../method/opensea/fetch'
+import * as nifty from '../../method/nifty/fetch'
+import { Galleryst } from '../../interfaces/index'
+
+const lockDigit = (price: number) => {
+  return (Math.floor( price * 10000) )/ 10000
+}
 
 // Group Component
-const NFTGroup = ({ lists, nfts, text='', type='' } : { type?: string, text?: string, lists: string[], nfts: RaribleNFTFull[]}) => {
+const NFTGroup = ({ lists, nfts, text='', type='' } : { type?: string, text?: string, lists: string[], nfts: Galleryst[]}) => {
+  let sortNfts = nfts
+  switch(type){
+    case 'onsale':
+      sortNfts = nfts.sort((a,b) => (b.priceETH != undefined && a.priceETH != undefined) ? b.priceETH - a.priceETH : 0 )
+      break
+    default:
+      sortNfts = nfts
+  }
   return <>
   { lists.length > 0 && <>
     <h2 className="text-xl">{text}</h2>
     <div className=" w-full">
-      { nfts.filter(item => lists.includes(item.id)).map(item => {
-        return <a target="_blank" href={`/nft?address=${item.id}`} className=" relative inline-block rounded-md h-32 m-3 my-5">
-          <img className={`inline-block h-32 ${ type == 'onsale' && 'border-4 border-yellow-500'} `} src={item.properties?.imagePreview} />
-          <span className="text-black absolute bottom-0 rounded-tr-full left-0 text-xs bg-white p-1 pt-2 pr-2 bg-pink-400 text-pink-800" >
-            {item?.item?.likes}
-          </span>
-          {  type == 'onsale' && item.item?.ownership?.priceEth && <span className="text-black rounded-xl shadow-lg absolute top-0 right-0 text-xs bg-white p-1 -mt-3 -mr-3 bg-yellow-500 text-yellow-800" >
-            { item.item?.ownership?.priceEth } ETH
+      { sortNfts.filter(item => lists.includes(item.id)).map(item => {
+        const {id, imagePreview, priceETH, name , check} = item
+        return imagePreview != undefined && <a target="_blank" href={`/nft?address=${id}`} className=" relative inline-block rounded-md m-3 my-5 mt-6">
+          <img className={`inline-block h-32 ${ type == 'onsale' && 'border-4 border-yellow-500'} `} src={imagePreview} />
+          {type == 'onsale' && priceETH && <span className="text-black shadow-lg absolute top-0 right-0 text-xs bg-white px-1 bg-yellow-500 text-yellow-800" >
+            { lockDigit(priceETH) } ETH
           </span> }
-          <span className="text-black opacity-50 absolute bottom-0 left-0 -mb-5 text-xs w-full text-center">{item.properties?.name}</span>
+          <span className="absolute bottom-0 left-0 flex flex-col p-1" >
+            { check?.rarible && <span className="bg-yellow-500 h-4 w-4 text-xs rounded-full flex items-center justify-center">r</span> }
+            { check?.opensea && <span className="bg-blue-500 text-white mt-1 h-4 w-4 text-xs rounded-full flex items-center justify-center">O</span> }
+            { check?.foundation && <span className="bg-black text-white mt-1 h-4 w-4 text-xs rounded-full flex items-center justify-center">F</span> }
+            { check?.nifty && <span className="bg-blue-700 text-white mt-1 h-4 w-4 text-xs rounded-full flex items-center justify-center">N</span> }
+          </span>
+          <span className="text-black opacity-50 absolute bottom-0 left-0 -mb-8 h-8 flex justify-center items-center text-xs w-full text-center" style={{ lineHeight: 1.2 }}>
+            {name.length > 20 ? `${name.substr(0,20)}...` : name}
+          </span>
         </a>
       })}
     </div>
@@ -27,9 +49,9 @@ const NFTGroup = ({ lists, nfts, text='', type='' } : { type?: string, text?: st
   </>
 }
 
-const Page = ({ address }: {address: string}) => {
+const Page = ({ address, nifty_slug }: {address: string, nifty_slug: string | false}) => {
   const [profile, setProfile] = useState<Profile>({})
-  const [NFTLists, setNFTLists] = useState<RaribleNFTFull[]>([])
+  const [NFTLists, setNFTLists] = useState<Galleryst[]>([])
   const [ownLists, setOwnLists] = useState<string[]>([])
   const [onsaleLists, setOnsaleLists] = useState<string[]>([])
   const [createdLists, setCreatedLists] = useState<string[]>([])
@@ -41,15 +63,44 @@ const Page = ({ address }: {address: string}) => {
       const metaResp = await rarible.userMeta(address)
       setProfile({ ...resp.data, meta: metaResp.data})
 
-      // Nfts
-      const ownLists = await rarible.collectBy(address, 'ownership', setOwnLists)
-      const onsaleLists = await rarible.collectBy(address, 'onsale', setOnsaleLists)
-      const creates =  await rarible.collectBy(address, 'created', setCreatedLists)
+      // Rarible NFTs
+      let rari : RaribleGetResponse = await rarible.ownByAddress(address, { setOwnLists, setOnsaleLists, setCreatedLists })
 
-      // Collect NFTS data
-      const uniqueLists = [...new Set([...ownLists, ...onsaleLists, ...creates])]
-      const nftResp = await rarible.collectNFTS(uniqueLists)
-      setNFTLists(nftResp.data)
+      // Opensea NFTs
+      const os : OpenseaGetResponse = await opensea.ownByAddress(address)
+
+      // Nifty gateway NFTs
+      const nf = await nifty.creatorDetailAndWorks(nifty_slug)
+      console.log(nf)
+
+
+      // Collect 3 type of NFTs-ID own by owner
+      // address format is ${address:token_id}
+      setOwnLists([...new Set([...rari.owned, ...os.owned])])
+      setOnsaleLists([...new Set([...rari.onsale, ...os.onsale])])
+      setCreatedLists([...new Set([...rari.created, ...os.created])])
+
+      const total_ids = [...new Set([...rari.allID , ...os.allID])]
+      let constructNFTlists : Galleryst[] = []
+
+      // Get All rarible items
+      rari.items = await rarible.getAllNFTS(rari.allID)
+
+      //
+      total_ids.map(id => {
+        const findRari = rari.items?.find(item => item.id == id)
+        const findOpensea = os.items.find(item => item.id == id)
+        const check = {
+          rarible: findRari != undefined ,
+          opensea: findOpensea != undefined ,
+        }
+        if(findRari != undefined){
+          constructNFTlists.push({...findRari, check})
+        }else if(findOpensea != undefined){
+          constructNFTlists.push({...findOpensea, check})
+        }
+      })
+      setNFTLists(constructNFTlists)
     })()
   }, []);
 
@@ -70,12 +121,15 @@ const Page = ({ address }: {address: string}) => {
       <ul className="flex">
         <li className="px-3" >{profile?.meta?.followers} followers</li>
         <li className="px-3" >{profile?.meta?.followings} followings</li>
-        <li className="px-3" >{profile?.meta?.itemsCreated} created</li>
-        <li className="px-3" >{profile?.meta?.ownerships} collects</li>
-        <li className="px-3" >{profile?.meta?.ownershipsWithStock} Onsale</li>
+        {/*  */}
+        <li className="px-3" >{onsaleLists.length} on-sale</li>
+        <li className="px-3" >{ownLists.length} collects</li>
+        <li className="px-3" >{createdLists.length} creates</li>
       </ul>
       <br />
       <br />
+      {/* {JSON.stringify(openseaLists[2])} */}
+
       <NFTGroup type="onsale" text={`On sale (${onsaleLists.length} items)`} lists={onsaleLists} nfts={NFTLists} />
       <NFTGroup type="owned" text={`Own by ${profile?.username} (${ownLists.length} items)`} lists={ownLists} nfts={NFTLists} />
       <NFTGroup type="created" text={`Created (${createdLists.length} items)`} lists={createdLists} nfts={NFTLists} />
@@ -85,9 +139,10 @@ const Page = ({ address }: {address: string}) => {
 
 
 export async function getServerSideProps(context: any) {
-  const { address } = context.query
+  const { address , nifty_slug } = context.query
+
   return {
-    props: { address },
+    props: { address, nifty_slug: nifty_slug != undefined ? nifty_slug : false },
   }
 }
 
