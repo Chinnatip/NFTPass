@@ -32,7 +32,7 @@ export const construct = () : NiftyGetResponse => {
 }
 
 export const fetchOwnBySlug = async (nifty_slug: string) : Promise<NiftyGetResponse> => {
-  const niftyResp = await axios.get(`http://localhost:3000/api/nifty?nifty_slug=${nifty_slug}`)
+  const niftyResp = await axios.get(`https://www.galleryst.co/api/nifty?nifty_slug=${nifty_slug}`)
   const nifty : NiftyResp = niftyResp.data
   const { userProfileAndNifties } = nifty
   const { nifties, stores, ...creatorInfo } = userProfileAndNifties
