@@ -6,7 +6,9 @@ import { raribleImg } from '../../method/rarible/method'
 import * as rarible from '../../method/rarible/fetch'
 import * as opensea from '../../method/opensea/fetch'
 import * as nifty from '../../method/nifty/fetch'
+import * as foundation from '../../method/foundation/fetch'
 import { Galleryst } from '../../interfaces/index'
+import { FoundationGetResponse } from 'method/foundation/interface'
 
 const lockDigit = (price: number) => {
   return (Math.floor( price * 10000) )/ 10000
@@ -54,7 +56,7 @@ const NFTGroup = ({ lists, nfts, text='', type='' } : { type?: string, text?: st
     <div className=" w-full">
       { sortNfts.filter(item => lists.includes(item.id)).map(item => {
         const {id, imagePreview, priceETH, name , check} = item
-        return imagePreview != undefined && <a target="_blank" href={`/nft?address=${id}`} className=" relative inline-block rounded-md m-3 my-5 mt-6">
+        return imagePreview != undefined && <a target="_blank" href={`/nft?address=${id}`} className=" relative inline-block rounded-md m-3 my-5 mt-6" key={`${item.id}`}>
           {imagePreview.slice( imagePreview.length - 3, imagePreview.length) == 'mp4' ?
             <video className={`inline-block h-32 ${ type == 'onsale' && 'border-4 border-yellow-500'} `} src={imagePreview} autoPlay loop muted/>:
             <img className={`inline-block h-32 ${ type == 'onsale' && 'border-4 border-yellow-500'} `} src={imagePreview} />}
@@ -75,9 +77,9 @@ const NFTGroup = ({ lists, nfts, text='', type='' } : { type?: string, text?: st
       })}
     </div>
       <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 md:p-4 p-0 gap-2 w-full">
-        {nfts.filter(item => lists.includes(item.id)).map(item => {
+        {nfts.filter(item => lists.includes(item.id)).map((item, index) => {
           const { imagePreview } = item
-          return <a target="_blank" href={`/nft?address=${item.id}`} className="cursor-pointer bg-white rounded-16 mb-2">
+          return <a target="_blank" href={`/nft?address=${item.id}`} className="cursor-pointer bg-white rounded-16 mb-2" key={`${item.id}`}>
 
             <div className="thumbnail-wrapper w-full relative">
               {type == 'onsale' &&
@@ -135,13 +137,16 @@ const Page = ({ address, nifty_slug }: {address: string, nifty_slug: string | fa
         setDropLists(nf.drops)
       }
 
+      // Foundation NFTs
+      const fnd : FoundationGetResponse = await foundation.ownByAddress(address)
+
       // Collect 3 type of NFTs-ID own by owner
       // address format is ${address:token_id}
-      setOwnLists([...new Set([...rari.owned, ...os.owned, ...nf.owned])])
-      setOnsaleLists([...new Set([...rari.onsale, ...os.onsale, ...nf.onsale])])
-      setCreatedLists([...new Set([...rari.created, ...os.created])])
+      setOwnLists([...new Set([...rari.owned, ...os.owned, ...nf.owned, ...fnd.owned])])
+      setOnsaleLists([...new Set([...rari.onsale, ...os.onsale, ...nf.onsale, ...fnd.onsale])])
+      setCreatedLists([...new Set([...rari.created, ...os.created, ...fnd.created])])
 
-      const total_ids = [...new Set([...rari.allID , ...os.allID, ...nf.allID])]
+      const total_ids = [...new Set([...rari.allID , ...os.allID, ...nf.allID, ...fnd.allID])]
       let constructNFTlists : Galleryst[] = []
 
       // Get All rarible items
@@ -152,17 +157,21 @@ const Page = ({ address, nifty_slug }: {address: string, nifty_slug: string | fa
         const findRari = rari.items?.find(item => item.id == id)
         const findNifty = nf.items?.find(item => item.id == id)
         const findOpensea = os.items?.find(item => item.id == id)
+        const findFoundation = fnd.items?.find(item => item.id == id)
         const check = {
           rarible: findRari != undefined ,
           opensea: findOpensea != undefined ,
-          nifty: findNifty != undefined
+          nifty: findNifty != undefined,
+          foundation: findFoundation != undefined
         }
-        if(findRari != undefined){
+        if (findRari != undefined) {
           constructNFTlists.push({...findRari, check})
-        }else if(findNifty != undefined){
+        } else if (findNifty != undefined) {
           constructNFTlists.push({...findNifty, check})
-        }else if(findOpensea != undefined){
+        } else if (findOpensea != undefined) {
           constructNFTlists.push({...findOpensea, check})
+        } else if (findFoundation != undefined) {
+          constructNFTlists.push({...findFoundation, check})
         }
       })
       setNFTLists(constructNFTlists)

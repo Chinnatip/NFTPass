@@ -1,3 +1,5 @@
+import { Galleryst } from 'interfaces'
+
 type LinkPlatforms =
   | 'discord'
   | 'facebook'
@@ -62,6 +64,8 @@ export interface HasuraArtwork {
   moderationStatus: string
   latestTxDate: Date
   creator: User
+  owner?: User
+  amountInETH?: string
 }
 
 export type Artwork = {
@@ -157,4 +161,12 @@ export type UserProfileCollector = {
   nftMarketAuctions: {
     highestBid: Pick<BidFragment, 'datePlaced' | 'bidder'>
   }
+}
+
+export interface FoundationGetResponse {
+  owned: string[]
+  onsale: string[]
+  created: string[]
+  allID: string[]
+  items: Galleryst[]
 }

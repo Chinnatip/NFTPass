@@ -1,12 +1,16 @@
 import { ApolloClient, gql, InMemoryCache } from '@apollo/client'
+import { Galleryst } from 'interfaces'
 import {
   Artwork,
   ArtworkHistory,
+  FoundationGetResponse,
   HasuraArtwork,
   User,
   UserFollower,
 } from './interface'
 import { FOUNDATION_GQL_URI, THE_GRAPH_GQL_URI } from './static'
+import Web3 from 'web3'
+import { getFoundationAssetUrl } from './utils'
 
 const foundationApolloClient = new ApolloClient({
   uri: FOUNDATION_GQL_URI,
@@ -25,10 +29,7 @@ export const usersInfo = async (publicKeys: string[]): Promise<User[]> => {
       $moderationStatuses: [user_moderationstatus_enum!]
     ) {
       users: user(
-        where: {
-          publicKey: { _in: $publicKeys }
-          moderationStatus: { _in: $moderationStatuses }
-        }
+        where: { publicKey: { _in: $publicKeys }, moderationStatus: { _in: $moderationStatuses } }
       ) {
         firstName
         lastName
@@ -59,8 +60,103 @@ export const usersInfo = async (publicKeys: string[]): Promise<User[]> => {
   return data.users
 }
 
-export const hasuraArtworks = async (
-  tokenIds: number[]
+export const hasuraArtworks = async (limit = 48, offset = 0): Promise<HasuraArtwork[]> => {
+  const ARTWORK_QUERY = gql`
+    query hasuraArtworks(
+      $excludeHidden: Boolean!
+      $moderationStatuses: [artwork_moderationstatus_enum!]
+      $userModerationStatuses: [user_moderationstatus_enum!]
+      $limit: Int!
+      $offset: Int!
+    ) {
+      artworks: artwork(
+        limit: $limit
+        offset: $offset
+        where: {
+          deletedAt: { _is_null: true }
+          moderationStatus: { _in: $moderationStatuses }
+          user: { moderationStatus: { _in: $userModerationStatuses } }
+          _or: [
+            { _and: [{ hiddenAt: { _is_null: true } }, { user: { hiddenAt: { _is_null: true } } }] }
+            {
+              _or: [
+                {
+                  _and: [
+                    { hiddenAt: { _is_null: $excludeHidden } }
+                    { user: { hiddenAt: { _is_null: true } } }
+                  ]
+                }
+                {
+                  _and: [
+                    { hiddenAt: { _is_null: true } }
+                    { user: { hiddenAt: { _is_null: $excludeHidden } } }
+                  ]
+                }
+                {
+                  _and: [
+                    { hiddenAt: { _is_null: $excludeHidden } }
+                    { user: { hiddenAt: { _is_null: $excludeHidden } } }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ) {
+        id
+        name
+        description
+        assetIPFSPath
+        metadataIPFSPath
+        width
+        height
+        duration
+        mimeType
+        mintTxHash
+        assetId
+        assetStatus
+        tokenId
+        status
+        hiddenAt
+        deletedAt
+        moderationStatus
+        latestTxDate
+        creator: user {
+          firstName
+          lastName
+          isAdmin
+          links
+          publicKey
+          username
+          profileImageUrl
+          coverImageUrl
+          name
+          bio
+          isApprovedCreator
+          moderationStatus
+          joinedWaitlistAt
+          createdAt
+        }
+      }
+    }
+  `
+  const variables = {
+    limit,
+    offset,
+    excludeHidden: false,
+    moderationStatuses: ['ACTIVE'],
+    userModerationStatuses: ['ACTIVE'],
+  }
+  const { data } = await foundationApolloClient.query({
+    query: ARTWORK_QUERY,
+    variables,
+  })
+  return data.artworks
+}
+
+export const hasuraArtworksByTokenIds = async (
+  tokenIds: number[] | string[],
+  successOnly = false
 ): Promise<HasuraArtwork[]> => {
   const ARTWORK_QUERY = gql`
     query hasuraArtworksByTokenIds(
@@ -75,6 +171,7 @@ export const hasuraArtworks = async (
           deletedAt: { _is_null: true }
           moderationStatus: { _in: $moderationStatuses }
           user: { moderationStatus: { _in: $userModerationStatuses } }
+          ${successOnly ? 'assetStatus: { _eq: "SUCCESS" }' : ''}
           _or: [
             {
               _and: [
@@ -150,11 +247,11 @@ export const hasuraArtworks = async (
     moderationStatuses: ['ACTIVE'],
     userModerationStatuses: ['ACTIVE'],
   }
-  const { data } = foundationApolloClient.query({
+  const { data } = await foundationApolloClient.query({
     query: ARTWORK_QUERY,
     variables,
   })
-  return data
+  return data.artworks
 }
 
 export const userFollowers = async (
@@ -182,12 +279,7 @@ export const userFollowers = async (
           profileImageUrl
           userIndex
           publicKey
-          follows(
-            where: {
-              user: { _eq: $currentUserPublicKey }
-              isFollowing: { _eq: true }
-            }
-          ) {
+          follows(where: { user: { _eq: $currentUserPublicKey }, isFollowing: { _eq: true } }) {
             createdAt
             isFollowing
           }
@@ -208,15 +300,74 @@ export const userFollowers = async (
   return data.follows
 }
 
-export const userFollowState = async (
-  publicKey: string,
-  currentUserPublicKey = ''
-) => {
+export const hasuraUserFeed = async (userIds: string[], publicKey = '', limit = 48, offset = 0) => {
+  const USER_FEED_QUERY = gql`
+    query hasuraUsersFeed($publicKey: String!, $userIds: [String!]!, $limit: Int!, $offset: Int!) {
+      users: user(
+        limit: $limit
+        offset: $offset
+        order_by: { createdAt: desc }
+        where: {
+          publicKey: { _in: $userIds }
+          moderationStatus: { _eq: "ACTIVE" }
+          _and: [{ publicKey: { _neq: $publicKey } }, { publicKey: { _in: $userIds } }]
+          artworks: { tokenId: { _is_null: false } }
+        }
+      ) {
+        ...HasuraFeedUserFragment
+      }
+    }
+
+    fragment HasuraFeedUserFragment on user {
+      ...HasuraUserFragment
+      followerCount: follows_aggregate(where: { isFollowing: { _eq: true } }) {
+        aggregate {
+          count
+        }
+      }
+      follows(where: { user: { _eq: $publicKey }, isFollowing: { _eq: true } }) {
+        createdAt
+        isFollowing
+      }
+    }
+
+    fragment HasuraUserFragment on user {
+      ...HasuraUserFragmentLight
+      firstName
+      lastName
+      isAdmin
+      links
+    }
+
+    fragment HasuraUserFragmentLight on user {
+      userIndex
+      publicKey
+      username
+      profileImageUrl
+      coverImageUrl
+      name
+      bio
+      isApprovedCreator
+      moderationStatus
+      joinedWaitlistAt
+      createdAt
+    }
+  `
+  const variables = {
+    publicKey,
+    userIds,
+    limit,
+    offset,
+  }
+  const { data } = await foundationApolloClient.query({
+    query: USER_FEED_QUERY,
+    variables,
+  })
+  return data.users
+}
+export const userFollowState = async (publicKey: string, currentUserPublicKey = '') => {
   const FOLLOW_STATE_QUERY = gql`
-    query getHasuraUserFollowState(
-      $currentUserPublicKey: String!
-      $publicKey: String!
-    ) {
+    query getHasuraUserFollowState($currentUserPublicKey: String!, $publicKey: String!) {
       followerCount: follow_aggregate(
         where: { followedUser: { _eq: $publicKey }, isFollowing: { _eq: true } }
       ) {
@@ -238,10 +389,7 @@ export const userFollowState = async (
             { followedUser: { _eq: $publicKey } }
             {
               userByFollowingUser: {
-                follows: {
-                  user: { _eq: $currentUserPublicKey }
-                  isFollowing: { _eq: true }
-                }
+                follows: { user: { _eq: $currentUserPublicKey }, isFollowing: { _eq: true } }
               }
             }
           ]
@@ -276,7 +424,7 @@ export const userFollowState = async (
 
 export const userOwnedArtworks = async (
   publicKey: string,
-  limit = 48,
+  limit = 100,
   offset = 0
 ): Promise<Artwork[]> => {
   const OWNED_ARTWORK_QUERY = gql`
@@ -344,16 +492,13 @@ export const userOwnedArtworks = async (
 
 export const userMintedArtworks = async (
   publicKey: string,
-  limit = 48,
+  limit = 100,
   offset = 0
 ): Promise<Artwork[]> => {
   const MINTED_ARTWORK_QUERY = gql`
     query getMintedArtworks($publicKey: String!, $limit: Int!, $offset: Int!) {
       artworks: nfts(
-        where: {
-          creator: $publicKey
-          owner_not: "0x0000000000000000000000000000000000000000"
-        }
+        where: { creator: $publicKey, owner_not: "0x0000000000000000000000000000000000000000" }
         first: $limit
         skip: $offset
         orderBy: dateMinted
@@ -409,14 +554,53 @@ export const userMintedArtworks = async (
   return data.artworks
 }
 
+export const ownByAddress = async (
+  address: string,
+  limit = 100,
+  offset = 0
+): Promise<FoundationGetResponse> => {
+  // fetch
+  const ownedNfts = await userOwnedArtworks(address, limit, offset)
+  const createdNfts = await userMintedArtworks(address, limit, offset)
+  const allNfts = [...ownedNfts, ...createdNfts]
+  const onsaleNfts = allNfts.filter(({ nftHistory }) => nftHistory?.[0].event === 'Bid')
+  // return ids
+  const owned = ownedNfts.map(nft => `${nft.id.split('-')[0]}:${nft.tokenId}`)
+  const created = createdNfts.map(nft => `${nft.id.split('-')[0]}:${nft.tokenId}`)
+  const onsale = onsaleNfts.map(nft => `${nft.id.split('-')[0]}:${nft.tokenId}`)
+  const allID = Array.from(new Set([...owned, ...created])) // on-sales are already in these 2
+  // memoization map
+  const tokenIdToAddress = new Map(allID.map(id => [id.split(':')[1], id]))
+  const tokenIdToPrice = new Map<string, number>(
+    allNfts.map(nft => {
+      return [nft.tokenId, parseInt(nft.mostRecentActiveAuction?.highestBid?.amountInETH) || 0]
+    })
+  )
+  const allTokenID = allID.map(id => id.split(':')[1])
+  const nftWithDetails = await hasuraArtworksByTokenIds(allTokenID)
+  const items = nftWithDetails.map<Galleryst>(nft => {
+    return {
+      name: nft.name,
+      id: tokenIdToAddress.get(nft.tokenId.toString())!,
+      priceETH: tokenIdToPrice.get(nft.tokenId.toString()),
+      imagePreview: getFoundationAssetUrl(nft.assetIPFSPath),
+    }
+  })
+  return {
+    owned,
+    created,
+    onsale,
+    allID,
+    items,
+  }
+}
+
 export const userProfileCollectors = async (publicKey: string) => {
   const PROFILE_COLLECTOR_QUERY = gql`
     query ProfileCollectorsQuery($publicKey: String!, $timeStampNow: Int!) {
       account(id: $publicKey) {
         id
-        nftMarketAuctions(
-          where: { status_not: Canceled, dateEnding_lt: $timeStampNow }
-        ) {
+        nftMarketAuctions(where: { status_not: Canceled, dateEnding_lt: $timeStampNow }) {
           highestBid {
             datePlaced
             bidder {
@@ -442,10 +626,7 @@ export const userArtworksPresence = async (publicKey: string) => {
   const ARTWORK_PRESENCE_QUERY = gql`
     query getArtworksPresence($publicKey: String!) {
       artworksMinted: nfts(
-        where: {
-          creator: $publicKey
-          owner_not: "0x0000000000000000000000000000000000000000"
-        }
+        where: { creator: $publicKey, owner_not: "0x0000000000000000000000000000000000000000" }
         first: 1
       ) {
         id
@@ -471,7 +652,7 @@ export const userArtworksPresence = async (publicKey: string) => {
   })
 }
 
-export const trendingArtworks = async (limit = 48) => {
+export const trendingArtworks = async (limit = 48): Promise<any[]> => {
   const TRENDING_QUERY = gql`
     query trendingArtworksQuery($limit: Int, $now: Int) {
       auctions: nftMarketAuctions(
@@ -527,12 +708,14 @@ export const trendingArtworks = async (limit = 48) => {
     limit,
     now: Math.floor(Date.now() / 1000),
   }
-  return theGraphApolloClient.query({ query: TRENDING_QUERY, variables })
+  const { data } = await theGraphApolloClient.query({
+    query: TRENDING_QUERY,
+    variables,
+  })
+  return data.auctions
 }
 
-export const getArtworkHistory = async (
-  addressPlusTokenId: string
-): Promise<ArtworkHistory> => {
+export const getArtworkHistory = async (addressPlusTokenId: string): Promise<ArtworkHistory> => {
   const ARTWORK_HISTORY_QUERY = gql`
     query getArtworkHistory($addressPlusTokenId: String!) {
       nft(id: $addressPlusTokenId) {
