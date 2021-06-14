@@ -9,7 +9,6 @@ import {
   UserFollower,
 } from './interface'
 import { FOUNDATION_GQL_URI, THE_GRAPH_GQL_URI } from './static'
-import Web3 from 'web3'
 import { getFoundationAssetUrl } from './utils'
 
 const foundationApolloClient = new ApolloClient({

@@ -77,7 +77,7 @@ const NFTGroup = ({ lists, nfts, text='', type='' } : { type?: string, text?: st
       })}
     </div>
       <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 md:p-4 p-0 gap-2 w-full">
-        {nfts.filter(item => lists.includes(item.id)).map((item, index) => {
+        {nfts.filter(item => lists.includes(item.id)).map(item => {
           const { imagePreview } = item
           return <a target="_blank" href={`/nft?address=${item.id}`} className="cursor-pointer bg-white rounded-16 mb-2" key={`${item.id}`}>
 
