@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react'
 import { Profile, RaribleGetResponse } from '../../method/rarible/interface'
 import { OpenseaGetResponse } from '../../method/opensea/interface'
 import { NiftyGetResponse , Drop} from '../../method/nifty/interface'
+import { FoundationGetResponse } from 'method/foundation/interface'
 import { raribleImg } from '../../method/rarible/method'
 import * as rarible from '../../method/rarible/fetch'
 import * as opensea from '../../method/opensea/fetch'
 import * as nifty from '../../method/nifty/fetch'
 import * as foundation from '../../method/foundation/fetch'
 import { Galleryst } from '../../interfaces/index'
-import { FoundationGetResponse } from 'method/foundation/interface'
 
 const lockDigit = (price: number) => {
   return (Math.floor( price * 10000) )/ 10000
