@@ -1,13 +1,12 @@
 /**
- * @description wrap promise (async call), returns data and error
+ * @description wrap promise (async call), returns both data and error
  * @example
  * const [data, error] = await withError(someAsyncFunction())
- * if (data) {
- *   // use data here...
+ * if (error) {
+ *   // handle error
  * } else {
- *   // use data here...
+ *   // use data if not error
  * }
- * 
  */
 export async function withError<T>(
   promise: Promise<T>
