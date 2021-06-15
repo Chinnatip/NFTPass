@@ -9,28 +9,43 @@ import * as opensea from '../../method/opensea/fetch'
 import * as nifty from '../../method/nifty/fetch'
 import * as foundation from '../../method/foundation/fetch'
 import { Galleryst } from '../../interfaces/index'
+import { withError } from 'utils/promise.util'
 
 const lockDigit = (price: number) => {
   return (Math.floor( price * 10000) )/ 10000
+}
+
+const getUserProfile = async (address: string): Promise<Profile> => {
+  const [resp, errResp] = await withError(rarible.userInfo(address))
+  const [metaResp, errMetaResp] = await withError(rarible.userMeta(address))
+  if (!errResp && !errMetaResp) {
+    return { ...resp.data, pic: raribleImg(resp.data?.pic), meta: metaResp.data }
+  }
+  const [fndUser, errFnd] = await withError(foundation.userInfo(address))
+  if (!errFnd) {
+    return fndUser
+  }
+  return {}
 }
 
 const NFTDrop = ({ lists,text='' } : {lists : Drop[],text: string}) => {
   return <>
   { lists.length > 0 && <>
     <h2 className="text-xl">{text}</h2>
-    <div className=" w-full">
+    <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 md:p-4 p-0 gap-2 w-full">
       { lists.map(item => {
         const { address, title, image} = item
-        return image != undefined && <a target="_blank" href={`/nft?address=${address}`} className=" relative inline-block rounded-md m-3 my-5 mt-6">
-          {image.slice( image.length - 3, image.length) == 'mp4' ?
-            <video className={`inline-block h-32 `} src={image} autoPlay loop muted/>:
-            <img className={`inline-block h-32 `} src={image} />}
-          <span className="absolute bottom-0 left-0 flex flex-col p-1" >
+        return image != undefined &&  <a target="_blank" href={`/nft?address=${address}`} className="relative cursor-pointer bg-white rounded-16 mb-2" key={`${address}`}>
+          <div className="thumbnail-wrapper w-full relative">
+            { image.slice( image.length - 3, image.length) == 'mp4' ?
+              <video className="rounded-16 border-8 border-white thumbnail-height" src={image} autoPlay loop muted/> :
+              <img className="rounded-16 border-8 border-white thumbnail-height" src={image} />
+            }
+          </div>
+          <span className="absolute bottom-0 left-0 flex flex-col pl-3 pb-4 z-10" >
             <span className="bg-blue-700 text-white mt-1 h-4 w-4 text-xs rounded-full flex items-center justify-center">N</span>
           </span>
-          <span className="text-black opacity-50 absolute bottom-0 left-0 -mb-8 h-8 flex justify-center items-center text-xs w-full text-center" style={{ lineHeight: 1.2 }}>
-            {title.length > 20 ? `${title.substr(0,20)}...` : title}
-          </span>
+          <span className="hidden text-black opacity-50 absolute bottom-0 left-0 -mb-5 text-xs w-full text-center">{title}</span>
         </a>
       })}
     </div>
@@ -42,64 +57,43 @@ const NFTDrop = ({ lists,text='' } : {lists : Drop[],text: string}) => {
 
 // Group Component
 const NFTGroup = ({ lists, nfts, text='', type='' } : { type?: string, text?: string, lists: string[], nfts: Galleryst[]}) => {
-  let sortNfts = nfts
-  switch(type){
-    case 'onsale':
-      sortNfts = nfts.sort((a,b) => (b.priceETH != undefined && a.priceETH != undefined) ? b.priceETH - a.priceETH : 0 )
-      break
-    default:
-      sortNfts = nfts
-  }
+  // let sortNfts = nfts
+  // switch(type){
+  //   case 'onsale':
+  //     sortNfts = nfts.sort((a,b) => (b.priceETH != undefined && a.priceETH != undefined) ? b.priceETH - a.priceETH : 0 )
+  //     break
+  //   default:
+  //     sortNfts = nfts
+  // }
   return <>
   { lists.length > 0 && <>
     <h2 className="text-xl">{text}</h2>
-    <div className=" w-full">
-      { sortNfts.filter(item => lists.includes(item.id)).map(item => {
-        const {id, imagePreview, priceETH, name , check} = item
-        return imagePreview != undefined && <a target="_blank" href={`/nft?address=${id}`} className=" relative inline-block rounded-md m-3 my-5 mt-6" key={`${item.id}`}>
-          {imagePreview.slice( imagePreview.length - 3, imagePreview.length) == 'mp4' ?
-            <video className={`inline-block h-32 ${ type == 'onsale' && 'border-4 border-yellow-500'} `} src={imagePreview} autoPlay loop muted/>:
-            <img className={`inline-block h-32 ${ type == 'onsale' && 'border-4 border-yellow-500'} `} src={imagePreview} />}
-
-          {type == 'onsale' && priceETH && <span className="text-black shadow-lg absolute top-0 right-0 text-xs bg-white px-1 bg-yellow-500 text-yellow-800" >
-            { lockDigit(priceETH) } ETH
-          </span> }
-          <span className="absolute bottom-0 left-0 flex flex-col p-1" >
-            { check?.rarible && <span className="bg-yellow-500 h-4 w-4 text-xs rounded-full flex items-center justify-center">r</span> }
-            { check?.opensea && <span className="bg-blue-500 text-white mt-1 h-4 w-4 text-xs rounded-full flex items-center justify-center">O</span> }
-            { check?.foundation && <span className="bg-black text-white mt-1 h-4 w-4 text-xs rounded-full flex items-center justify-center">F</span> }
-            { check?.nifty && <span className="bg-blue-700 text-white mt-1 h-4 w-4 text-xs rounded-full flex items-center justify-center">N</span> }
-          </span>
-          <span className="text-black opacity-50 absolute bottom-0 left-0 -mb-8 h-8 flex justify-center items-center text-xs w-full text-center" style={{ lineHeight: 1.2 }}>
-            {name.length > 20 ? `${name.substr(0,20)}...` : name}
-          </span>
-        </a>
-      })}
-    </div>
       <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 md:p-4 p-0 gap-2 w-full">
         {nfts.filter(item => lists.includes(item.id)).map(item => {
-          const { imagePreview } = item
-          return <a target="_blank" href={`/nft?address=${item.id}`} className="cursor-pointer bg-white rounded-16 mb-2" key={`${item.id}`}>
-
+          const { imagePreview, check } = item
+          return <a target="_blank" href={`/nft?address=${item.id}`} className="relative cursor-pointer bg-white rounded-16 mb-2" key={`${item.id}`}>
             <div className="thumbnail-wrapper w-full relative">
-              {type == 'onsale' &&
-                <div className="absolute z-10 top-0 px-2 rounded-full ml-4 mt-4 mr-4 h-6 w-auto bg-white backdrop-blur-2xl bg-opacity-25 flex items-center justify-center">
-                  <div className="w-auto rounded-full text-xs text-white">On Sale</div>
-                </div>
+              { imagePreview.slice( imagePreview.length - 3, imagePreview.length) == 'mp4' ?
+                <video className="rounded-16 border-8 border-white thumbnail-height" src={imagePreview} autoPlay loop muted/> :
+                <img className="rounded-16 border-8 border-white thumbnail-height" src={imagePreview} />
               }
-              <img className="rounded-16 border-8 border-white thumbnail-height" src={imagePreview} />
               <div className="absolute flex justify-end	z-10 bottom-0  w-full mb-2 px-2 pt-6 ">
                 <div className="flex px-2 rounded-b-16 pt-10 justify-end w-full" style={{ background: 'linear-gradient(360deg, rgba(0, 0, 0, 0.52) 10%, rgba(196, 196, 196, 0) 50%)' }}>
                   {type == 'onsale' && item.priceETH != undefined &&
                     <span className="text-white font-bold text-right " >
-                      {item.priceETH} ETH  </span>}</div>
+                      { lockDigit(item.priceETH) } ETH
+                    </span>}</div>
               </div>
+              <span className="absolute bottom-0 left-0 flex flex-col pl-3 pb-4 z-10" >
+                { check?.rarible && <span className="bg-yellow-500 h-4 w-4 text-xs rounded-full flex items-center justify-center">r</span> }
+                { check?.opensea && <span className="bg-blue-500 text-white mt-1 h-4 w-4 text-xs rounded-full flex items-center justify-center">O</span> }
+                { check?.foundation && <span className="bg-black text-white mt-1 h-4 w-4 text-xs rounded-full flex items-center justify-center">F</span> }
+                { check?.nifty && <span className="bg-blue-700 text-white mt-1 h-4 w-4 text-xs rounded-full flex items-center justify-center">N</span> }
+              </span>
             </div>
             <span className="text-black absolute bottom-0 rounded-tr-full left-0 hidden text-xs bg-white p-1 pt-2 pr-2 bg-pink-400 text-pink-800" >
               {item?.likes}
             </span>
-
-
             <span className="hidden text-black opacity-50 absolute bottom-0 left-0 -mb-5 text-xs w-full text-center">{item?.name}</span>
           </a>
         })}
@@ -109,7 +103,7 @@ const NFTGroup = ({ lists, nfts, text='', type='' } : { type?: string, text?: st
   </>
 }
 
-const Page = ({ address, nifty_slug }: {address: string, nifty_slug: string | false}) => {
+const Page = ({ address, nifty_slug }: {address: string | false, nifty_slug: string | false}) => {
   const [profile, setProfile] = useState<Profile>({})
   const [NFTLists, setNFTLists] = useState<Galleryst[]>([])
   const [ownLists, setOwnLists] = useState<string[]>([])
@@ -119,16 +113,23 @@ const Page = ({ address, nifty_slug }: {address: string, nifty_slug: string | fa
 
   useEffect(() => {
     (async () => {
-      // Creator profile
-      const resp = await rarible.userInfo(address)
-      const metaResp = await rarible.userMeta(address)
-      setProfile({ ...resp.data, meta: metaResp.data })
+      let rari : RaribleGetResponse  = { onsale: [], created: [], owned: [], allID: [], items: [] }
+      let fnd : FoundationGetResponse = { onsale: [], created: [], owned: [], allID: [], items: [] }
+      let os : OpenseaGetResponse = { onsale: [], created: [], owned: [], allID: [], items: [] }
+      if (address){
+        // Creator profile
+        const userProfile = await getUserProfile(address)
+        setProfile(userProfile)
 
-      // Rarible NFTs
-      let rari : RaribleGetResponse = await rarible.ownByAddress(address, { setOwnLists, setOnsaleLists, setCreatedLists })
+        // Rarible NFTs
+        rari = await rarible.ownByAddress(address, { setOwnLists, setOnsaleLists, setCreatedLists })
 
-      // Opensea NFTs
-      const os : OpenseaGetResponse = await opensea.ownByAddress(address)
+        // Opensea NFTs
+        os = await opensea.ownByAddress(address)
+
+        // Foundation NFTs
+        fnd = await foundation.ownByAddress(address)
+      }
 
       // Nifty gateway NFTs
       let nf : NiftyGetResponse = nifty.construct()
@@ -136,9 +137,6 @@ const Page = ({ address, nifty_slug }: {address: string, nifty_slug: string | fa
         nf  = await nifty.fetchOwnBySlug(nifty_slug)
         setDropLists(nf.drops)
       }
-
-      // Foundation NFTs
-      const fnd : FoundationGetResponse = await foundation.ownByAddress(address)
 
       // Collect 3 type of NFTs-ID own by owner
       // address format is ${address:token_id}
@@ -183,7 +181,7 @@ const Page = ({ address, nifty_slug }: {address: string, nifty_slug: string | fa
       <div className="rounded-24 border border-white shadow-nft mt-20" style={{ background: 'rgba(185, 184, 184, 0.32)', borderRadius: '24px 24px 0px 0px' }}>
         <div className="bg-white" style={{ borderRadius: '24px 24px 0px 0px' }}>
           <div className="text-center">
-            <img src={raribleImg(profile?.pic)} className="inline-block h-20 w-20 border-4 border-white shadow-nft rounded-full -mt-12 object-cover" />
+            <img src={profile?.pic} className="inline-block h-20 w-20 border-4 border-white shadow-nft rounded-full -mt-12 object-cover" />
             <div className="text-3xl">{profile?.username}</div>
             <div className="mt-1 mb-6 px-3 py-2 bg-white rounded-full shadow-nft flex align-middle justify-center w-min m-auto">
               <div className="text-gray-500 text-sm">{address}</div>
@@ -228,9 +226,11 @@ const Page = ({ address, nifty_slug }: {address: string, nifty_slug: string | fa
 
 export async function getServerSideProps(context: any) {
   const { address , nifty_slug } = context.query
-
   return {
-    props: { address, nifty_slug: nifty_slug != undefined ? nifty_slug : false },
+    props: {
+      address: address != undefined ? address : false,
+      nifty_slug: nifty_slug != undefined ? nifty_slug : false
+    },
   }
 }
 

@@ -170,3 +170,10 @@ export interface FoundationGetResponse {
   allID: string[]
   items: Galleryst[]
 }
+
+export interface FoundationFollowState {
+  followerCount: number
+  followingCount: number
+  mutualFollowCount: number
+  follows: any[]
+}

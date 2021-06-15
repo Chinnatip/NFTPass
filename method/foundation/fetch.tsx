@@ -1,8 +1,9 @@
 import { ApolloClient, gql, InMemoryCache } from '@apollo/client'
-import { Galleryst } from 'interfaces'
+import { Galleryst, Profile } from 'interfaces'
 import {
   Artwork,
   ArtworkHistory,
+  FoundationFollowState,
   FoundationGetResponse,
   HasuraArtwork,
   User,
@@ -21,7 +22,7 @@ const theGraphApolloClient = new ApolloClient({
   cache: new InMemoryCache(),
 })
 
-export const usersInfo = async (publicKeys: string[]): Promise<User[]> => {
+export const hasuraUsersByAddresses = async (publicKeys: string[]): Promise<User[]> => {
   const USER_QUERY = gql`
     query hasuraUsersByIds(
       $publicKeys: [String!]!
@@ -57,6 +58,34 @@ export const usersInfo = async (publicKeys: string[]): Promise<User[]> => {
     variables,
   })
   return data.users
+}
+
+export const userInfo = async (address: string): Promise<Profile> => {
+  const users = await hasuraUsersByAddresses([address])
+  const user = users.find(predicate => predicate.publicKey === address)
+  if (!user) throw new Error('[FND] user address not found')
+  const followState = await userFollowState(address)
+  return {
+    address: user.publicKey,
+    username: user.username,
+    pic: user.profileImageUrl,
+    cover: user.coverImageUrl,
+    followings: followState.followingCount,
+    followers: followState.followerCount,
+    description: user.bio,
+    website: user.links.website.handle,
+    twitterUsername: user.links.twitter.handle,
+    // meta: {
+    //   address,
+    //   ownershipsWithStock: 0,
+    //   itemsCreated: 0,
+    //   ownerships: 0,
+    //   hides: 0,
+    //   followers: followState.followerCount,
+    //   followings: followState.followingCount,
+    //   likes: 0,
+    // },
+  }
 }
 
 export const hasuraArtworks = async (limit = 48, offset = 0): Promise<HasuraArtwork[]> => {
@@ -364,7 +393,11 @@ export const hasuraUserFeed = async (userIds: string[], publicKey = '', limit = 
   })
   return data.users
 }
-export const userFollowState = async (publicKey: string, currentUserPublicKey = '') => {
+
+export const userFollowState = async (
+  publicKey: string,
+  currentUserPublicKey = ''
+): Promise<FoundationFollowState> => {
   const FOLLOW_STATE_QUERY = gql`
     query getHasuraUserFollowState($currentUserPublicKey: String!, $publicKey: String!) {
       followerCount: follow_aggregate(
@@ -418,7 +451,13 @@ export const userFollowState = async (publicKey: string, currentUserPublicKey = 
     publicKey,
     currentUserPublicKey,
   }
-  return foundationApolloClient.query({ query: FOLLOW_STATE_QUERY, variables })
+  const { data } = await foundationApolloClient.query({ query: FOLLOW_STATE_QUERY, variables })
+  return {
+    followerCount: data.followerCount.aggregate.count || 0,
+    followingCount: data.followingCount.aggregate.count || 0,
+    mutualFollowCount: data.mutualFollowCount.aggregate.count || 0,
+    follows: data.follows || [],
+  }
 }
 
 export const userOwnedArtworks = async (
