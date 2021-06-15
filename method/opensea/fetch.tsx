@@ -29,12 +29,20 @@ const constructOpensea = (nftLists: OpenseaItem[]) : Galleryst[] => {
 
 export const ownByAddress = async(address: string) => {
   const parse_url = `${OPENSEA_URL}?owner=${address}&order_direction=desc&offset=0&limit=100`
-  // console.log(parse_url)
   const resp = await axios.get(parse_url)
   const items : OpenseaItem[] = resp.data.assets
+  const created = items
+    .filter(({creator}) => {
+      if(creator != null){
+        return creator.address == address
+      }else{
+        return false
+      }})
+    .map(item => `${item.asset_contract.address}:${item.token_id}`)
+  console.log(created)
   return {
     onsale: items.filter(({ sell_orders }) => sell_orders != undefined ).map(item => `${item.asset_contract.address}:${item.token_id}`) ,
-    created: items.filter(({creator: {address: createAddress}}) => createAddress == address).map(item => `${item.asset_contract.address}:${item.token_id}`),
+    created ,
     owned: items.map(item => `${item.asset_contract.address}:${item.token_id}`),
     allID: items.map(item => `${item.asset_contract.address}:${item.token_id}`),
     items: constructOpensea(items)

@@ -3,7 +3,11 @@ import { RaribleNFT, RaribleNFTFull } from './interface'
 import { RARIBLE_PREFIX } from './static'
 import { Galleryst } from '../../interfaces/index'
 
-export const userInfo = async (address: string) => await axios.get(`${RARIBLE_PREFIX}users/${address}`)
+export const userInfo = async (address: string) => {
+  const resp = await axios.get(`${RARIBLE_PREFIX}users/${address}`)
+  console.log(resp.status)
+  return resp
+}
 
 export const userMeta = async (address: string) => await axios.get(`${RARIBLE_PREFIX}profiles/${address}/meta`)
 
