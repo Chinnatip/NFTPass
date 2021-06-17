@@ -38,6 +38,8 @@
     "graphql": "^15.5.0",
     "hooksy": "^1.0.0",
     "js-cookie": "^2.2.1",
+    "mobx": "^6.3.2",
+    "mobx-react-lite": "^3.2.0",
     "moment": "^2.27.0",
     "next": "^10.0.5",
     "react": "^16.12.0",

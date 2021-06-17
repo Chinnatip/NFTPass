@@ -10,6 +10,9 @@ import * as nifty from '../../method/nifty/fetch'
 import * as foundation from '../../method/foundation/fetch'
 import { Galleryst } from '../../interfaces/index'
 import { withError } from 'utils/promise.util'
+import { mask } from 'utils/address.util'
+import { walletStore } from 'stores/wallet.store'
+import { observer } from 'mobx-react-lite'
 
 const lockDigit = (price: number) => {
   return (Math.floor( price * 10000) )/ 10000
@@ -103,6 +106,20 @@ const NFTGroup = ({ lists, nfts, text='', type='' } : { type?: string, text?: st
   </>
 }
 
+const ConnectBtn = observer(() => {
+  return (
+    <div className="flex justify-end">
+      <button
+      onClick={walletStore.connect}
+        style={{ color: '#9A6B6B', backgroundColor: '#C7AAAA' }}
+        className={`py-2 px-3 mx-5 font-semibold text-sm focus:outline-none appearance-none rounded-full `}
+      >
+        {walletStore.verified ? `${mask(walletStore.address)} | ${walletStore.readableBalance}` : 'Connect' }
+      </button>
+    </div>
+  )
+})
+
 const Page = ({ address, nifty_slug }: {address: string | false, nifty_slug: string | false}) => {
   const [profile, setProfile] = useState<Profile>({})
   const [NFTLists, setNFTLists] = useState<Galleryst[]>([])
@@ -177,6 +194,7 @@ const Page = ({ address, nifty_slug }: {address: string | false, nifty_slug: str
   }, []);
 
   return <div className="w-screen h-screen pt-8 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")' }}>
+    <ConnectBtn />
     <div className="md:w-4/5 w-full m-auto z-10 ">
       <div className="rounded-24 border border-white shadow-nft mt-20" style={{ background: 'rgba(185, 184, 184, 0.32)', borderRadius: '24px 24px 0px 0px' }}>
         <div className="bg-white" style={{ borderRadius: '24px 24px 0px 0px' }}>
