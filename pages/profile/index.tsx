@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Profile, RaribleGetResponse } from '../../method/rarible/interface'
 import { OpenseaGetResponse } from '../../method/opensea/interface'
 import { NiftyGetResponse , Drop} from '../../method/nifty/interface'
@@ -13,6 +13,8 @@ import { withError } from 'utils/promise.util'
 import { mask } from 'utils/address.util'
 import { walletStore } from 'stores/wallet.store'
 import { observer } from 'mobx-react-lite'
+import { walletService } from 'services/wallet.service'
+import { createPopper } from '@popperjs/core'
 
 const lockDigit = (price: number) => {
   return (Math.floor( price * 10000) )/ 10000
@@ -107,15 +109,55 @@ const NFTGroup = ({ lists, nfts, text='', type='' } : { type?: string, text?: st
 }
 
 const ConnectBtn = observer(() => {
+  const [show, setShow] = useState(false)
+  const btnRef = useRef(null)
+  const popperRef = useRef(null)
+  createPopper(btnRef.current!, popperRef.current!, { placement: 'bottom-start' })
+  const handleClick = async () => {
+    if (!show) {
+      await walletService.getAccounts()
+    }
+    setShow(!show)
+  }
   return (
     <div className="flex justify-end">
       <button
-      onClick={walletStore.connect}
+        ref={btnRef}
+        onClick={handleClick}
         style={{ color: '#9A6B6B', backgroundColor: '#C7AAAA' }}
         className={`py-2 px-3 mx-5 font-semibold text-sm focus:outline-none appearance-none rounded-full `}
       >
         {walletStore.verified ? `${mask(walletStore.address)} | ${walletStore.readableBalance}` : 'Connect' }
       </button>
+      <div ref={popperRef} className={`${show ? '' : 'hidden'} p-2 rounded-2xl bg-white`}>
+        {(!walletStore.isConnected && walletStore.accounts.length > 0) && walletStore.accounts.map((account, index) => {
+          return (
+            <React.Fragment key={account} >
+              <button
+                className='text-xs'
+                onClick={() => { 
+                  setShow(false)
+                  walletService.connect(account)
+                }}
+              >
+                {account}
+              </button>
+              {index !== walletStore.accounts.length - 1 && <hr />}
+            </React.Fragment>
+          )
+        })}
+        {walletStore.isConnected && (
+          <button
+            className='text-md'
+            onClick={() => {
+              setShow(false)
+              walletService.disconnect()
+            }}
+          >
+            Disconnect
+          </button>
+        )}
+      </div>
     </div>
   )
 })

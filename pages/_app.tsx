@@ -6,11 +6,15 @@ import { config } from '@fortawesome/fontawesome-svg-core'
 import 'styles/index.css'
 import '@fortawesome/fontawesome-svg-core/styles.css' // Import the CSS
 import * as ga from '../lib/ga'
+import { useSetup } from 'hooks/useSetup'
 
 config.autoAddCss = false
 
 function MyApp({ Component, pageProps }: AppProps) {
   const Router = useRouter()
+  const ready = useSetup()
+  console.log("🚀 ~ ready", ready)
+  
   useEffect(() => {
     const handleRouteChange = (url: any) => {
       ga.pageview(url)
