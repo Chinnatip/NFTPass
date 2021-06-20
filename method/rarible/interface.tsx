@@ -157,6 +157,7 @@ export interface Profile {
   receiveEmailNotifications?: boolean
   version?: number
   emailConfirmed?: boolean
+  verified?: boolean
   meta?: {
     address?: string
     ownershipsWithStock?: number

@@ -10,6 +10,7 @@ export interface Galleryst {
   priceETH?: number
   priceUSD?: number
   imagePreview: string
+  verified?: boolean
   check?: {
     rarible?: boolean
     opensea?: boolean
