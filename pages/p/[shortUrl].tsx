@@ -1,17 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
 import firebase from "../../method/firebase"
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
-import { Profile, RaribleGetResponse } from '../../method/rarible/interface'
-import { OpenseaGetResponse } from '../../method/opensea/interface'
-import { NiftyGetResponse , Drop} from '../../method/nifty/interface'
-import { FoundationGetResponse } from 'method/foundation/interface'
-import { raribleImg } from '../../method/rarible/method'
-import * as rarible from '../../method/rarible/fetch'
-import * as opensea from '../../method/opensea/fetch'
-import * as nifty from '../../method/nifty/fetch'
-import * as foundation from '../../method/foundation/fetch'
+import { Profile } from '../../method/rarible/interface'
+import { Drop} from '../../method/nifty/interface'
 import { Galleryst } from '../../interfaces/index'
-import { withError } from 'utils/promise.util'
 import { mask } from 'utils/address.util'
 import { walletStore } from 'stores/wallet.store'
 import { observer } from 'mobx-react-lite'
@@ -21,19 +13,6 @@ import Icon from '@/Icon'
 
 const lockDigit = (price: number) => {
   return (Math.floor( price * 10000) )/ 10000
-}
-
-const getUserProfile = async (address: string): Promise<Profile> => {
-  const [resp, errResp] = await withError(rarible.userInfo(address))
-  const [metaResp, errMetaResp] = await withError(rarible.userMeta(address))
-  if (!errResp && !errMetaResp) {
-    return { ...resp.data, pic: raribleImg(resp.data?.pic), meta: metaResp.data, marketCheck: {} }
-  }
-  const [fndUser, errFnd] = await withError(foundation.userInfo(address))
-  if (!errFnd) {
-    return {...fndUser, marketCheck: {}}
-  }
-  return { marketCheck: {} }
 }
 
 const sanitizeArray = (objs: Galleryst[]) => {
@@ -176,7 +155,7 @@ const ConnectBtn = observer(() => {
   )
 })
 
-const Page = observer(({ address, nifty_slug }: {address: string | false, nifty_slug: string | false}) => {
+const Page  = ({ shortUrl }: { shortUrl: string }) => {
   const [profile, setProfile] = useState<Profile>({})
   const [NFTLists, setNFTLists] = useState<Galleryst[]>([])
   const [ownLists, setOwnLists] = useState<string[]>([])
@@ -186,100 +165,26 @@ const Page = observer(({ address, nifty_slug }: {address: string | false, nifty_
 
   useEffect(() => {
     (async () => {
-      let rari : RaribleGetResponse  = { onsale: [], created: [], owned: [], allID: [], items: [] }
-      let fnd : FoundationGetResponse = { onsale: [], created: [], owned: [], allID: [], items: [] }
-      let os : OpenseaGetResponse = { onsale: [], created: [], owned: [], allID: [], items: [] }
 
-      // Nifty gateway NFTs
-      let nf : NiftyGetResponse = nifty.construct()
-      if(nifty_slug != false){
-        nf  = await nifty.fetchOwnBySlug(nifty_slug)
-        setDropLists(nf.drops)
-      }
 
-      // Fetch and collect data
-      if(address){
-        const db = firebase.firestore().collection("creatorParcel").doc(address)
-        const document = await db.get()
-        if(document.exists){
-          const response : any = document.data()
-          const { profile, ownLists, onsaleLists, dropLists, createdLists, NFTLists } = response
-          setProfile(profile)
-          setOwnLists(ownLists)
-          setOnsaleLists(onsaleLists)
-          setDropLists(dropLists)
-          setCreatedLists(createdLists)
-          setNFTLists(NFTLists)
-        }else{
-          let userProfile = await getUserProfile(address)
-          setProfile(userProfile)
-
-          checkMarket(setProfile, userProfile, nf, 'nifty')
-
-          // Rarible NFTs
-          rari = await rarible.ownByAddress(address, { setOwnLists, setOnsaleLists, setCreatedLists })
-          checkMarket(setProfile, userProfile, rari, 'rarible')
-
-          // Opensea NFTs
-          os = await opensea.ownByAddress(address)
-          checkMarket(setProfile, userProfile, os, 'opensea')
-
-          // Foundation NFTs
-          fnd = await foundation.ownByAddress(address)
-          checkMarket(setProfile, userProfile, fnd, 'foundation')
-
-          // Collect 3 type of NFTs-ID own by owner
-          // address format is ${address:token_id}
-          setOwnLists([...new Set([...rari.owned, ...os.owned, ...nf.owned, ...fnd.owned])])
-          setOnsaleLists([...new Set([...rari.onsale, ...os.onsale, ...nf.onsale, ...fnd.onsale])])
-          setCreatedLists([...new Set([...rari.created, ...os.created, ...fnd.created])])
-
-          const total_ids = [...new Set([...rari.allID , ...os.allID, ...nf.allID, ...fnd.allID])]
-          let constructNFTlists : Galleryst[] = []
-
-          // Get All rarible items
-          rari.items = await rarible.getAllNFTS(rari.allID)
-
-          //
-          total_ids.map(id => {
-            const findRari = rari.items?.find(item => item.id == id)
-            const findNifty = nf.items?.find(item => item.id == id)
-            const findOpensea = os.items?.find(item => item.id == id)
-            const findFoundation = fnd.items?.find(item => item.id == id)
-            const check = {
-              rarible: findRari != undefined ,
-              opensea: findOpensea != undefined ,
-              nifty: findNifty != undefined,
-              foundation: findFoundation != undefined
-            }
-            if (findRari != undefined) {
-              constructNFTlists.push({...findRari, check})
-            } else if (findNifty != undefined) {
-              constructNFTlists.push({...findNifty, check})
-            } else if (findOpensea != undefined) {
-              constructNFTlists.push({...findOpensea, check})
-            } else if (findFoundation != undefined) {
-              constructNFTlists.push({...findFoundation, check})
-            }
-          })
-          setNFTLists(constructNFTlists)
-        }
+      const db = firebase.firestore().collection("creatorParcel").where('profile.shortUrl','==',shortUrl)
+      const document = await db.get()
+      if(document.docs.length > 0){
+        const doc = document.docs[0]
+        const response : any = doc.data()
+        const { profile, ownLists, onsaleLists, dropLists, createdLists, NFTLists } = response
+        setProfile(profile)
+        setOwnLists(ownLists)
+        setOnsaleLists(onsaleLists)
+        setDropLists(dropLists)
+        setCreatedLists(createdLists)
+        setNFTLists(NFTLists)
       }
     })()
   }, []);
 
-  const checkMarket = (action: any, profile: Profile, lists: any, market: string) => {
-    if(lists.allID.length > 0) {
-      let marketCheck: any = profile.marketCheck
-      marketCheck[market] = true
-      action({ ...profile, ...{
-        marketCheck: marketCheck
-      }})
-    }
-  }
-
-  const claimPage = async (address : string | false, userParcel: any) => {
-    if(address != false){
+  const claimPage = async (address : string | undefined, userParcel: any) => {
+    if(address != undefined){
       alert(`claiming >>> ${address}` )
       const db = firebase.firestore().collection("creatorParcel").doc(address)
       console.log(userParcel)
@@ -316,9 +221,9 @@ const Page = observer(({ address, nifty_slug }: {address: string | false, nifty_
             { profile?.verified && <div className="text-gray-500 text-xs mb-5">Verifed by Galleryst</div> }
             <div className="mt-1 mb-6  flex align-middle justify-center m-auto">
               <div className="text-gray-500 text-sm px-3 py-2 bg-white rounded-full shadow-nft">
-                {address}
+                {profile?.address}
               </div>
-              {address == walletStore.address && profile?.verified != true && <button onClick={() => claimPage(address, {
+              {profile?.address == walletStore.address && profile?.verified != true && <button onClick={() => claimPage(profile?.address, {
               // { <button onClick={() => claimPage(address, {
                 profile: {...profile ,verified: true },
                 NFTLists: sanitizeArray(NFTLists),
@@ -374,16 +279,13 @@ const Page = observer(({ address, nifty_slug }: {address: string | false, nifty_
       </div>
     </div>
   </div>
-})
-
+}
 
 export async function getServerSideProps(context: any) {
-  const { address , nifty_slug } = context.query
+
+  const { shortUrl } = context.params
   return {
-    props: {
-      address: address != undefined ? address : false,
-      nifty_slug: nifty_slug != undefined ? nifty_slug : false
-    },
+    props: { shortUrl },
   }
 }
 
