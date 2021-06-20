@@ -158,6 +158,12 @@ export interface Profile {
   version?: number
   emailConfirmed?: boolean
   verified?: boolean
+  marketCheck?: {
+    rarible?: boolean
+    opensea?: boolean
+    foundation?: boolean
+    nifty?: boolean
+  }
   meta?: {
     address?: string
     ownershipsWithStock?: number

@@ -27,13 +27,25 @@ const getUserProfile = async (address: string): Promise<Profile> => {
   const [resp, errResp] = await withError(rarible.userInfo(address))
   const [metaResp, errMetaResp] = await withError(rarible.userMeta(address))
   if (!errResp && !errMetaResp) {
-    return { ...resp.data, pic: raribleImg(resp.data?.pic), meta: metaResp.data }
+    return { ...resp.data, pic: raribleImg(resp.data?.pic), meta: metaResp.data, marketCheck: {} }
   }
   const [fndUser, errFnd] = await withError(foundation.userInfo(address))
   if (!errFnd) {
-    return fndUser
+    return {...fndUser, marketCheck: {}}
   }
-  return {}
+  return { marketCheck: {} }
+}
+
+const sanitizeArray = (objs: Galleryst[]) => {
+  const clean = (obj: any) => {
+    for (var propName in obj) {
+      if (obj[propName] === null || obj[propName] === undefined) {
+        delete obj[propName];
+      }
+    }
+    return obj
+  }
+  return objs.map(obj => clean(obj))
 }
 
 const NFTDrop = ({ lists,text='' } : {lists : Drop[],text: string}) => {
@@ -74,8 +86,8 @@ const NFTGroup = ({ lists, nfts, text='', type='' } : { type?: string, text?: st
   //     sortNfts = nfts
   // }
   return <>
-  { lists.length > 0 && <>
-    <h2 className="text-xl">{text}</h2>
+  { lists.length > 0 && <div className="mx-10 mt-6">
+    <h2 className="text-sm bg-gray-200 rounded-full inline-block mb-2 px-3 py-1 shadow-nft text-gray-600">{text}</h2>
       <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 md:p-4 p-0 gap-2 w-full">
         {nfts.filter(item => lists.includes(item.id)).map(item => {
           const { imagePreview, check } = item
@@ -107,7 +119,7 @@ const NFTGroup = ({ lists, nfts, text='', type='' } : { type?: string, text?: st
         })}
       </div>
       <br />
-    </>}
+    </div>}
   </>
 }
 
@@ -186,6 +198,7 @@ const Page = observer(({ address, nifty_slug }: {address: string | false, nifty_
         setDropLists(nf.drops)
       }
 
+      // Fetch and collect data
       if(address){
         const db = firebase.firestore().collection("creatorParcel").doc(address)
         const document = await db.get()
@@ -199,17 +212,22 @@ const Page = observer(({ address, nifty_slug }: {address: string | false, nifty_
           setCreatedLists(createdLists)
           setNFTLists(NFTLists)
         }else{
-          const userProfile = await getUserProfile(address)
+          let userProfile = await getUserProfile(address)
           setProfile(userProfile)
+
+          checkMarket(setProfile, userProfile, nf, 'nifty')
 
           // Rarible NFTs
           rari = await rarible.ownByAddress(address, { setOwnLists, setOnsaleLists, setCreatedLists })
+          checkMarket(setProfile, userProfile, rari, 'rarible')
 
           // Opensea NFTs
           os = await opensea.ownByAddress(address)
+          checkMarket(setProfile, userProfile, os, 'opensea')
 
           // Foundation NFTs
           fnd = await foundation.ownByAddress(address)
+          checkMarket(setProfile, userProfile, fnd, 'foundation')
 
           // Collect 3 type of NFTs-ID own by owner
           // address format is ${address:token_id}
@@ -248,24 +266,45 @@ const Page = observer(({ address, nifty_slug }: {address: string | false, nifty_
           setNFTLists(constructNFTlists)
         }
       }
-
-
     })()
   }, []);
+
+  const checkMarket = (action: any, profile: Profile, lists: any, market: string) => {
+    if(lists.allID.length > 0) {
+      let marketCheck: any = profile.marketCheck
+      marketCheck[market] = true
+      action({ ...profile, ...{
+        marketCheck: marketCheck
+      }})
+    }
+  }
 
   const claimPage = async (address : string | false, userParcel: any) => {
     if(address != false){
       alert(`claiming >>> ${address}` )
       const db = firebase.firestore().collection("creatorParcel").doc(address)
+      console.log(userParcel)
       await db.set(userParcel)
       alert(`${address} >>> updated!` )
     }
   }
 
+  const load_style = 'border text-gray-400 bg-gray-200'
+  const rarible_style = 'text-black bg-yellow-500'
+  const opensea_style = 'text-white bg-blue-500'
+  const nifty_style = 'text-white bg-blue-700'
+  const foundation_style = 'text-white bg-black'
+
   return <div className="w-screen h-screen pt-8 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")' }}>
     <ConnectBtn />
-    <div className="md:w-4/5 w-full m-auto z-10 ">
-      <div className="rounded-24 border border-white shadow-nft mt-20 pb-10" style={{ background: 'rgba(185, 184, 184, 0.32)', borderRadius: '24px' }}>
+    <div className="md:w-4/5 w-full m-auto z-10 relative">
+      <div className="absolute top-0 right-0 mt-10 -mr-6 flex flex-col">
+        <div className={`h-12 w-12 flex items-center justify-center mb-3 rounded-full shadow-nft text-lg ${profile.marketCheck?.rarible == true ? rarible_style : load_style}`}>R</div>
+        <div className={`h-12 w-12 flex items-center justify-center mb-3 rounded-full shadow-nft text-lg ${profile.marketCheck?.opensea == true ? opensea_style : load_style}`}>O</div>
+        <div className={`h-12 w-12 flex items-center justify-center mb-3 rounded-full shadow-nft text-lg ${profile.marketCheck?.foundation == true ? foundation_style : load_style}`}>F</div>
+        <div className={`h-12 w-12 flex items-center justify-center mb-3 rounded-full shadow-nft text-lg ${profile.marketCheck?.nifty == true ? nifty_style : load_style}`}>N</div>
+      </div>
+      <div className="rounded-24 border border-white shadow-nft mt-20 mb-20 pb-10" style={{ background: 'rgba(185, 184, 184, 0.32)', borderRadius: '24px' }}>
         <div className="bg-white" style={{ borderRadius: '24px 24px 0px 0px' }}>
           <div className="text-center">
             <span className="relative">
@@ -280,9 +319,10 @@ const Page = observer(({ address, nifty_slug }: {address: string | false, nifty_
               <div className="text-gray-500 text-sm px-3 py-2 bg-white rounded-full shadow-nft">
                 {address}
               </div>
-              {address == walletStore.address && <button onClick={() => claimPage(address, {
+              {address == walletStore.address && profile?.verified != true && <button onClick={() => claimPage(address, {
+              // { <button onClick={() => claimPage(address, {
                 profile: {...profile ,verified: true },
-                NFTLists,
+                NFTLists: sanitizeArray(NFTLists),
                 onsaleLists,
                 ownLists,
                 createdLists,
@@ -323,6 +363,7 @@ const Page = observer(({ address, nifty_slug }: {address: string | false, nifty_
         </div>
 
         {/* Gallery */}
+        <div className="h-4"/>
         <NFTGroup type="onsale" text={`On sale (${onsaleLists.length} items)`} lists={onsaleLists} nfts={NFTLists} />
         <NFTGroup type="owned" text={`Own by ${profile?.username} (${ownLists.length} items)`} lists={ownLists} nfts={NFTLists} />
         <NFTGroup type="created" text={`Created (${createdLists.length} items)`} lists={createdLists} nfts={NFTLists} />
