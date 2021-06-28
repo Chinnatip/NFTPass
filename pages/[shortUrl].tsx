@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
-import firebase from "../../method/firebase"
-import { faCheck } from '@fortawesome/free-solid-svg-icons'
-import { Profile } from '../../method/rarible/interface'
-import { Drop} from '../../method/nifty/interface'
-import { Galleryst } from '../../interfaces/index'
+import firebase from "../method/firebase"
+import { faCheck , faCopy, faSync } from '@fortawesome/free-solid-svg-icons'
+import { Profile } from '../method/rarible/interface'
+import { Drop} from '../method/nifty/interface'
+import { Galleryst } from '../interfaces/index'
 import { mask } from 'utils/address.util'
 import { walletStore } from 'stores/wallet.store'
 import { observer } from 'mobx-react-lite'
@@ -155,8 +155,40 @@ const ConnectBtn = observer(() => {
   )
 })
 
+const AddressBox = ({ address }:{ address: string | undefined}) => {
+  const [ show, setShow ] = useState(false)
+  const useCopyToClipboard = ( text: string ) => {
+    navigator.clipboard.writeText(text)
+    setShow(true)
+    setTimeout(() => { setShow(false)}, 1300);
+  }
+  return <div className="text-gray-500 text-sm px-3 py-2 bg-white rounded-full shadow-nft flex items-center relative">
+    { show && <div className="absolute bg-black text-white top-0 right-0 p-1 px-2 -mt-8 -mr-2 text-sm rounded-full">Copied !</div>}
+    <span className="inline-block ml-2">{address}</span>
+    { address && <span
+      className="text-black w-8 h-8 ml-2 inline-flex items-center justify-center inline-block bg-gray-200 hover:bg-gray-400 rounded-full cursor-pointer"
+      onClick={() => { useCopyToClipboard(address != undefined ? address : '')}}>
+      <Icon fill={faCopy} noMargin />
+    </span>}
+  </div>
+}
+
+const UpdateAction = ({ action }:{action: any}) => {
+  const [ show, setShow ] = useState(false)
+  return <div
+    onClick={() => {
+      setShow(true);
+      setTimeout(() => { setShow(false)}, 4000);
+    }}
+    className="absolute top-0 right-0 mt-5 mr-5 flex items-center button-red py-2 px-3 rounded-full cursor-pointer text-sm font-semibold">
+    { show && <div className="absolute bg-black text-white top-0 right-0 p-1 px-2 -mt-10 text-sm rounded-full">Processing please wait ...</div>}
+    <Icon fill={faSync} /> Update address Info
+  </div>
+}
+
 const Page  = ({ shortUrl }: { shortUrl: string }) => {
   const [profile, setProfile] = useState<Profile>({})
+  const [show, setShow] = useState('collection')
   const [NFTLists, setNFTLists] = useState<Galleryst[]>([])
   const [ownLists, setOwnLists] = useState<string[]>([])
   const [onsaleLists, setOnsaleLists] = useState<string[]>([])
@@ -165,8 +197,6 @@ const Page  = ({ shortUrl }: { shortUrl: string }) => {
 
   useEffect(() => {
     (async () => {
-
-
       const db = firebase.firestore().collection("creatorParcel").where('profile.shortUrl','==',shortUrl)
       const document = await db.get()
       if(document.docs.length > 0){
@@ -202,14 +232,9 @@ const Page  = ({ shortUrl }: { shortUrl: string }) => {
   return <div className="w-screen h-screen pt-8 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")' }}>
     <ConnectBtn />
     <div className="md:w-4/5 w-full m-auto z-10 relative">
-      <div className="absolute top-0 right-0 mt-10 -mr-6 flex flex-col">
-        <div className={`h-12 w-12 flex items-center justify-center mb-3 rounded-full shadow-nft text-lg ${profile.marketCheck?.rarible == true ? rarible_style : load_style}`}>R</div>
-        <div className={`h-12 w-12 flex items-center justify-center mb-3 rounded-full shadow-nft text-lg ${profile.marketCheck?.opensea == true ? opensea_style : load_style}`}>O</div>
-        <div className={`h-12 w-12 flex items-center justify-center mb-3 rounded-full shadow-nft text-lg ${profile.marketCheck?.foundation == true ? foundation_style : load_style}`}>F</div>
-        <div className={`h-12 w-12 flex items-center justify-center mb-3 rounded-full shadow-nft text-lg ${profile.marketCheck?.nifty == true ? nifty_style : load_style}`}>N</div>
-      </div>
+      <UpdateAction action={{ setProfile,setOwnLists,setOnsaleLists,setDropLists,setCreatedLists,setNFTLists }} />
       <div className="rounded-24 border border-white shadow-nft mt-20 mb-20 pb-10" style={{ background: 'rgba(185, 184, 184, 0.32)', borderRadius: '24px' }}>
-        <div className="bg-white" style={{ borderRadius: '24px 24px 0px 0px' }}>
+        <div className="bg-white pb-6" style={{ borderRadius: '24px 24px 0px 0px' }}>
           <div className="text-center">
             <span className="relative">
               <img src={profile?.pic} className="inline-block h-20 w-20 border-4 border-white shadow-nft rounded-full -mt-12 object-cover" />
@@ -220,9 +245,9 @@ const Page  = ({ shortUrl }: { shortUrl: string }) => {
             <div className="text-3xl">{profile?.username}</div>
             { profile?.verified && <div className="text-gray-500 text-xs mb-5">Verifed by Galleryst</div> }
             <div className="mt-1 mb-6  flex align-middle justify-center m-auto">
-              <div className="text-gray-500 text-sm px-3 py-2 bg-white rounded-full shadow-nft">
-                {profile?.address}
-              </div>
+
+              <AddressBox address={profile?.address} />
+
               {profile?.address == walletStore.address && profile?.verified != true && <button onClick={() => claimPage(profile?.address, {
               // { <button onClick={() => claimPage(address, {
                 profile: {...profile ,verified: true },
@@ -251,27 +276,40 @@ const Page  = ({ shortUrl }: { shortUrl: string }) => {
             {/* Tabbar */}
             <div className="mb-8 inline-block" >
               <button
-                className={`bg-white shadow-nft mx-2 px-3 py-2 font-semibold text-sm focus:outline-none appearance-none rounded-full `}>Collections
+                onClick={() => setShow('collection')}
+                className={`${show == 'collection' ? 'bg-black text-white' : 'bg-white'} shadow-nft mx-2 px-3 py-2 font-semibold text-sm focus:outline-none appearance-none rounded-full `}>Collections
                 <span className="p-1 ml-1 w-8 rounded-full bg-gray-main text-white inline-block">{ownLists.length}</span>
               </button>
               <button
-                className={`bg-white shadow-nft mx-2 px-3 py-2 font-semibold text-sm focus:outline-none appearance-none rounded-full `}>Creates
+                onClick={() => setShow('creates')}
+                className={`${show == 'creates' ? 'bg-black text-white' : 'bg-white'}  shadow-nft mx-2 px-3 py-2 font-semibold text-sm focus:outline-none appearance-none rounded-full `}>Creates
                 <span className="p-1 ml-1 w-8 rounded-full bg-gray-main text-white inline-block">{createdLists.length}</span>
               </button>
               { dropLists.length > 0 && <button
-                className={`bg-white shadow-nft mx-2 px-3 py-2 font-semibold text-sm focus:outline-none appearance-none rounded-full `}>Drops
+                onClick={() => setShow('drops')}
+                className={`${show == 'drops' ? 'bg-black text-white' : 'bg-white'}  shadow-nft mx-2 px-3 py-2 font-semibold text-sm focus:outline-none appearance-none rounded-full `}>Drops
                 <span className="p-1 ml-1 w-8 rounded-full bg-gray-main text-white inline-block">{dropLists.length}</span>
               </button>}
             </div>
           </div>
         </div>
 
+        {/* NFT controller */}
+         <div className="py-3 text-center flex justify-center items-center bg-gray-100">
+          <span className="text-sm text-gray-500 mr-2">Filter by marletplace</span>
+          <div className={`h-12 w-12 mx-2 flex items-center justify-center rounded-full shadow-nft text-lg ${profile.marketCheck?.rarible == true ? rarible_style : load_style}`}>R</div>
+          <div className={`h-12 w-12 mx-2 flex items-center justify-center rounded-full shadow-nft text-lg ${profile.marketCheck?.opensea == true ? opensea_style : load_style}`}>O</div>
+          <div className={`h-12 w-12 mx-2 flex items-center justify-center rounded-full shadow-nft text-lg ${profile.marketCheck?.foundation == true ? foundation_style : load_style}`}>F</div>
+          <div className={`h-12 w-12 mx-2 flex items-center justify-center rounded-full shadow-nft text-lg ${profile.marketCheck?.nifty == true ? nifty_style : load_style}`}>N</div>
+        </div>
+
         {/* Gallery */}
         <div className="h-4"/>
-        <NFTGroup type="onsale" text={`On sale (${onsaleLists.length} items)`} lists={onsaleLists} nfts={NFTLists} />
-        <NFTGroup type="owned" text={`Own by ${profile?.username} (${ownLists.length} items)`} lists={ownLists} nfts={NFTLists} />
-        <NFTGroup type="created" text={`Created (${createdLists.length} items)`} lists={createdLists} nfts={NFTLists} />
-        <NFTDrop text={`Nifty drops (${dropLists.length} items)`} lists={dropLists} />
+        {show == 'drops' &&<NFTDrop text={`Nifty drops (${dropLists.length} items)`} lists={dropLists} />}
+        {show == 'collection' &&<>
+          <NFTGroup type="onsale" text={`On sale (${onsaleLists.length} items)`} lists={onsaleLists} nfts={NFTLists} />
+          <NFTGroup type="owned" text={`Own by ${profile?.username} (${ownLists.length} items)`} lists={ownLists} nfts={NFTLists} /></>}
+        {show == 'creates' && <NFTGroup type="created" text={`Created (${createdLists.length} items)`} lists={createdLists} nfts={NFTLists} />}
 
         {/* Footer */}
         <div className="text-white text-center text-sm mt-8">© 2021 Galleryst.com, All rights reserved.</div>
