@@ -98,14 +98,14 @@ const Page = ({ address }: { address: string }) => {
         <a href={`/profile?address=${nft?.item?.creator}`} className="bg-blue-500 p-3 text-white rounded-xl">See creator profile</a>
       </div>
 
-      <div className="m-auto w-2/3 flex lg:flex-row flex-col justify-between">
+      <div className="m-auto w-2/3 flex lg:flex-row-reverse flex-col justify-between">
         <div className="lg:w-1/2 w-full">
           <h1 className="text-xl">{nft?.properties?.name}</h1>
-          <div className="text-gray-500 mb-4">{address}</div>
+          <div className="text-gray-500 mb-4 break-words">{address}</div>
           <h3>{nft?.properties?.description}</h3>
         </div>
         <br />
-        <div className="lg:w-1/2 w-full lg:pl-6 pl-0 lg:sticky">
+        <div className="lg:w-1/2 w-full lg:pr-6 pr-0 lg:sticky">
           {nft?.item?.ownership?.priceEth != undefined && <div className="flex text-2xl ">
             <span className="flex-grow">
               {nft?.item?.ownership?.status}
