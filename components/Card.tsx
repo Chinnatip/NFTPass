@@ -3,7 +3,7 @@ import { NFT, Creator, priceCal } from '../method/fetchJSON'
 import { useRouter } from 'next/router'
 import Modal from './CardModal'
 
-export default ({ src, nfts_lists, creator }: {
+const Card = ({ src, nfts_lists, creator }: {
   src: NFT,
   nfts_lists: NFT[],
   creator: Creator | undefined
@@ -41,3 +41,5 @@ export default ({ src, nfts_lists, creator }: {
     </div>
   </>
 }
+
+export default Card

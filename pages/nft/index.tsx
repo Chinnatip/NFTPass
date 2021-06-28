@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react'
 import { RaribleNFTFull, ProfileList, BestOffer, Activity } from '../../method/rarible/interface'
 import { raribleImg } from '../../method/rarible/method'
 import * as rarible from '../../method/rarible/fetch'
+import * as opensea from '../../method/opensea/fetch'
 import dayjs from 'dayjs'
-import { profile } from 'node:console'
-import { name } from 'dayjs/locale/*'
+// import { profile } from 'node:console'
+// import { name } from 'dayjs/locale/*'
 
 const Page = ({ address }: { address: string }) => {
   const [nft, setNFT] = useState<RaribleNFTFull>()
@@ -13,6 +14,8 @@ const Page = ({ address }: { address: string }) => {
   const [users, setUsers] = useState<ProfileList[]>([])
   const [offer, setOffer] = useState<BestOffer>()
   const [activities, setActivity] = useState<Activity[]>([])
+
+  // const [_, setOpenseaList] = useState([])
 
   useEffect(() => {
     (async () => {
@@ -62,6 +65,11 @@ const Page = ({ address }: { address: string }) => {
         profileGet = [...profileGet, ...otherProfileGet]
       }
       setUsers(profileGet)
+
+      // Opensea
+      const openseaResp = await opensea.nftDetail(address)
+      console.log(openseaResp.data)
+      // setOpenseaList(openseaResp.data)
 
     })()
   }, []);

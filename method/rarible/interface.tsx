@@ -1,3 +1,13 @@
+import { Galleryst } from '../../interfaces/index'
+
+export interface RaribleGetResponse {
+  onsale: string[]
+  created: string[]
+  owned: string[]
+  allID: string[]
+  items?: Galleryst[]
+}
+
 export interface Offer {
   "token": string
   "tokenId": string
@@ -147,6 +157,13 @@ export interface Profile {
   receiveEmailNotifications?: boolean
   version?: number
   emailConfirmed?: boolean
+  verified?: boolean
+  marketCheck?: {
+    rarible?: boolean
+    opensea?: boolean
+    foundation?: boolean
+    nifty?: boolean
+  }
   meta?: {
     address?: string
     ownershipsWithStock?: number
