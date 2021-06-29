@@ -39,7 +39,7 @@ export const ownByAddress = async(address: string) => {
         return false
       }})
     .map(item => `${item.asset_contract.address}:${item.token_id}`)
-  console.log(created)
+  // console.log(created)
   return {
     onsale: items.filter(({ sell_orders }) => sell_orders != undefined ).map(item => `${item.asset_contract.address}:${item.token_id}`) ,
     created ,
