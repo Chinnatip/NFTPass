@@ -19,6 +19,12 @@ export const withError = async <T extends {}>(
   }
 }
 
+/**
+ * @description simulate sleep behavior
+ * @param ms 
+ * @example
+ * await sleep(3000) // 3 seconds
+ */
 export const sleep = (ms: number): Promise<void> => {
   return new Promise(resolve => setTimeout(resolve, ms))
 }

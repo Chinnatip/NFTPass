@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { ethers, utils } from 'ethers'
+import { gallerystStore } from 'stores/galleryst.store'
 import { walletStore } from 'stores/wallet.store'
 
 class WalletService {
@@ -34,7 +35,7 @@ class WalletService {
   }
 
   connect = async (addressToConnect: string) => {
-    if (!addressToConnect ||walletStore.accounts.length === 0) {
+    if (!addressToConnect || walletStore.accounts.length === 0) {
       await this.getAccounts()
     }
     if (!walletStore.accounts.includes(addressToConnect)) {
@@ -61,6 +62,8 @@ class WalletService {
     if (data.verified) {
       walletStore.setAddress(addressToConnect)
       walletStore.setVerified(true)
+      walletStore.updateSigner()
+      gallerystStore.updateNftContract()
     }
   }
 
