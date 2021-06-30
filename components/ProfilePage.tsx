@@ -12,7 +12,7 @@ const ProfilePage = ({ profile, wallet, action, lists }: {
   const [toggle, setToggle] = useState('collection')
   const { onsaleLists, ownLists, createdLists, dropLists, NFTLists } = lists
   const parcel = {
-    profile: {...profile ,verified: true },
+    profile: { ...profile, verified: true },
     NFTLists: sanitizeArray(NFTLists),
     onsaleLists,
     ownLists,
@@ -33,7 +33,7 @@ const ProfilePage = ({ profile, wallet, action, lists }: {
           <div className="mb-8 inline-block" >
             <Toggle text="Collections" trigger="collection" action={setToggle} toggle={toggle} amount={ownLists.length} />
             <Toggle text="Creates" trigger="creates" action={setToggle} toggle={toggle} amount={createdLists.length} />
-            { dropLists.length > 0 &&
+            {dropLists.length > 0 &&
               <Toggle text="Drops" trigger="drops" action={setToggle} toggle={toggle} amount={dropLists.length} />
             }
           </div>
@@ -42,7 +42,7 @@ const ProfilePage = ({ profile, wallet, action, lists }: {
 
       {/* NFT controller */}
       <div className="py-3 text-center flex justify-center items-center bg-gray-100">
-        <span className="text-sm text-gray-500 mr-2">Filter by marletplace</span>
+        <span className="text-sm text-gray-500 mr-1">Filter by marletplace</span>
         <Filter platform="rarible" profile={profile} />
         <Filter platform="opensea" profile={profile} />
         <Filter platform="foundation" profile={profile} />
@@ -50,11 +50,11 @@ const ProfilePage = ({ profile, wallet, action, lists }: {
       </div>
 
       {/* Gallery */}
-      <div className="h-4"/>
-      {toggle == 'drops' &&<NFTDrop text={`Nifty drops (${dropLists.length} items)`} lists={dropLists} />}
-      {toggle == 'collection' &&<>
-        <NFTGroup type="onsale" text={`On sale (${onsaleLists.length} items)`} lists={onsaleLists} nfts={NFTLists} />
+      <div className="h-4" />
+      {toggle == 'drops' && <NFTDrop text={`Nifty drops (${dropLists.length} items)`} lists={dropLists} />}
+      {toggle == 'collection' && <>
         <NFTGroup type="owned" text={`Own by ${profile?.username} (${ownLists.length} items)`} lists={ownLists} nfts={NFTLists} /></>}
+      <NFTGroup type="onsale" text={`On sale (${onsaleLists.length} items)`} lists={onsaleLists} nfts={NFTLists} />
       {toggle == 'creates' && <NFTGroup type="created" text={`Created (${createdLists.length} items)`} lists={createdLists} nfts={NFTLists} />}
 
       {/* Footer */}

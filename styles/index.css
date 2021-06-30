@@ -1527,3 +1527,54 @@ img.fit-wh-img {
 button:focus {
   outline: none !important;
 }
+
+.logo-48 {
+  min-width: 48px;
+}
+
+.rarible-logo {
+  background-size: 100% 100%;
+  background-size: cover;
+  background-image: url('public/image/rarible_logo.png');
+}
+
+.opensea-logo {
+  background-size: 100% 100%;
+  background-size: cover;
+  background-image: url('public/image/opensea_logo.png');
+}
+
+.foundation-logo {
+  background-size: 100% 100%;
+  background-size: cover;
+  background-image: url('public/image/foundation_logo.png');
+}
+
+.nifty-logo {
+  background-size: 100% 100%;
+  background-size: cover;
+  background-image: url('public/image/niftygateway_logo.png');
+}
+
+.address-text-wrapper {
+  width: 7em;
+  white-space:nowrap;
+}
+
+div.address-text-wrapper > span {
+  white-space: nowrap;
+  overflow: hidden;
+  vertical-align:middle;
+}
+
+.ellipsis {
+  display: inline-block;
+  width: calc(50% + 0.2em);
+  text-overflow: ellipsis;
+}
+
+.indent {
+  display:inline-flex;
+  width: calc(50% - 1em);
+  justify-content:flex-end;
+}
