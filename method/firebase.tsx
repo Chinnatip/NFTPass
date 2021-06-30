@@ -19,4 +19,20 @@ try {
     console.error('Firebase initialization error', err.stack)}
 }
 const fire = firebase;
+
+export const findbyAddress = async (doc: string, address: string) => {
+  const db = fire.firestore().collection(doc).doc(address)
+  return await db.get()
+}
+
+export const findDocument = async (doc: string, shortUrl: string, rules: string) => {
+  const db = fire.firestore().collection(doc).where(rules,'==',shortUrl)
+  return await db.get()
+}
+
+export const writeDocument = async (doc: string, address: string, parcel: any) => {
+  const db = firebase.firestore().collection(doc).doc(address)
+  await db.set(parcel)
+}
+
 export default fire;

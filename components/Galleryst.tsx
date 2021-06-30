@@ -1,33 +1,104 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useRef } from 'react'
 import * as firebase from "../method/firebase"
-import { Profile } from '../method/rarible/interface'
-import { Drop} from '../method/nifty/interface'
-import { Galleryst } from '../interfaces/index'
-<<<<<<< HEAD
+import { faCopy, faSync, faCheck } from '@fortawesome/free-solid-svg-icons'
+import { claimPage } from '../method/integrate'
 import { mask } from 'utils/address.util'
 import { walletStore } from 'stores/wallet.store'
 import { observer } from 'mobx-react-lite'
 import { walletService } from 'services/wallet.service'
 import { createPopper } from '@popperjs/core'
+import { Profile } from '../method/rarible/interface'
+import { creatorFetch } from '../method/integrate'
+import { Galleryst } from '../interfaces/index'
+import { Drop} from '../method/nifty/interface'
 import Icon from '@/Icon'
 
 const lockDigit = (price: number) => {
   return (Math.floor( price * 10000) )/ 10000
 }
 
-const sanitizeArray = (objs: Galleryst[]) => {
-  const clean = (obj: any) => {
-    for (var propName in obj) {
-      if (obj[propName] === null || obj[propName] === undefined) {
-        delete obj[propName];
-      }
-    }
-    return obj
-  }
-  return objs.map(obj => clean(obj))
+// HEADER
+export const CreatorHeader = ({profile, parcel, claimable=false }:{ profile: Profile, parcel?: any , claimable?: boolean}) => {
+  const [ claiming, setClaim ] = useState(false)
+  return <>
+    {/* Creator profile image */}
+    <span className="relative">
+      <img src={profile?.pic} className="inline-block h-20 w-20 border-4 border-white shadow-nft rounded-full -mt-12 object-cover" />
+      { profile?.verified && <span className="absolute -mr-2 -mb-2 bottom-0 right-0 h-6 w-6 inline-flex justify-center items-center bg-green-400 rounded-full text-white shadow-nft">
+        <Icon fill={faCheck} noMargin></Icon>
+      </span> }
+    </span>
+
+    {/* Creator name */}
+    <div className="text-3xl">{profile?.username}</div>
+
+    {/* Verify sign */}
+    { profile?.verified && <div className="text-gray-500 text-xs mb-5">Verifed by Galleryst</div> }
+
+    {/* Address and claim */}
+    <div className="mt-1 mb-6  flex align-middle justify-center m-auto relative">
+      <AddressBox address={profile?.address} />
+      { claimable && <ClaimBox address={profile.address} profile={parcel} action={setClaim} /> }
+      { claiming && <div className="absolute bg-black text-white py-2 px-6 opacity-75 rounded-full top-0 left-0 -mt-12" style={{ left: '50%',transform: 'translateX(-50%)' }}>Claiming ....</div>}
+    </div>
+
+    {/* Contact url */}
+    <div className="p-4 pt-0">
+      <div className="md:px-8 px-1">{profile?.description}</div>
+      <a target="_blank" className="my-2 inline-block text-blue-700" href={profile?.website}>{profile?.website}</a>
+    </div>
+
+    {/* Follower */}
+    { profile?.meta?.followers != undefined && profile?.meta?.followers > 0 && <div className="p-4 pt-0 text-sm text-gray-500">
+      <div className="md:px-8 px-1">
+        {profile?.meta?.followers} followers | {profile?.meta?.followings} followings
+      </div>
+    </div>}
+  </>
 }
 
-const NFTDrop = ({ lists,text='' } : {lists : Drop[],text: string}) => {
+// TOGGLE TAB
+export const Toggle = ({ trigger, text, action, toggle, amount }:{ trigger: string, text: string, action: any, toggle: string, amount: number}) => {
+  return <button
+    onClick={() => action(trigger)}
+    className={`${toggle == trigger ? 'bg-black text-white' : 'bg-white'} shadow-nft mx-2 px-3 py-2 font-semibold text-sm focus:outline-none appearance-none rounded-full `}>
+      {text}
+    <span className="p-1 ml-1 w-8 rounded-full bg-gray-main text-white inline-block">
+      {amount}
+    </span>
+  </button>
+}
+
+// ADDRESS BOX
+export const AddressBox = ({ address }:{ address: string | undefined}) => {
+  const [ show, setShow ] = useState(false)
+  const useCopyToClipboard = ( text: string ) => {
+    navigator.clipboard.writeText(text)
+    setShow(true)
+    setTimeout(() => { setShow(false)}, 1300);
+  }
+  return <div className="text-gray-500 text-sm px-3 py-2 bg-white rounded-full shadow-nft flex items-center relative">
+    { show && <div className="absolute bg-black text-white top-0 right-0 p-1 px-2 -mt-8 -mr-2 text-sm rounded-full">Copied !</div>}
+    <span className="inline-block ml-2">{address}</span>
+    { address && <span
+      className="text-black w-8 h-8 ml-2 inline-flex items-center justify-center inline-block bg-gray-200 hover:bg-gray-400 rounded-full cursor-pointer"
+      onClick={() => { useCopyToClipboard(address != undefined ? address : '')}}>
+      <Icon fill={faCopy} noMargin />
+    </span>}
+  </div>
+}
+
+// CLAIM BOX
+const ClaimBox = ({ address , profile, action }: {address: string | undefined, profile: any , action: any }) => {
+  return <button
+    onClick={() => address != undefined && claimPage(address, profile, action)}
+    className="bg-black text-sm text-white rounded-full inline-block px-3 py-2 ml-3">
+    Claim this address
+  </button>
+}
+
+// NFT DROPS
+export const NFTDrop = ({ lists,text='' } : {lists : Drop[],text: string}) => {
   return <>
   { lists.length > 0 && <>
     <h2 className="text-xl">{text}</h2>
@@ -53,16 +124,8 @@ const NFTDrop = ({ lists,text='' } : {lists : Drop[],text: string}) => {
   </>
 }
 
-// Group Component
-const NFTGroup = ({ lists, nfts, text='', type='' } : { type?: string, text?: string, lists: string[], nfts: Galleryst[]}) => {
-  // let sortNfts = nfts
-  // switch(type){
-  //   case 'onsale':
-  //     sortNfts = nfts.sort((a,b) => (b.priceETH != undefined && a.priceETH != undefined) ? b.priceETH - a.priceETH : 0 )
-  //     break
-  //   default:
-  //     sortNfts = nfts
-  // }
+// NFT GROUP
+export const NFTGroup = ({ lists, nfts, text='', type='' } : { type?: string, text?: string, lists: string[], nfts: Galleryst[]}) => {
   return <>
   { lists.length > 0 && <div className="mx-10 mt-6">
     <h2 className="text-sm bg-gray-200 rounded-full inline-block mb-2 px-3 py-1 shadow-nft text-gray-600">{text}</h2>
@@ -101,7 +164,8 @@ const NFTGroup = ({ lists, nfts, text='', type='' } : { type?: string, text?: st
   </>
 }
 
-const ConnectBtn = observer(() => {
+// CONNECT TO WALLET BUTTON
+export const ConnectBtn = observer(() => {
   const [show, setShow] = useState(false)
   const btnRef = useRef(null)
   const popperRef = useRef(null)
@@ -117,7 +181,7 @@ const ConnectBtn = observer(() => {
       <button
         ref={btnRef}
         onClick={handleClick}
-        style={{ color: '#9A6B6B', backgroundColor: '#9A6B6B29' }}
+        style={{ color: '#9A6B6B', backgroundColor: '#C7AAAA' }}
         className={`py-2 px-3 mx-5 font-semibold text-sm focus:outline-none appearance-none rounded-full `}
       >
         {walletStore.verified ? `${mask(walletStore.address)} | ${walletStore.readableBalance}` : 'Connect' }
@@ -155,80 +219,48 @@ const ConnectBtn = observer(() => {
   )
 })
 
-const AddressBox = ({ address }:{ address: string | undefined}) => {
+// UPDATE ACTION
+export const UpdateAction = ({ action, profile }:{action: any, profile: Profile}) => {
   const [ show, setShow ] = useState(false)
-  const useCopyToClipboard = ( text: string ) => {
-    navigator.clipboard.writeText(text)
-    setShow(true)
-    setTimeout(() => { setShow(false)}, 1300);
-  }
-  return <div className="text-gray-500 text-sm px-3 py-2 bg-white rounded-full shadow-nft flex items-center relative">
-    { show && <div className="absolute bg-black text-white top-0 right-0 p-1 px-2 -mt-8 -mr-2 text-sm rounded-full">Copied !</div>}
-    <span className="inline-block ml-2">{address}</span>
-    { address && <span
-      className="text-black w-8 h-8 ml-2 inline-flex items-center justify-center inline-block bg-gray-200 hover:bg-gray-400 rounded-full cursor-pointer"
-      onClick={() => { useCopyToClipboard(address != undefined ? address : '')}}>
-      <Icon fill={faCopy} noMargin />
-    </span>}
-  </div>
-}
-
-const UpdateAction = ({ action }:{action: any}) => {
-  const [ show, setShow ] = useState(false)
+  const { address } = profile
   return <div
-    onClick={() => {
-      setShow(true);
-      setTimeout(() => { setShow(false)}, 4000);
+    onClick={async () => {
+      setShow(true)
+      if (address != undefined){
+        const parcel = await creatorFetch(address, action, false, profile)
+        await firebase.writeDocument("creatorParcel",address, parcel)
+      }
+      setShow(false)
     }}
     className="absolute top-0 right-0 mt-5 mr-5 flex items-center button-red py-2 px-3 rounded-full cursor-pointer text-sm font-semibold">
     { show && <div className="absolute bg-black text-white top-0 right-0 p-1 px-2 -mt-10 text-sm rounded-full">Processing please wait ...</div>}
     <Icon fill={faSync} /> Update address Info
   </div>
 }
-=======
-import { ConnectBtn } from '@/Galleryst'
-import ProfilePage from '@/ProfilePage'
->>>>>>> 215ffdbe8582132ed10e1aa8ffcebb101a43c2ea
 
-const Page  = ({ shortUrl }: { shortUrl: string }) => {
-  const [profile, setProfile] = useState<Profile>({})
-  const [NFTLists, setNFTLists] = useState<Galleryst[]>([])
-  const [ownLists, setOwnLists] = useState<string[]>([])
-  const [onsaleLists, setOnsaleLists] = useState<string[]>([])
-  const [createdLists, setCreatedLists] = useState<string[]>([])
-  const [dropLists, setDropLists] = useState<Drop[]>([])
-  const stateLists = { NFTLists , ownLists, onsaleLists, createdLists , dropLists }
-  const stateAction = { setProfile, setOwnLists, setOnsaleLists, setDropLists, setCreatedLists, setNFTLists }
-  useEffect(() => {
-    (async () => {
-      const document = await firebase.findDocument("creatorParcel", shortUrl, "profile.shortUrl")
-      if(document.docs.length > 0){
-        const doc = document.docs[0]
-        const response : any = doc.data()
-        const { profile, ownLists, onsaleLists, dropLists, createdLists, NFTLists } = response
-        setProfile(profile)
-        setOwnLists(ownLists)
-        setOnsaleLists(onsaleLists)
-        setDropLists(dropLists)
-        setCreatedLists(createdLists)
-        setNFTLists(NFTLists)
-      }
-    })()
-  }, []);
-
-  return <div className="w-screen h-screen pt-8 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")' }}>
-    <ConnectBtn />
-    <ProfilePage profile={profile} action={stateAction} lists={stateLists} />
+// FILTER PLATFORM
+export const Filter = ({ platform, profile }: { platform: 'rarible' | 'opensea' | 'foundation' | 'nifty' , profile: Profile}) => {
+  const market : {
+    rarible?: boolean
+    opensea?: boolean
+    foundation?: boolean
+    nifty?: boolean
+  } = profile.marketCheck != undefined ? profile.marketCheck : {}
+  const check = (platform:  'rarible' | 'opensea' | 'foundation' | 'nifty'  ) => {
+    switch(platform){
+      case 'rarible':
+        return { style: 'text-black bg-yellow-500' , text: 'R' }
+      case 'opensea':
+        return { style: 'text-white bg-blue-500' , text: 'O' }
+      case 'foundation':
+        return { style: 'text-white bg-black' , text: 'F' }
+      case 'nifty':
+        return { style: 'text-white bg-blue-700' , text: 'N' }
+    }
+  }
+  const default_style = 'border text-gray-400 bg-gray-200'
+  const { text,style } = check(platform)
+  return <div className={`h-12 w-12 mx-2 flex items-center justify-center rounded-full shadow-nft text-lg ${market[platform] ? style : default_style}`}>
+    {text}
   </div>
 }
-
-export async function getServerSideProps(context: any) {
-
-  const { shortUrl } = context.params
-  return {
-    props: { shortUrl },
-  }
-}
-
-
-export default Page

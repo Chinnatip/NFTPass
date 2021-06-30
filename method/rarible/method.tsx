@@ -8,3 +8,12 @@ export const raribleImg = (pic: string | undefined ) => {
     return ''
   }
 }
+
+export const raribleCover = (pic: string | undefined ) => {
+  const parsePic = pic?.split('/ipfs/')
+  if(parsePic != undefined){
+    return `${RARIBLE_IMG_PREFIX}${parsePic[1]}`
+  }else{
+    return ''
+  }
+}

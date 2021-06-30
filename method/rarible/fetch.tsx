@@ -1,60 +1,14 @@
 import axios from 'axios'
-import { RaribleNFT, RaribleNFTFull } from './interface'
+import { RaribleNFTFull } from './interface'
 import { RARIBLE_PREFIX } from './static'
 import { Galleryst } from '../../interfaces/index'
 
 export const userInfo = async (address: string) => {
-  const resp = await axios.get(`${RARIBLE_PREFIX}users/${address}`)
-  console.log(resp.status)
+  const resp = await axios.get(`/api/rarible/profile?address=${address}`)
   return resp
 }
 
-export const userMeta = async (address: string) => await axios.get(`${RARIBLE_PREFIX}profiles/${address}/meta`)
-
-const itemID = (items : RaribleNFT[]) => items.map(item => `${item.token}:${item.tokenId}`)
-
-const extractID = (resp : { data: RaribleNFT[] | undefined }) => {
-  return resp.data != undefined ? itemID(resp.data) : []
-}
-
-export const ownershipBy = async (address: string): Promise<string[]> => {
-  const resp = await axios.post(`${RARIBLE_PREFIX}ownerships/simple`, {
-    "size":100,
-    "filter":{
-        "@type":"by_owner",
-        "address": address,
-        "incoming":true,
-        "inStockOnly":false,
-        "hideOnly":false
-    }
-  })
-  return extractID(resp)
-}
-
-export const onsaleBy = async (address: string): Promise<string[]> => {
-  const resp = await axios.post(`${RARIBLE_PREFIX}ownerships/simple`, {
-    "size":100,
-    "filter":{
-      "@type":"by_owner",
-      "address": address,
-      "incoming":true,
-      "inStockOnly":true,
-      "hideOnly":false
-    }
-  })
-  return extractID(resp)
-}
-
-export const createdBy = async (address: string): Promise<string[]> => {
-  const resp = await axios.post(`${RARIBLE_PREFIX}items`, {
-    "size":100,
-    "filter":{
-      "@type":"by_creator",
-      "creator": address
-    }
-  })
-  return extractID(resp)
-}
+export const userMeta = async (address: string) => await axios.get(`/api/rarible/meta?address=${address}`)
 
 export const collectNFTS = async (lists: string[]) => axios({
   method: 'post',
@@ -95,11 +49,9 @@ export const ownByAddress = async(address: string, action: {
   setOnsaleLists: any,
   setCreatedLists: any,
 }) => {
-  const owned = await ownershipBy(address)
-  const onsale = await onsaleBy(address)
-  const created = await createdBy(address)
+  const resp = await axios.get(`/api/rarible/nfts?address=${address}`)
+  const { owned, onsale, created } = resp.data
   const allID = [...new Set([...owned, ...onsale, ...created])]
-
   action.setOwnLists(owned)
   action.setOnsaleLists(onsale)
   action.setCreatedLists(created)
@@ -108,29 +60,11 @@ export const ownByAddress = async(address: string, action: {
 }
 
 export const getAllNFTS = async (rari: string[]) => {
-  const raribleResp = await collectNFTS(rari)
+  const raribleResp = await axios.post(`/api/rarible/nfts`, {
+    lists: rari
+  }) // await collectNFTS(rari)
   return raribleResp.data != undefined ? constructRarible(raribleResp.data) : []
 }
-
-// export const collectBy = async (address: string, type: string) => {
-//   let response
-//   switch (type) {
-//     case 'ownership':
-//       response = await ownershipBy(address)
-//       break;
-//     case 'onsale':
-//       response = await onsaleBy(address)
-//       break;
-//     case 'created':
-//       response = await createdBy(address)
-//       break;
-//     default:
-//       response = undefined
-//   }
-//   const responseData : RaribleNFT[]  = response?.data != undefined ? response.data : []
-//   const unique : string[] = [...new Set( responseData.map(item => `${item.token}:${item.tokenId}`))]
-//   return unique
-// }
 
 export const getNFTactivity = async (token : string, token_id : string) => await axios.post(`${RARIBLE_PREFIX}activity`, {
   types:["BID","BURN","BUY","CANCEL","CANCEL_BID","ORDER","MINT","TRANSFER","SALE"],
