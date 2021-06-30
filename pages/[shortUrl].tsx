@@ -117,7 +117,7 @@ const ConnectBtn = observer(() => {
       <button
         ref={btnRef}
         onClick={handleClick}
-        style={{ color: '#9A6B6B', backgroundColor: '#C7AAAA' }}
+        style={{ color: '#9A6B6B', backgroundColor: '#9A6B6B29' }}
         className={`py-2 px-3 mx-5 font-semibold text-sm focus:outline-none appearance-none rounded-full `}
       >
         {walletStore.verified ? `${mask(walletStore.address)} | ${walletStore.readableBalance}` : 'Connect' }
