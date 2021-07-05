@@ -148,6 +148,7 @@ export interface Profile {
   shortUrl?: string
   pic?: string
   cover?: string
+  email?: string
   followings?: number
   followers?: number
   acceptedTerms?: number

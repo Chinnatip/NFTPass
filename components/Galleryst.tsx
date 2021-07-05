@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react'
 import * as firebase from "../method/firebase"
-import { faCopy, faSync, faCheck } from '@fortawesome/free-solid-svg-icons'
-import { claimPage } from '../method/integrate'
+import { faCopy, faSync, faCheck, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { mask } from 'utils/address.util'
 import { walletStore } from 'stores/wallet.store'
 import { observer } from 'mobx-react-lite'
@@ -19,7 +18,7 @@ const lockDigit = (price: number) => {
 
 // HEADER
 export const CreatorHeader = ({ profile, parcel, claimable = false }: { profile: Profile, parcel?: any, claimable?: boolean }) => {
-  const [claiming, setClaim] = useState(false)
+  const [claimStage, setClaimStage] = useState(false)
   return <>
     {/* Creator profile image */}
     <span className="relative">
@@ -38,8 +37,8 @@ export const CreatorHeader = ({ profile, parcel, claimable = false }: { profile:
     {/* Address and claim */}
     <div className="mt-1 mb-6  flex align-middle justify-center m-auto relative">
       <AddressBox address={profile?.address} />
-      {claimable && <ClaimBox address={profile.address} profile={parcel} action={setClaim} />}
-      {claiming && <div className="absolute bg-black text-white py-2 px-6 opacity-75 rounded-full top-0 left-0 -mt-12" style={{ left: '50%', transform: 'translateX(-50%)' }}>Claiming ....</div>}
+      {claimable && <ClaimBox address={profile.address} profile={profile} action={setClaimStage} />}
+      {claimStage && <ClaimModal profile={profile} address={profile.address} parcel={parcel} modalAction={setClaimStage} />}
     </div>
 
     {/* Contact url */}
@@ -91,13 +90,76 @@ export const AddressBox = ({ address }: { address: string | undefined }) => {
   </div>
 }
 
-// CLAIM BOX
-const ClaimBox = ({ address, profile, action }: { address: string | undefined, profile: any, action: any }) => {
+const ClaimBox = ({ address, profile, action }: { address: string | undefined, profile: Profile, action: any }) => {
   return <button
-    onClick={() => address != undefined && claimPage(address, profile, action)}
+    onClick={() => address != undefined && action(true)}
     className="bg-black text-sm text-white rounded-full inline-block px-3 py-2 ml-3">
-    Claim this address
+    {profile.verified ? 'Edit profile' : 'Claim this address'}
   </button>
+}
+
+const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string | undefined, parcel: any, profile: Profile, modalAction: any }) => {
+  const [username, setUsername] = useState(profile.username)
+  const [shortUrl, setShorthand] = useState(profile.shortUrl)
+  const [email, setEmail] = useState(profile.email)
+  const [website, setWebsite] = useState(profile.website)
+  const [description, setDescription] = useState(profile.description)
+  const claimPage = async () => {
+    console.log(username, shortUrl, email, website, description)
+    // console.log(parcel)
+    if (address) {
+      await firebase.writeDocument("creatorParcel", address, {
+        ...parcel,
+        profile: {
+          ...parcel.profile,
+          username,
+          shortUrl,
+          email,
+          website,
+          description
+        }
+      })
+    }
+    setTimeout(() => { modalAction(false) }, 1300)
+  }
+  return <>
+    <div className="top-0 left-0 fixed w-screen h-screen bg-black opacity-50" />
+    <div className="fixed top-0 left-0 w-1/2 px-8 py-8 bg-white rounded-3xl shadow-nft text-left overflow-scroll " style={{ height: '70vh', transform: 'translate(-50%,-50%)', top: '50%', left: '50%' }}>
+      <div className="relative w-full">
+        <button onClick={() => modalAction(false)} className="absolute top-0 right-0 border rounded-full h-8 w-8 flex items-center justify-center">
+          <Icon fill={faTrash} noMargin />
+        </button>
+      </div>
+      <div className="text-center text-gray-600 text-sm">Edit Profile</div>
+      <div className="text-center">
+        <img src={profile.pic} className="h-20 rounded-full m-auto border" />
+      </div>
+      <div className="mt-5 mb-4">
+        <div className="text-black">Name</div>
+        <input className="bg-white rounded-full shadow-nft w-full px-4 h-12 my-2 text-gray-700" placeholder="Galleryst" value={username} type="text" onChange={e => setUsername(e.target.value)} />
+      </div>
+      <div className="mt-5 mb-4">
+        <div className="text-black">URL</div>
+        <span className="w-full flex items-center bg-white rounded-full h-12 my-2 shadow-nft ">
+          <span className="ml-4"> galleryst.co/ </span>
+          <input className="flex-grow pl-1 px-4 text-gray-700" placeholder="short-url" value={shortUrl} type="text" onChange={e => setShorthand(e.target.value)} />
+        </span>
+      </div>
+      <div className="mt-5 mb-4">
+        <div className="text-black">Received Notification via Email</div>
+        <input className="bg-white rounded-full shadow-nft w-full px-4 h-12 my-2 text-gray-700" placeholder="Email" value={email} type="email" onChange={e => setEmail(e.target.value)} />
+      </div>
+      <div className="mt-5 mb-4">
+        <div className="text-black">Your website</div>
+        <input className="bg-white rounded-full shadow-nft w-full px-4 h-12 my-2 text-gray-700" placeholder="Your website" value={website} type="text" onChange={e => setWebsite(e.target.value)} />
+      </div>
+      <div className="mt-5 mb-4">
+        <div className="text-black">Add a bio</div>
+        <textarea rows={6} className="bg-white rounded-2xl shadow-nft w-full px-4 py-2 my-2 text-gray-700" placeholder="Enter your short bio" value={description} onChange={e => setDescription(e.target.value)} />
+      </div>
+      <button onClick={() => claimPage()} className="bg-black w-full h-12 rounded-full text-white">Save</button>
+    </div>
+  </>
 }
 
 // NFT DROPS
@@ -252,9 +314,9 @@ export const Filter = ({ platform, profile }: { platform: 'rarible' | 'opensea' 
   const check = (platform: 'rarible' | 'opensea' | 'foundation' | 'nifty') => {
     switch (platform) {
       case 'rarible':
-        return { style: 'text-black bg-yellow-500 rarible-logo logo-48', text: 'R' }
+        return { style: 'text-black bg-yellow-500 rarible-logo logo-48', text: '' }
       case 'opensea':
-        return { style: 'text-white bg-blue-500 opensea-logo logo-48', text: 'O' }
+        return { style: 'text-white bg-blue-500 opensea-logo logo-48', text: '' }
       case 'foundation':
         return { style: 'text-white bg-black foundation-logo logo-48', text: 'F' }
       case 'nifty':

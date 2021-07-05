@@ -9,7 +9,6 @@ import * as foundation from './foundation/fetch'
 import { Galleryst } from '../interfaces/index'
 import { withError } from 'utils/promise.util'
 import { raribleImg } from './rarible/method'
-import * as firebase from "./firebase"
 
 const checkMarket = (action: any, profile: Profile, lists: any, market: string) => {
   if(lists.allID.length > 0) {
@@ -19,14 +18,6 @@ const checkMarket = (action: any, profile: Profile, lists: any, market: string) 
       marketCheck: marketCheck
     } }
     action(profile)
-  }
-}
-
-export const  claimPage = async (address : string | false, parcel: any, action: any) => {
-  if(address != false){
-    action(true)
-    await firebase.writeDocument("creatorParcel",address, parcel)
-    setTimeout(() => { action(false)}, 1300)
   }
 }
 
