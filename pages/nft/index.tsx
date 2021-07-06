@@ -4,6 +4,8 @@ import { raribleImg } from '../../method/rarible/method'
 import * as rarible from '../../method/rarible/fetch'
 import * as opensea from '../../method/opensea/fetch'
 import dayjs from 'dayjs'
+import { CreatorHeader } from '@/Galleryst'
+import { profile } from 'console'
 // import { profile } from 'node:console'
 // import { name } from 'dayjs/locale/*'
 
@@ -80,7 +82,7 @@ const Page = ({ address }: { address: string }) => {
     if (address != undefined) {
       const finder = userLists.find(user => user.id === address)
       return <a href={`/profile?address=${address}`} className="bg-gray-500 mx-2 w-8 h-8 rounded-full overflow-hidden inline-flex items-center justify-center">
-        <img src={finder?.image} className="h-8 inline " />
+        <img src={finder?.image} className="h-8 inline w-10" />
       </a>
     } else {
       return <div className="w-8 h-8 inline bg-gray-600 rounded-full" />
@@ -89,10 +91,10 @@ const Page = ({ address }: { address: string }) => {
 
   const profileAddress = (user: ProfileList | undefined) => {
     return user != undefined && user?.image != '' ?
-      <a href={`/profile?address=${user.id}`} target="_blank" className="ml-2 bg-gray-500 w-10 h-10 rounded-full overflow-hidden inline-flex items-center justify-center">
-        <img src={user?.image} className="h-10 inline" />
+      <a href={`/profile?address=${user.id}`} target="_blank" className="ml-2 mb-2  bg-gray-500 w-10 h-10 rounded-full overflow-hidden inline-flex items-center justify-center">
+        <img src={user?.image} className="h-10 inline w-10" />
       </a> :
-      <span className="inline-block w-10 h-10 rounded-full bg-purple-500 ml-2 flex items-center justify-center">{user?.name?.substr(0, 1)}</span>
+      <span className="inline-block w-10 h-10 rounded-full bg-purple-500 ml-2 mb-2 flex items-center justify-center">{user?.name?.substr(0, 1)}</span>
   }
 
   return <div className="w-screen h-screen z-20 bg-white fixed top-0 left-0 overflow-y-scroll overflow-x-hidden">
@@ -106,7 +108,7 @@ const Page = ({ address }: { address: string }) => {
         <a href={`/profile?address=${nft?.item?.creator}`} className="bg-blue-500 p-3 text-white rounded-xl">See creator profile</a>
       </div>
 
-      <div className="m-auto w-2/3 flex lg:flex-row-reverse flex-col justify-between">
+      <div className="m-auto md:w-2/3 w-full md:px-0 px-3 flex lg:flex-row-reverse flex-col justify-between">
         <div className="lg:w-1/2 w-full">
           <h1 className="text-xl">{nft?.properties?.name}</h1>
           <div className="text-gray-500 mb-4 break-words">{address}</div>
@@ -119,33 +121,39 @@ const Page = ({ address }: { address: string }) => {
               {nft?.item?.ownership?.status}
             </span>
             {nft?.item?.ownership?.priceEth} ETH
-        </div>}
+          </div>}
           {offer != undefined && <div className="flex text-2xl ">
             <span className="flex-grow">
               Best offer
-          </span>
+            </span>
             {offer?.buyPriceEth} ETH
-        </div>}
+          </div>}
           <br />
           <div hidden>
             <div>Supply: {nft?.item?.supply} / Selling: {nft?.item?.ownership?.selling}</div>
             <div>Like:  {nft?.item?.likes} / Visit: {nft?.item?.visits}</div>
           </div>
           <div className="shadow-nft p-6 rounded-24">
-            <div className="flex h-12 items-center ">
-              <span className="flex-grow">Creator:</span>
-              {profileAddress(creator)}
+            <div className="flex h-auto items-center flex-col w-full content-start">
+              <div className="flex w-full text-gray-700">Created by</div>
+              <div className="flex justify-between w-full">
+                {profileAddress(creator)}
+                {creator?.name}
+              </div>
             </div>
-            {owners.length > 0 && <div className="flex h-12 items-center">
-              <span className="flex-grow">Owner:</span>
-              {owners.map(owner => profileAddress(owner))}
+
+            {owners.length > 0 && <div className="flex h-auto items-center flex-col w-full content-start">
+              <div className="flex w-full text-gray-700">Collected by </div>
+              <div className="flex content-start w-full flex-wrap">
+                {owners.map(owner => profileAddress(owner))}
+              </div>
             </div>}
           </div>
         </div>
       </div>
     </div>
-    <div className="w-2/3 m-auto">
-      <div className="px-12 m-auto">
+    <div className="md:w-2/3 w-full m-auto">
+      <div className="px-3 m-auto">
         <h2 className="mt-8 text-xl font-semibold">NFT History</h2>
         {/* Activity lists */}
         {activities.map(activity => {

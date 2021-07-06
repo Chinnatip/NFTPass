@@ -53,8 +53,9 @@ const ProfilePage = ({ profile, wallet, action, lists }: {
       <div className="h-4" />
       {toggle == 'drops' && <NFTDrop text={`Nifty drops (${dropLists.length} items)`} lists={dropLists} />}
       {toggle == 'collection' && <>
+        <NFTGroup type="onsale" text={`On sale (${onsaleLists.length} items)`} lists={onsaleLists} nfts={NFTLists} />
         <NFTGroup type="owned" text={`Own by ${profile?.username} (${ownLists.length} items)`} lists={ownLists} nfts={NFTLists} /></>}
-      <NFTGroup type="onsale" text={`On sale (${onsaleLists.length} items)`} lists={onsaleLists} nfts={NFTLists} />
+
       {toggle == 'creates' && <NFTGroup type="created" text={`Created (${createdLists.length} items)`} lists={createdLists} nfts={NFTLists} />}
 
       {/* Footer */}
