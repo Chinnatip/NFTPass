@@ -239,15 +239,25 @@ export const ConnectBtn = observer(() => {
     }
     setShow(!show)
   }
+  const getBtnText = () => {
+    if (!walletStore.isMetaMaskInstalled) {
+      return 'MetaMask not detected'
+    } else if (walletStore.verified) {
+      return `${mask(walletStore.address)} | ${walletStore.readableBalance}`
+    } else {
+      return 'Connect'
+    }
+  }
   return (
     <div className="flex justify-end">
       <button
         ref={btnRef}
         onClick={handleClick}
+        disabled={!walletStore.isMetaMaskInstalled}
         style={{ color: '#9A6B6B', backgroundColor: '#C7AAAA' }}
-        className={`py-2 px-3 mx-5 font-semibold text-sm focus:outline-none appearance-none rounded-full `}
+        className={`py-2 px-3 mx-5 font-semibold text-sm focus:outline-none appearance-none rounded-full ${walletStore.isMetaMaskInstalled ? 'cursor-pointer' : 'cursor-default'}`}
       >
-        {walletStore.verified ? `${mask(walletStore.address)} | ${walletStore.readableBalance}` : 'Connect' }
+        {getBtnText()}
       </button>
       <div ref={popperRef} className={`${show ? '' : 'hidden'} p-2 rounded-2xl bg-white`}>
         {(!walletStore.isConnected && walletStore.accounts.length > 0) && walletStore.accounts.map((account, index) => {
