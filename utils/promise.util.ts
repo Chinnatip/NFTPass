@@ -8,9 +8,7 @@
  *   // use data if not error
  * }
  */
-export const withError = async <T extends {}>(
-  promise: Promise<T>
-): Promise<[T, Error | null]> => {
+export const withError = async <T extends {}>(promise: Promise<T>): Promise<[T, Error | null]> => {
   try {
     const data = await promise
     return [data, null]
@@ -19,6 +17,10 @@ export const withError = async <T extends {}>(
   }
 }
 
+/**
+ * @example
+ * await sleep(3000) // 3 seconds
+ */
 export const sleep = (ms: number): Promise<void> => {
   return new Promise(resolve => setTimeout(resolve, ms))
 }

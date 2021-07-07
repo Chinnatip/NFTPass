@@ -3,16 +3,12 @@ import { ethers, utils } from 'ethers'
 import { walletStore } from 'stores/wallet.store'
 
 class WalletService {
-  private readonly provider!: ethers.providers.Web3Provider
+  private provider!: ethers.providers.Web3Provider
 
-  constructor() {
-    if (typeof window !== 'undefined') {
-      this.provider = new ethers.providers.Web3Provider(window.ethereum)
-    }
-  }
+  constructor() {}
 
-  init = async () => {
-    // await this.getAccounts()
+  init = () => {
+    this.provider = walletStore.defaultProvider
   }
 
   checkGallerystVerified = async (address: string): Promise<boolean> => {
@@ -34,7 +30,7 @@ class WalletService {
   }
 
   connect = async (addressToConnect: string) => {
-    if (!addressToConnect ||walletStore.accounts.length === 0) {
+    if (!addressToConnect || walletStore.accounts.length === 0) {
       await this.getAccounts()
     }
     if (!walletStore.accounts.includes(addressToConnect)) {
@@ -48,6 +44,7 @@ class WalletService {
       return
     }
     // Not verified, process signing
+    // use separate provider instance
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const { data: params } = await axios.get('/api/verifySignature')
     const typedSignature = await provider.send('eth_signTypedData_v4', [
@@ -61,6 +58,7 @@ class WalletService {
     if (data.verified) {
       walletStore.setAddress(addressToConnect)
       walletStore.setVerified(true)
+      walletStore.updateSigner()
     }
   }
 

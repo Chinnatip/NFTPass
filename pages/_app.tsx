@@ -12,9 +12,8 @@ config.autoAddCss = false
 
 function MyApp({ Component, pageProps }: AppProps) {
   const Router = useRouter()
-  const ready = useSetup()
-  console.log("🚀 ~ ready", ready)
-  
+  useSetup()
+
   useEffect(() => {
     const handleRouteChange = (url: any) => {
       ga.pageview(url)
