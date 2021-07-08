@@ -87,6 +87,10 @@ export interface SaleOrder {
   prefixed_hash: string
 }
 
+export interface OpenSeaNFT {
+  assets: OpenseaItem[]
+}
+
 export interface OpenseaItem {
   id: number
   token_id: string
