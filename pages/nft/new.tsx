@@ -4,10 +4,6 @@ import * as rarible from '../../method/rarible/fetch'
 import * as opensea from '../../method/opensea/fetch'
 import { User, NFTDetail } from '../../interfaces/index'
 import dayjs from 'dayjs'
-import { CreatorHeader } from '@/Galleryst'
-import { profile } from 'console'
-// import { profile } from 'node:console'
-// import { name } from 'dayjs/locale/*'
 
 const getDate = (dayFormat: string) => dayjs(dayFormat).format('DD MMM YYYY')
 const profilePic = (user: User | undefined) => {
@@ -41,8 +37,6 @@ const Page = ({ address }: { address: string }) => {
   }, []);
 
   const {image, title, description, pricing, offer, creator, owner, activity } = nft
-  const getDate = (dayFormat: string) => dayjs(dayFormat).format('DD MMM YYYY')
-
   return <div className="w-screen h-screen z-20 bg-white fixed top-0 left-0 overflow-y-scroll overflow-x-hidden">
     <div className="flex flex-col">
       <div className="w-full relative flex items-center justify-center" style={{ background: 'rgba(92, 86, 86, 0.48)', height: '75vh' }}>
@@ -50,62 +44,43 @@ const Page = ({ address }: { address: string }) => {
           <img src={image} className="shadow-nft-img rounded-lg fit-wh-img" />
         </div>
       </div>
-      <div className="text-center mt-10 mb-12 hidden">
-        <a href={`/profile?address=${address}`} className="bg-blue-500 p-3 text-white rounded-xl">See creator profile</a>
+      <div className="text-center mt-10 mb-12">
+        <a href={`/profile?address=${'creatpr_address'}`} className="bg-blue-500 p-3 text-white rounded-xl">See creator profile</a>
       </div>
-
-      <div className="mt-10 m-auto md:w-2/3 w-full md:px-0 px-3 flex lg:flex-row flex-col justify-between">
-        <div className="lg:w-1/2 w-full lg:flex lg:flex-col contents">
-          {/*  */}
-          <div className="text-2xl order-1 font-black mb-4">{title}</div>
-          <div className="text-gray-500 mb-4 break-words order-2 hidden">{address}</div>
-          <div className="order-5"><h3 >{description}</h3></div>
-
+      <div className="m-auto w-2/3 flex lg:flex-row-reverse flex-col justify-between">
+        <div className="lg:w-1/2 w-full">
+          <h1 className="text-xl">{title}</h1>
+          <div className="text-gray-500 mb-4 break-words">{address}</div>
+          <h3>{description}</h3>
         </div>
-
-        <div className="lg:w-1/2 w-full lg:pl-6 pr-0 lg:sticky lg:flex lg:flex-col contents">
-          <div className="order-3 mb-4">
-            {pricing?.eth != undefined && <div className="flex text-xl ">
-              <span className="flex-grow text-gray-500 text-left">
-                {pricing.status}
-              </span>
-              <span className="text-right">{pricing?.eth} ETH</span>
-
+        <br />
+        <div className="lg:w-1/2 w-full lg:pr-6 pr-0 lg:sticky">
+          { pricing?.eth != undefined &&
+            <div className="flex text-2xl ">
+              <span className="flex-grow"> {pricing.status} </span>
+              {pricing.eth} ETH
             </div>}
-            { offer?.status && <div className="flex text-xl ">
-              <span className="flex-grow text-gray-500 text-left">
-                Best offer
-              </span>
-              <span className="text-right"> {offer?.best_offer?.toFixed(5)} ETH</span>
-
+          { offer?.status &&
+            <div className="flex text-2xl ">
+              <span className="flex-grow"> Best offer </span>
+              {offer?.best_offer?.toFixed(5)} ETH
             </div>}
-            <br />
-            {/* <div hidden>
-              <div>Supply: {nft?.item?.supply} / Selling: {nft?.item?.ownership?.selling}</div>
-              <div>Like:  {nft?.item?.likes} / Visit: {nft?.item?.visits}</div>
-            </div> */}
-            <div className="shadow-nft p-4 rounded-24">
-              <div className="flex h-auto items-center flex-col w-full ">
-                <div className="flex w-full text-gray-700 mb-2">Created by</div>
-                <a href={`/profile?address=${profileAddress(creator)}`} className="flex justify-between w-full mb-4 items-center	">
-                  {profileAddress(creator)}
-                  {creator?.name}
-                </a>
-              </div>
-
-              {owner !== undefined && owner.length > 0 && <div className="flex h-auto items-center flex-col w-full content-start">
-                <div className="flex w-full text-gray-700 mb-2">Collected by </div>
-                <div className="flex content-start w-full flex-wrap">
-                  {owner.map(owner => profileAddress(owner))}
-                </div>
-              </div>}
+          <br />
+          <div className="shadow-nft p-6 rounded-24">
+            <div className="flex h-12 items-center ">
+              <span className="flex-grow">Creator:</span>
+              {profileAddress(creator)}
             </div>
+            {owner != undefined && owner.length > 0 && <div className="flex h-12 items-center">
+              <span className="flex-grow">Owner:</span>
+              {owner.map(owner => profileAddress(owner))}
+            </div>}
           </div>
         </div>
       </div>
     </div>
-    <div className="md:w-2/3 w-full m-auto">
-      <div className="px-3 m-auto">
+    <div className="w-2/3 m-auto">
+      <div className="px-12 m-auto">
         <h2 className="mt-8 text-xl font-semibold">NFT History</h2>
         {activity?.map(({ type, current_owner, previous_owner, date, value, price }) => {
           switch (type) {
