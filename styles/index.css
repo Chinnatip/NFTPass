@@ -1420,6 +1420,10 @@ body.video-react-full-window .video-react-fullscreen {
   box-shadow: 0px 12px 40px 8px rgba(0, 0, 0, 0.08);
 }
 
+.shadow-greenery {
+  box-shadow: 0 6px 20px #9eff9e !important;
+}
+
 .shadow-nft-img {
   box-shadow: 0px 12px 40px 8px #00000026;
 }
@@ -1558,13 +1562,13 @@ button:focus {
 
 .address-text-wrapper {
   width: 7em;
-  white-space:nowrap;
+  white-space: nowrap;
 }
 
 div.address-text-wrapper > span {
   white-space: nowrap;
   overflow: hidden;
-  vertical-align:middle;
+  vertical-align: middle;
 }
 
 .ellipsis {
@@ -1574,7 +1578,7 @@ div.address-text-wrapper > span {
 }
 
 .indent {
-  display:inline-flex;
+  display: inline-flex;
   width: calc(50% - 1em);
-  justify-content:flex-end;
+  justify-content: flex-end;
 }

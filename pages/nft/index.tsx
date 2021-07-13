@@ -3,13 +3,49 @@ import { User, NFTDetail } from '../../interfaces/index'
 import * as rarible from '../../method/rarible/fetch'
 import * as opensea from '../../method/opensea/fetch'
 import dayjs from 'dayjs'
-// import { hostname } from 'os'
-// import { CreatorHeader } from '@/Galleryst'
-// import { profile } from 'console'
-// import { profile } from 'node:console'
-// import { name } from 'dayjs/locale/*'
 
-// const getDate = (dayFormat: string) => dayjs(dayFormat).format('DD MMM YYYY')
+export const Filter = ({ current, platform, action, targetAction, target }: {
+  target?: NFTDetail,
+  targetAction?: any,
+  platform: any,
+  action: any ,
+  current: 'rarible' | 'opensea' | 'foundation' | 'nifty',
+}) => {
+  const market: {
+    rarible?: boolean
+    opensea?: boolean
+    foundation?: boolean
+    nifty?: boolean
+  } = platform.check != undefined ? platform.check : {}
+  const check = (platform: 'rarible' | 'opensea' | 'foundation' | 'nifty') => {
+    switch (platform) {
+      case 'rarible':
+        return { style: 'text-black bg-yellow-500 rarible-logo logo-48', text: '' }
+      case 'opensea':
+        return { style: 'text-white bg-blue-500 opensea-logo logo-48', text: '' }
+      case 'foundation':
+        return { style: 'text-white bg-black foundation-logo logo-48', text: 'F' }
+      case 'nifty':
+        return { style: 'text-white bg-blue-700 nifty-logo logo-48', text: 'N' }
+    }
+  }
+  const default_style = 'border text-gray-400 bg-gray-200'
+  const { text, style } = check(current)
+  return <div
+    className={`
+      cursor-pointer h-12 w-12 mx-2 flex items-center
+      shadow-xl justify-center rounded-full shadow-nft text-lg logo-48
+      ${ platform.current == current && 'border-1 border-green-400 shadow-greenery'}
+      ${market[current] ? style : default_style}
+    `}
+    onClick={() => {
+      action({ ...platform , current: current})
+      if(targetAction != undefined) targetAction(target)
+    }}>
+    {text}
+  </div>
+}
+
 const profilePic = (user: User | undefined) => {
   if(user != undefined ){
     return <a href={`/profile?address=${user.address}`} className="bg-gray-500 mx-2 w-8 h-8 rounded-full overflow-hidden inline-flex items-center justify-center">
@@ -29,25 +65,42 @@ const profileAddress = (user: User | undefined) => {
 
 const Page = ({ address }: { address: string }) => {
   const [nft, setNFT] = useState<NFTDetail>({ address })
+  const [raribles, setRarible] = useState<NFTDetail>({ address })
+  const [openseas, setOpensea] = useState<NFTDetail>({ address })
+  const [platform, setPlatform] = useState({current: 'opensea', check: {rarible: false, opensea: false}})
   useEffect(() => {
     (async () => {
       // Rarible
-      await rarible.nftDetail(address, setNFT)
-
-      // Opensea
-      await opensea.nftDetail(address, setNFT)
-
+      const raribleCheck = await rarible.nftDetail(address, setNFT, setRarible)
+      const openseaCheck = await opensea.nftDetail(address, setNFT, setOpensea)
+      const checkCurrent = openseaCheck.status ? 'opensea' : raribleCheck.status ? 'rarible' : 'nifty'
+      setPlatform({
+        current: checkCurrent,
+        check: {
+          opensea: openseaCheck.status,
+          rarible: raribleCheck.status
+        }
+      })
+      switch(checkCurrent){
+        case 'opensea': openseaCheck.data && setNFT(openseaCheck.data); break;
+        case 'rarible': raribleCheck.data && setNFT(raribleCheck.data); break;
+      }
     })()
   }, []);
 
   const {image, title, description, pricing, offer, creator, owner, activity } = nft
   const getDate = (dayFormat: string) => dayjs(dayFormat).format('DD MMM YYYY')
-
   return <div className="w-screen h-screen z-20 bg-white fixed top-0 left-0 overflow-y-scroll overflow-x-hidden">
     <div className="flex flex-col">
       <div className="w-full relative flex items-center justify-center" style={{ background: 'rgba(92, 86, 86, 0.48)', height: '75vh' }}>
-        <div className="p-4 flex items-center" style={{height: '100%'}}>
+        <div className="p-4 flex items-center flex-col" style={{height: '100%'}}>
           <img src={image} className="shadow-nft-img rounded-lg fit-wh-img" style={{ height: '80%' }} />
+          <div className="pt-3 text-center flex justify-center items-center">
+            <Filter current="rarible" platform={platform}  action={setPlatform} targetAction={setNFT} target={raribles} />
+            <Filter current="opensea" platform={platform}  action={setPlatform} targetAction={setNFT} target={openseas} />
+            <Filter current="foundation" platform={platform}  action={setPlatform} />
+            <Filter current="nifty" platform={platform}  action={setPlatform} />
+          </div>
         </div>
       </div>
       <div className="text-center mt-10 mb-12 hidden">
