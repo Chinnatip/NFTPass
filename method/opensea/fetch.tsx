@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { OpenseaItem, SaleOrder } from './interface'
 import { Galleryst } from '../../interfaces/index'
+import { beasrOfferQuery, priceHistory } from './graph'
 
 const OPENSEA_URL = 'https://api.opensea.io/api/v1/assets'
 
@@ -27,6 +28,110 @@ const constructOpensea = (nftLists: OpenseaItem[]) : Galleryst[] => {
   })
 }
 
+const getPriceHistory = async(contact_address: string, token_id: string) => {
+  const parse_url = `https://api.opensea.io/graphql/`
+  const parcel = JSON.stringify({
+    "query": priceHistory,
+    "id":"EventHistoryQuery",
+    "variables":{
+        "archetype":{
+            "assetContractAddress": contact_address,
+            "tokenId": token_id
+        },
+        "eventTypes":["AUCTION_SUCCESSFUL","ASSET_TRANSFER"],
+        "count":10,
+        "showAll":false
+    },
+  })
+  const resp = await axios.post(parse_url, parcel, {
+    headers: {
+      'x-api-key': '2f6f419a083c46de9d83ce3dbe7db601',
+      'x-build-id': '7uNU3d0X-cJsnsg8jvrhm',
+      'Content-Type': 'application/json'
+    }
+  })
+  const priceResp = resp.data.data.assetEvents.edges.map((edge: any) => {
+    const { node: {
+      eventTimestamp, eventType,
+      price,
+      seller, fromAccount,
+      winnerAccount, toAccount,
+    } } = edge
+    if(price != undefined && seller!= undefined && winnerAccount ){
+      // Successfull Auction
+      const { quantity, asset: {  decimals, symbol } } = price
+      return {
+        date: eventTimestamp,
+        price:  parseInt(quantity) / 10**decimals,
+        value: 1,
+        symbol,
+        previous_owner: { address: seller.address, image: seller.imageUrl, user: seller.user },
+        current_owner: { address: winnerAccount.address, image: winnerAccount.imageUrl, user: winnerAccount.user },
+        type: 'order'
+       }
+    }else{
+      // Transfer
+      return {
+        date: eventTimestamp,
+        value: 1,
+        type: 'transfer',
+        previous_owner: { address: fromAccount.address, image: fromAccount.imageUrl, user: fromAccount.user },
+        current_owner: { address: toAccount.address, image: toAccount.imageUrl, user: toAccount.user },
+       }
+    }
+  })
+  console.log(priceResp)
+  return priceResp
+
+}
+
+const getBestOffer = async(contact_address: string, token_id: string) => {
+  const parse_url = `https://api.opensea.io/graphql/`
+  const parcel = JSON.stringify({
+    "id":"OrdersQuery",
+    "query": beasrOfferQuery,
+    "variables":{
+        "count":10,
+        "isExpired":false,
+        "isValid":true,
+        "makerAssetIsPayment":true,
+        "takerArchetype":{
+            "assetContractAddress": contact_address,
+            "tokenId": token_id,
+            "chain":"ETHEREUM"
+        },
+        "sortBy":"MAKER_ASSETS_USD_PRICE"
+    }
+  })
+  const resp = await axios.post(parse_url, parcel, {
+    headers: {
+      'x-api-key': '2f6f419a083c46de9d83ce3dbe7db601',
+      'x-build-id': '7uNU3d0X-cJsnsg8jvrhm',
+      'Content-Type': 'application/json',
+      'Cookie': 'csrftoken=4PJ8epNu3qtuNic4V1W10YROyRwHEiSCXZ4bqHmftpznw2qcL8v1GZI3TxSLq0di'
+    }
+  })
+  const offerResp = resp.data.data.orders.edges
+  if(offerResp.length > 0){
+    const offers =  resp.data.data.orders.edges.map((assetX: any) => {
+      const { asset, quantity } = assetX?.node?.makerAssetBundle?.assetQuantities?.edges[0].node
+      const { decimals, symbol,usdSpotPrice } = asset
+      return {
+        amount: parseInt(quantity) / 10**decimals ,
+        quantity,
+        decimals,symbol,usdSpotPrice
+      }
+    })
+    return {
+      status: true,
+      best_offer: offers[0].amount,
+      offers
+    }
+  }else{
+    return undefined
+  }
+}
+
 export const ownByAddress = async(address: string) => {
   const parse_url = `${OPENSEA_URL}?owner=${address}&order_direction=desc&offset=0&limit=100`
   const resp = await axios.get(parse_url)
@@ -49,9 +154,38 @@ export const ownByAddress = async(address: string) => {
   }
 }
 
-export const nftDetail = async(address: string) => {
+export const nftDetail = async(address: string, action: any) => {
   const splitAddress = address.split(':')
   const contact_address = splitAddress[0]
   const token_id = splitAddress[1]
-  return await axios.get(`${OPENSEA_URL}?token_ids=${token_id}&asset_contract_address=${contact_address}&order_direction=desc&offset=0&limit=20`)
+  const resp = await axios.get(`${OPENSEA_URL}?token_ids=${token_id}&asset_contract_address=${contact_address}&order_direction=desc&offset=0&limit=20`)
+  const os : OpenseaItem = resp.data['assets'][0]
+  const pricing = os.sell_orders != undefined  && os.sell_orders.length > 0 ? {
+    status: true,
+    eth: parseFloat(os.sell_orders[0]?.base_price) / 10**os.sell_orders[0]?.payment_token_contract.decimals,
+    usd: parseFloat(os.sell_orders[0]?.payment_token_contract.usd_price) * parseFloat(os.sell_orders[0]?.base_price) / 10**os.sell_orders[0]?.payment_token_contract.decimals
+  } : undefined
+  const offer = await getBestOffer(contact_address, token_id)
+  const activity = await getPriceHistory(contact_address, token_id)
+  console.log(activity)
+  const returner = {
+    address,
+    image: os.image_original_url,// nfts.properties?.imageBig,
+    title: os.name,
+    description: os.description,
+    owner: [{
+      address: os.owner?.address,
+      name: os.owner?.user?.username,
+      image: os.owner?.profile_img_url
+    }],
+    creator: {
+      address: os.creator?.address,
+      name: os.creator?.user,
+      image: os.creator?.profile_img_url
+    },
+    pricing,
+    offer,
+    activity
+  }
+  action(returner)
 }

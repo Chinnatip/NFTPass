@@ -107,6 +107,7 @@ export interface NFTDetail {
   pricing?: {
     status?: string
     eth?: number
+    usd?: number
   }
   offer?:{
     status?: boolean

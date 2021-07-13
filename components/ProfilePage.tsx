@@ -58,7 +58,7 @@ const ProfilePage = ({ profile, wallet, action, lists }: {
       {toggle == 'creates' && <NFTGroup type="created" text={`Created (${createdLists.length} items)`} lists={createdLists} nfts={NFTLists} />}
 
       {/* Footer */}
-      <div className="text-white text-center text-sm mt-8">© 2021 Galleryst.com, All rights reserved.</div>
+      <div className="text-white text-center text-sm mt-8">© 2021 Galleryst.co, All rights reserved.</div>
     </div>
   </div>
 }

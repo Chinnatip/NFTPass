@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
-import { OpenSeaNFT } from '../../method/opensea/interface'
+import { User, NFTDetail } from '../../interfaces/index'
 import * as rarible from '../../method/rarible/fetch'
 import * as opensea from '../../method/opensea/fetch'
-import { User, NFTDetail } from '../../interfaces/index'
 import dayjs from 'dayjs'
 
 const getDate = (dayFormat: string) => dayjs(dayFormat).format('DD MMM YYYY')
@@ -28,11 +27,11 @@ const Page = ({ address }: { address: string }) => {
   useEffect(() => {
     (async () => {
       // Rarible
-      await rarible.nftDetail(address, setNFT)
+      // await rarible.nftDetail(address, setNFT)
 
       // Opensea
-      const openseaResp = await opensea.nftDetail(address)
-      const os : OpenSeaNFT = openseaResp.data
+      await opensea.nftDetail(address, setNFT)
+
     })()
   }, []);
 
@@ -40,8 +39,8 @@ const Page = ({ address }: { address: string }) => {
   return <div className="w-screen h-screen z-20 bg-white fixed top-0 left-0 overflow-y-scroll overflow-x-hidden">
     <div className="flex flex-col">
       <div className="w-full relative flex items-center justify-center" style={{ background: 'rgba(92, 86, 86, 0.48)', height: '75vh' }}>
-        <div className="p-4 flex items-center">
-          <img src={image} className="shadow-nft-img rounded-lg fit-wh-img" />
+        <div className="p-4 flex items-center" style={{height: '100%'}}>
+          <img src={image} className="shadow-nft-img rounded-lg fit-wh-img" style={{ height: '80%' }} />
         </div>
       </div>
       <div className="text-center mt-10 mb-12">
@@ -57,13 +56,16 @@ const Page = ({ address }: { address: string }) => {
         <div className="lg:w-1/2 w-full lg:pr-6 pr-0 lg:sticky">
           { pricing?.eth != undefined &&
             <div className="flex text-2xl ">
-              <span className="flex-grow"> {pricing.status} </span>
-              {pricing.eth} ETH
+              <span className="flex-grow">Current price</span>
+              <div className="text-right">
+                <div>{pricing.eth} ETH</div>
+                <div className="text-sm opacity-50">{pricing.usd} USD</div>
+              </div>
             </div>}
           { offer?.status &&
             <div className="flex text-2xl ">
               <span className="flex-grow"> Best offer </span>
-              {offer?.best_offer?.toFixed(5)} ETH
+              {offer?.best_offer?.toFixed(2)} ETH
             </div>}
           <br />
           <div className="shadow-nft p-6 rounded-24">
@@ -108,3 +110,6 @@ export async function getServerSideProps(context: any) {
 }
 
 export default Page
+
+
+
