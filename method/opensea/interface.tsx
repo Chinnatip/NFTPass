@@ -177,7 +177,9 @@ export interface OpenseaItem {
   },
   sell_orders?: SaleOrder[]
   creator: {
-      user?: string
+      user?: {
+        username: string
+      }
       profile_img_url: string
       address: string
       config: string

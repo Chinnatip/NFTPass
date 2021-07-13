@@ -50,9 +50,10 @@ const getPriceHistory = async(contact_address: string, token_id: string) => {
       'Content-Type': 'application/json'
     }
   })
+  console.log(resp.data)
   const priceResp = resp.data.data.assetEvents.edges.map((edge: any) => {
     const { node: {
-      eventTimestamp, eventType,
+      eventTimestamp,
       price,
       seller, fromAccount,
       winnerAccount, toAccount,
@@ -111,23 +112,27 @@ const getBestOffer = async(contact_address: string, token_id: string) => {
       'Cookie': 'csrftoken=4PJ8epNu3qtuNic4V1W10YROyRwHEiSCXZ4bqHmftpznw2qcL8v1GZI3TxSLq0di'
     }
   })
-  const offerResp = resp.data.data.orders.edges
-  if(offerResp.length > 0){
-    const offers =  resp.data.data.orders.edges.map((assetX: any) => {
-      const { asset, quantity } = assetX?.node?.makerAssetBundle?.assetQuantities?.edges[0].node
-      const { decimals, symbol,usdSpotPrice } = asset
+  try{
+    const offerResp = resp.data.data.orders.edges
+    if(offerResp.length > 0){
+      const offers =  resp.data.data.orders.edges.map((assetX: any) => {
+        const { asset, quantity } = assetX?.node?.makerAssetBundle?.assetQuantities?.edges[0].node
+        const { decimals, symbol,usdSpotPrice } = asset
+        return {
+          amount: parseInt(quantity) / 10**decimals ,
+          quantity,
+          decimals,symbol,usdSpotPrice
+        }
+      })
       return {
-        amount: parseInt(quantity) / 10**decimals ,
-        quantity,
-        decimals,symbol,usdSpotPrice
+        status: true,
+        best_offer: offers[0].amount,
+        offers
       }
-    })
-    return {
-      status: true,
-      best_offer: offers[0].amount,
-      offers
+    }else{
+      return undefined
     }
-  }else{
+  }catch(e){
     return undefined
   }
 }
@@ -167,10 +172,9 @@ export const nftDetail = async(address: string, action: any) => {
   } : undefined
   const offer = await getBestOffer(contact_address, token_id)
   const activity = await getPriceHistory(contact_address, token_id)
-  console.log(activity)
   const returner = {
     address,
-    image: os.image_original_url,// nfts.properties?.imageBig,
+    image: os.image_original_url,
     title: os.name,
     description: os.description,
     owner: [{
@@ -180,12 +184,13 @@ export const nftDetail = async(address: string, action: any) => {
     }],
     creator: {
       address: os.creator?.address,
-      name: os.creator?.user,
+      name: os.creator?.user?.username,
       image: os.creator?.profile_img_url
     },
     pricing,
     offer,
     activity
   }
+  console.log(returner)
   action(returner)
 }
