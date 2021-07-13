@@ -35,7 +35,7 @@ const Page = ({ address }: { address: string }) => {
       await rarible.nftDetail(address, setNFT)
 
       // Opensea
-      // await opensea.nftDetail(address, setNFT)
+      await opensea.nftDetail(address, setNFT)
 
     })()
   }, []);
