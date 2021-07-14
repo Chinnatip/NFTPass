@@ -73,6 +73,7 @@ export const nftDetail = async(address: string, defaultAction: any, action: any)
   const splitAddress = address.split(':')
   const contact_address = splitAddress[0]
   const token_id = splitAddress[1]
+
   const resp = await axios.get(`${OPENSEA_URL}?token_ids=${token_id}&asset_contract_address=${contact_address}&order_direction=desc&offset=0&limit=20`)
   if(resp.data['assets'].length > 0){
     const os : OpenseaItem = resp.data['assets'][0]

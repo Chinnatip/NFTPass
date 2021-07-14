@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import Head from 'next/head'
+import { NextSeo } from 'next-seo';
 import { User, NFTDetail, ResponseDetail } from '../../interfaces/index'
 import * as rarible from '../../method/rarible/fetch'
 import * as opensea from '../../method/opensea/fetch'
@@ -113,11 +113,38 @@ const Page = ({ address }: { address: string }) => {
   const {image, title, description, pricing, offer, creator, owner, activity } = nft
   const getDate = (dayFormat: string) => dayjs(dayFormat).format('DD MMM YYYY')
   return <div className="w-screen h-screen z-20 bg-white fixed top-0 left-0 overflow-y-scroll overflow-x-hidden">
-    <Head>
-      {/* <meta name="twitter:site" property="og:site_name" content="Galleryst" key="ogsitename" />
-      <meta name="twitter:title" property="og:title" content="Galleryst" key="ogtitle" />
-      <meta name="twitter:description" property="og:description" content="Explore NFTs from all platforms in one place." key="ogdesc" /> */}
-    </Head>
+    <NextSeo
+      title="Simple Usage Example"
+      description="A short description goes here."
+      canonical="https://www.canonical.ie/"
+      openGraph={{
+        url: 'https://www.url.ie/a',
+        title: 'Open Graph Title',
+        description: 'Open Graph Description',
+        images: [
+          {
+            url: 'https://www.example.ie/og-image-01.jpg',
+            width: 800,
+            height: 600,
+            alt: 'Og Image Alt',
+          },
+          {
+            url: 'https://www.example.ie/og-image-02.jpg',
+            width: 900,
+            height: 800,
+            alt: 'Og Image Alt Second',
+          },
+          { url: 'https://www.example.ie/og-image-03.jpg' },
+          { url: 'https://www.example.ie/og-image-04.jpg' },
+        ],
+        site_name: 'SiteName',
+      }}
+      twitter={{
+        handle: '@handle',
+        site: '@site',
+        cardType: 'summary_large_image',
+      }}
+    />
     <div className="flex flex-col">
       <div className="w-full relative flex items-center justify-center" style={{ background: 'rgba(92, 86, 86, 0.48)', height: '75vh' }}>
         <div className="p-4 flex items-center flex-col" style={{height: '100%'}}>
