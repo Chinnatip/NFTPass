@@ -36,5 +36,5 @@
     "components/strategy",
     "components/static",
     "components/chart/NivoBar.jsx"
-  ]
+, "pages/api/opensea/offer.js", "pages/api/opensea/priceHistory.js"  ]
 }

@@ -1,7 +1,6 @@
 import axios from 'axios'
 import { OpenseaItem, SaleOrder } from './interface'
 import { Galleryst } from '../../interfaces/index'
-import { beasrOfferQuery, priceHistory } from './graph'
 import { NFTDetail } from '../../interfaces/index'
 
 const OPENSEA_URL = 'https://api.opensea.io/api/v1/assets'
@@ -30,110 +29,21 @@ const constructOpensea = (nftLists: OpenseaItem[]) : Galleryst[] => {
 }
 
 const getPriceHistory = async(contact_address: string, token_id: string) => {
-  const parse_url = `https://api.opensea.io/graphql/`
-  const parcel = JSON.stringify({
-    "query": priceHistory,
-    "id":"EventHistoryQuery",
-    "variables":{
-        "archetype":{
-            "assetContractAddress": contact_address,
-            "tokenId": token_id
-        },
-        "eventTypes":["AUCTION_SUCCESSFUL","ASSET_TRANSFER"],
-        "count":10,
-        "showAll":false
-    },
-  })
-  const resp = await axios.post(parse_url, parcel, {
-    headers: {
-      'x-api-key': '2f6f419a083c46de9d83ce3dbe7db601',
-      'x-build-id': '7uNU3d0X-cJsnsg8jvrhm',
-      'Content-Type': 'application/json'
-    }
-  })
+  const resp = await axios.get(`/api/opensea/tradeHistory?address=${contact_address}:${token_id}`)
   console.log(resp.data)
-  const priceResp = resp.data.data.assetEvents.edges.map((edge: any) => {
-    const { node: {
-      eventTimestamp,
-      price,
-      seller, fromAccount,
-      winnerAccount, toAccount,
-    } } = edge
-    if(price != undefined && seller!= undefined && winnerAccount ){
-      // Successfull Auction
-      const { quantity, asset: {  decimals, symbol } } = price
-      return {
-        date: eventTimestamp,
-        price:  parseInt(quantity) / 10**decimals,
-        value: 1,
-        symbol,
-        previous_owner: { address: seller.address, image: seller.imageUrl, user: seller.user },
-        current_owner: { address: winnerAccount.address, image: winnerAccount.imageUrl, user: winnerAccount.user },
-        type: 'order'
-       }
-    }else{
-      // Transfer
-      return {
-        date: eventTimestamp,
-        value: 1,
-        type: 'transfer',
-        previous_owner: { address: fromAccount.address, image: fromAccount.imageUrl, user: fromAccount.user },
-        current_owner: { address: toAccount.address, image: toAccount.imageUrl, user: toAccount.user },
-       }
-    }
-  })
-  console.log(priceResp)
-  return priceResp
-
+  if(resp.status ==200){
+    return resp.data
+  }else{
+    return undefined
+  }
 }
 
 const getBestOffer = async(contact_address: string, token_id: string) => {
-  const parse_url = `https://api.opensea.io/graphql/`
-  const parcel = JSON.stringify({
-    "id":"OrdersQuery",
-    "query": beasrOfferQuery,
-    "variables":{
-        "count":10,
-        "isExpired":false,
-        "isValid":true,
-        "makerAssetIsPayment":true,
-        "takerArchetype":{
-            "assetContractAddress": contact_address,
-            "tokenId": token_id,
-            "chain":"ETHEREUM"
-        },
-        "sortBy":"MAKER_ASSETS_USD_PRICE"
-    }
-  })
-  const resp = await axios.post(parse_url, parcel, {
-    headers: {
-      'x-api-key': '2f6f419a083c46de9d83ce3dbe7db601',
-      'x-build-id': '7uNU3d0X-cJsnsg8jvrhm',
-      'Content-Type': 'application/json',
-      'Cookie': 'csrftoken=4PJ8epNu3qtuNic4V1W10YROyRwHEiSCXZ4bqHmftpznw2qcL8v1GZI3TxSLq0di'
-    }
-  })
-  try{
-    const offerResp = resp.data.data.orders.edges
-    if(offerResp.length > 0){
-      const offers =  resp.data.data.orders.edges.map((assetX: any) => {
-        const { asset, quantity } = assetX?.node?.makerAssetBundle?.assetQuantities?.edges[0].node
-        const { decimals, symbol,usdSpotPrice } = asset
-        return {
-          amount: parseInt(quantity) / 10**decimals ,
-          quantity,
-          decimals,symbol,usdSpotPrice
-        }
-      })
-      return {
-        status: true,
-        best_offer: offers[0].amount,
-        offers
-      }
-    }else{
-      return undefined
-    }
-  }catch(e){
+  const resp = await axios.get(`/api/opensea/offer?address=${contact_address}:${token_id}`)
+  console.log(resp.data)
+  if(resp.status ==200){
+    return resp.data
+  }else{
     return undefined
   }
 }

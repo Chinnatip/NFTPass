@@ -96,8 +96,8 @@ const Page = ({ address }: { address: string }) => {
         <div className="p-4 flex items-center flex-col" style={{height: '100%'}}>
           <img src={image} className="shadow-nft-img rounded-lg fit-wh-img" style={{ height: '80%' }} />
           <div className="pt-3 text-center flex justify-center items-center">
-            <Filter current="rarible" platform={platform}  action={setPlatform} targetAction={setNFT} target={raribles} />
             <Filter current="opensea" platform={platform}  action={setPlatform} targetAction={setNFT} target={openseas} />
+            <Filter current="rarible" platform={platform}  action={setPlatform} targetAction={setNFT} target={raribles} />
             <Filter current="foundation" platform={platform}  action={setPlatform} />
             <Filter current="nifty" platform={platform}  action={setPlatform} />
           </div>
