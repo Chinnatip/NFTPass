@@ -1,7 +1,6 @@
 import axios from 'axios'
 import { OpenseaItem, SaleOrder } from './interface'
-import { Galleryst } from '../../interfaces/index'
-import { NFTDetail } from '../../interfaces/index'
+import { Galleryst, NFTDetail, ResponseDetail } from '../../interfaces/index'
 
 const OPENSEA_URL = 'https://api.opensea.io/api/v1/assets'
 
@@ -70,12 +69,7 @@ export const ownByAddress = async(address: string) => {
   }
 }
 
-interface Detail {
-  status: boolean
-  data?: NFTDetail | undefined
-}
-
-export const nftDetail = async(address: string, defaultAction: any, action: any): Promise<Detail> => {
+export const nftDetail = async(address: string, defaultAction: any, action: any): Promise<ResponseDetail> => {
   const splitAddress = address.split(':')
   const contact_address = splitAddress[0]
   const token_id = splitAddress[1]
@@ -111,7 +105,11 @@ export const nftDetail = async(address: string, defaultAction: any, action: any)
     // console.log(returner)
     defaultAction(data)
     action(data)
-    return { status: true, data }
+    return {
+      status: true,
+      link: `https://opensea.io/assets/${contact_address}/${token_id}`,
+      data
+    }
   }else{
     return { status: false }
   }

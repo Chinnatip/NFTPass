@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { User, NFTDetail } from '../../interfaces/index'
+import { User, NFTDetail, ResponseDetail } from '../../interfaces/index'
 import * as rarible from '../../method/rarible/fetch'
 import * as opensea from '../../method/opensea/fetch'
 import dayjs from 'dayjs'
@@ -12,10 +12,10 @@ export const Filter = ({ current, platform, action, targetAction, target }: {
   current: 'rarible' | 'opensea' | 'foundation' | 'nifty',
 }) => {
   const market: {
-    rarible?: boolean
-    opensea?: boolean
-    foundation?: boolean
-    nifty?: boolean
+    rarible?: { status:  boolean }
+    opensea?: { status:  boolean }
+    foundation?: { status:  boolean }
+    nifty?: { status:  boolean }
   } = platform.check != undefined ? platform.check : {}
   const check = (platform: 'rarible' | 'opensea' | 'foundation' | 'nifty') => {
     switch (platform) {
@@ -36,7 +36,7 @@ export const Filter = ({ current, platform, action, targetAction, target }: {
       cursor-pointer h-12 w-12 mx-2 flex items-center
       shadow-xl justify-center rounded-full shadow-nft text-lg logo-48
       ${ platform.current == current && 'border-1 border-green-400 shadow-greenery'}
-      ${market[current] ? style : default_style}
+      ${market[current]?.status ? style : default_style}
     `}
     onClick={() => {
       action({ ...platform , current: current})
@@ -55,6 +55,7 @@ const profilePic = (user: User | undefined) => {
     return <div className="w-8 h-8 inline bg-gray-600 rounded-full" />
   }
 }
+
 const profileAddress = (user: User | undefined) => {
   return user != undefined && user?.image != '' ?
     <a href={`/profile?address=${user.address}`} target="_blank" className="ml-2 bg-gray-500 w-10 h-10 rounded-full overflow-hidden inline-flex items-center justify-center">
@@ -63,22 +64,43 @@ const profileAddress = (user: User | undefined) => {
     <span className="inline-block w-10 h-10 rounded-full bg-purple-500 ml-2 flex items-center justify-center">{user?.name?.substr(0, 1)}</span>
 }
 
+interface PlatformItem {
+  link?: string
+  status: boolean
+}
+
+interface NFTPlatform {
+  current: string
+  check: {
+    opensea?: PlatformItem
+    rarible?: PlatformItem
+    nifty?: PlatformItem
+    foundation?: PlatformItem
+  }
+}
+
 const Page = ({ address }: { address: string }) => {
   const [nft, setNFT] = useState<NFTDetail>({ address })
   const [raribles, setRarible] = useState<NFTDetail>({ address })
   const [openseas, setOpensea] = useState<NFTDetail>({ address })
-  const [platform, setPlatform] = useState({current: 'opensea', check: {rarible: false, opensea: false}})
+  const [platform, setPlatform] = useState<NFTPlatform>({current: 'opensea', check: {rarible: {status: false}, opensea: {status: false}}})
   useEffect(() => {
     (async () => {
       // Rarible
-      const raribleCheck = await rarible.nftDetail(address, setNFT, setRarible)
-      const openseaCheck = await opensea.nftDetail(address, setNFT, setOpensea)
+      const raribleCheck: ResponseDetail = await rarible.nftDetail(address, setNFT, setRarible)
+      const openseaCheck: ResponseDetail = await opensea.nftDetail(address, setNFT, setOpensea)
       const checkCurrent = openseaCheck.status ? 'opensea' : raribleCheck.status ? 'rarible' : 'nifty'
       setPlatform({
         current: checkCurrent,
         check: {
-          opensea: openseaCheck.status,
-          rarible: raribleCheck.status
+          opensea: {
+            link: openseaCheck.link,
+            status: openseaCheck.status
+          },
+          rarible: {
+            link: raribleCheck.link,
+            status: raribleCheck.status
+          }
         }
       })
       switch(checkCurrent){
@@ -111,7 +133,16 @@ const Page = ({ address }: { address: string }) => {
         <div className="lg:w-1/2 w-full lg:flex lg:flex-col contents">
           <div className="text-2xl order-1 font-black mb-4">{title != null ? title : 'Untitled'}</div>
           <div className="text-gray-500 mb-4 break-words order-2 hidden">{address}</div>
-          <div className="order-5"><h3 >{description != null ? description : 'No description.'}</h3></div>
+          <div className="order-5 mb-3"><h3 >{description != null ? description : 'No description.'}</h3></div>
+          {/* Link to Platform */}
+          { platform.check['rarible']?.status && <div className="order-6 flex mt-4 p-4 items-center rounded-xl bg-white shadow-nft">
+            <span className="flex-grow ">Link to Rarible</span>
+            <a href={platform.check['rarible']?.link} target="_blank" className="text-black bg-yellow-500 rarible-logo logo-48 h-12 w-12 rounded-full" ></a>
+          </div> }
+          { platform.check['opensea']?.status && <div className="order-6 flex mt-4 p-4 items-center rounded-xl bg-white shadow-nft">
+            <span className="flex-grow ">Link to Opensea</span>
+            <a href={platform.check['opensea']?.link} target="_blank" className="text-white bg-blue-500 opensea-logo logo-48 h-12 w-12 rounded-full" ></a>
+          </div> }
         </div>
 
         <div className="lg:w-1/2 w-full lg:pl-6 pr-0 lg:sticky lg:flex lg:flex-col contents">

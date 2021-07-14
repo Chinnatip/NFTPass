@@ -3,6 +3,12 @@
 //   name: string
 // }
 
+export interface ResponseDetail {
+  status: boolean
+  link?: string
+  data?: NFTDetail | undefined
+}
+
 export interface Galleryst {
   name: string
   id: string
