@@ -13,10 +13,10 @@ export default class MyDocument extends Document {
 
           {/* Facebook */}
           <meta property="og:url" content="https://galleryst.co/" key="ogurl" />
-          <meta name="twitter:image" property="og:image" content="https://koh-assets.s3-ap-southeast-1.amazonaws.com/galleryst/ogimage.png" key="ogimage" />
+          {/* <meta name="twitter:image" property="og:image" content="https://koh-assets.s3-ap-southeast-1.amazonaws.com/galleryst/ogimage.png" key="ogimage" />
           <meta name="twitter:site" property="og:site_name" content="Galleryst" key="ogsitename" />
           <meta name="twitter:title" property="og:title" content="Galleryst" key="ogtitle" />
-          <meta name="twitter:description" property="og:description" content="Explore NFTs from all platforms in one place." key="ogdesc" />
+          <meta name="twitter:description" property="og:description" content="Explore NFTs from all platforms in one place." key="ogdesc" /> */}
           {/* Favicon */}
           <link rel='shortcut icon' type='image/x-icon' href='/favicon/favicon.ico' />
           <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
