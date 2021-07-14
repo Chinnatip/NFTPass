@@ -123,19 +123,17 @@ const Page = ({ address }: { address: string }) => {
         description: 'Open Graph Description',
         images: [
           {
-            url: 'https://www.example.ie/og-image-01.jpg',
+            url: 'https://guttercatgang.s3.us-east-2.amazonaws.com/i/1409.png',
             width: 800,
             height: 600,
             alt: 'Og Image Alt',
           },
           {
-            url: 'https://www.example.ie/og-image-02.jpg',
+            url: 'https://guttercatgang.s3.us-east-2.amazonaws.com/i/1409.png',
             width: 900,
             height: 800,
             alt: 'Og Image Alt Second',
           },
-          { url: 'https://www.example.ie/og-image-03.jpg' },
-          { url: 'https://www.example.ie/og-image-04.jpg' },
         ],
         site_name: 'SiteName',
       }}
