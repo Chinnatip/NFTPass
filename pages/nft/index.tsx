@@ -114,11 +114,9 @@ const Page = ({ address }: { address: string }) => {
   const getDate = (dayFormat: string) => dayjs(dayFormat).format('DD MMM YYYY')
   return <div className="w-screen h-screen z-20 bg-white fixed top-0 left-0 overflow-y-scroll overflow-x-hidden">
     <Head>
-      <meta property="og:image" content="https://api.placid.app/u/sxpwrxogf?&thumbnail[image]=https%3A%2F%2Flh3.googleusercontent.com%2Fs5yq1Hlr32j77n3KkHfhxkxoEX2I6Df78m_sU6L_136ZLFk8EM8ETdAFjWZNofkH2oT-dt1GpcdR4uWC14PPlzoCUy4MDOPzSnQGhA&title[text]=Gutter+Cat+%231409&creator_name[text]=Peterj.eth"/>
-      <meta property="og:image:height" content="600"/>
-      <meta property="og:image:width" content="1200"/>
-      <meta property="twitter:image" content="https://api.placid.app/u/sxpwrxogf?&thumbnail[image]=https%3A%2F%2Flh3.googleusercontent.com%2Fs5yq1Hlr32j77n3KkHfhxkxoEX2I6Df78m_sU6L_136ZLFk8EM8ETdAFjWZNofkH2oT-dt1GpcdR4uWC14PPlzoCUy4MDOPzSnQGhA&title[text]=Gutter+Cat+%231409&creator_name[text]=Peterj.eth"/>
-      <meta name="twitter:card" content="summary_large_image" />
+      {/* <meta name="twitter:site" property="og:site_name" content="Galleryst" key="ogsitename" />
+      <meta name="twitter:title" property="og:title" content="Galleryst" key="ogtitle" />
+      <meta name="twitter:description" property="og:description" content="Explore NFTs from all platforms in one place." key="ogdesc" /> */}
     </Head>
     <div className="flex flex-col">
       <div className="w-full relative flex items-center justify-center" style={{ background: 'rgba(92, 86, 86, 0.48)', height: '75vh' }}>
