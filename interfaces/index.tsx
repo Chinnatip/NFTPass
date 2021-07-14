@@ -1,8 +1,3 @@
-// export type User = {
-//   id: number
-//   name: string
-// }
-
 export interface ResponseDetail {
   status: boolean
   link?: string

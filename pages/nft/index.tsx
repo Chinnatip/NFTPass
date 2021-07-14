@@ -135,11 +135,11 @@ const Page = ({ address }: { address: string }) => {
           <div className="text-gray-500 mb-4 break-words order-2 hidden">{address}</div>
           <div className="order-5 mb-3"><h3 >{description != null ? description : 'No description.'}</h3></div>
           {/* Link to Platform */}
-          { platform.check['rarible']?.status && <div className="order-6 flex mt-4 p-4 items-center rounded-xl bg-white shadow-nft">
+          { platform.current == 'rarible' && platform.check['rarible']?.status && <div className="order-6 flex mt-4 p-4 items-center rounded-xl bg-white shadow-nft">
             <span className="flex-grow ">Link to Rarible</span>
             <a href={platform.check['rarible']?.link} target="_blank" className="text-black bg-yellow-500 rarible-logo logo-48 h-12 w-12 rounded-full" ></a>
           </div> }
-          { platform.check['opensea']?.status && <div className="order-6 flex mt-4 p-4 items-center rounded-xl bg-white shadow-nft">
+          { platform.current == 'opensea' && platform.check['opensea']?.status && <div className="order-6 flex mt-4 p-4 items-center rounded-xl bg-white shadow-nft">
             <span className="flex-grow ">Link to Opensea</span>
             <a href={platform.check['opensea']?.link} target="_blank" className="text-white bg-blue-500 opensea-logo logo-48 h-12 w-12 rounded-full" ></a>
           </div> }
