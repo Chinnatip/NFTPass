@@ -165,6 +165,11 @@ const checkDiff = (current_update: number, diffAmount: number = 2) => {
   return diff
 }
 
+const prepareURI = (text: string) => {
+  const rep = text.replaceAll('#', '@')
+  return encodeURI(rep)
+}
+
 const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, current_update, galleryst_id }: {
   address: string,
   seo: {
@@ -396,7 +401,7 @@ export async function getServerSideProps(context: any) {
       rarible: { data: getRarible },
       current_update, galleryst_id } = response
     const getNFT = response[getPlatform.current].data
-    const constructImage = `https://api.placid.app/u/sxpwrxogf?&thumbnail[image]=${encodeURI(getNFT.image)}&title[text]=${encodeURI(getNFT.title)}&creator_name[text]=${encodeURI(getNFT.creator?.name)}`
+    const constructImage = `https://api.placid.app/u/sxpwrxogf?&thumbnail[image]=${prepareURI(getNFT.image)}&title[text]=${prepareURI(getNFT.title)}&creator_name[text]=${prepareURI(getNFT.creator?.name)}`
     seo = {
       image: constructImage,
       title: getNFT.title != undefined ? getNFT.title : '-',
@@ -412,8 +417,5 @@ export async function getServerSideProps(context: any) {
     }
   }
 }
+
 export default Page
-
-// todo: check image if ipfs -> then extract by platform
-
-
