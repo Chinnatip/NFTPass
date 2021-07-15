@@ -42,8 +42,14 @@ export const Filter = ({ current, platform, action, targetAction, target }: {
       ${market[current]?.status ? style : default_style}
     `}
     onClick={() => {
+<<<<<<< HEAD
       action({ ...platform, current: current })
       if (targetAction != undefined) targetAction(target)
+=======
+      action({ ...platform , current: current})
+      console.log(target)
+      if(targetAction != undefined) targetAction(target)
+>>>>>>> fc02037736c91b4e1db020fb425cacc0109cfe67
     }}>
     {text}
   </div>
@@ -59,9 +65,9 @@ const profilePic = (user: User | undefined) => {
   }
 }
 
-const profileAddress = (user: User | undefined) => {
+const profileAddress = (user: User | undefined, index: number) => {
   return user != undefined && user?.image != '' ?
-    <a href={`/profile?address=${user.address}`} target="_blank" className="ml-2 bg-gray-500 w-10 h-10 rounded-full overflow-hidden inline-flex items-center justify-center">
+    <a key={index} href={`/profile?address=${user.address}`} target="_blank" className="ml-2 bg-gray-500 w-10 h-10 rounded-full overflow-hidden inline-flex items-center justify-center">
       <img src={user?.image} className="h-10 inline" />
     </a> :
     <span className="inline-block w-10 h-10 rounded-full bg-purple-500 ml-2 flex items-center justify-center">{user?.name?.substr(0, 1)}</span>
@@ -91,6 +97,7 @@ export const nftSanitizer = (objs: ResponseDetail) => {
     }
     return obj
   }
+<<<<<<< HEAD
   if (objs['data'] !== undefined) {
     delete objs['data']['activity']
     delete objs['data']['offer']
@@ -101,43 +108,85 @@ export const nftSanitizer = (objs: ResponseDetail) => {
     ...objs,
     data: clean({
       ...objs.data,
+=======
+  const cleaning = clean({...objs,
+    data: clean({...objs.data,
+>>>>>>> fc02037736c91b4e1db020fb425cacc0109cfe67
       creator: clean(objs.data?.creator),
+      owner: objs.data?.owner?.map(ow => clean(ow)),
+      offer: clean(objs.data?.offer),
+      pricing: clean(objs.data?.pricing),
+      activity: objs.data?.activity?.map( ac => {
+        return clean({
+          ...ac,
+          current_owner: clean({...ac.current_owner, user: clean(ac.current_owner.user) }),
+          previous_owner: clean({...ac.previous_owner, user: clean(ac.previous_owner?.user) })
+        })
+      } )
+
     })
   })
+  return cleaning
 }
 
+const checkDiff = (current_update: number, diffAmount: number = 2) => {
+  const today = dayjs()
+  const updatedAt = dayjs.unix(current_update)
+  const diff = diffAmount >= today.diff(updatedAt, 'days')
+  return diff
+}
 
-const Page = ({ address, seo }: {
+const Page = ({ address, seo, getPlatform , getNFT, getOpensea, getRarible, current_update }: {
   address: string,
   seo: {
     image: string,
     title: string,
     creator: string,
     description: string
+<<<<<<< HEAD
   }
 }) => {
   const [nft, setNFT] = useState<NFTDetail>({ address })
   const [raribles, setRarible] = useState<NFTDetail>({ address })
   const [openseas, setOpensea] = useState<NFTDetail>({ address })
   const [platform, setPlatform] = useState<NFTPlatform>({ current: 'opensea', check: { rarible: { status: false }, opensea: { status: false } } })
+=======
+  },
+  getPlatform?: NFTPlatform,
+  getNFT?: NFTDetail,
+  getOpensea?: NFTDetail,
+  getRarible?: NFTDetail,
+  current_update?: number
+}) => {
+  const [nft, setNFT] = useState<NFTDetail>(getNFT != undefined ? getNFT : { address })
+  const [raribles, setRarible] = useState<NFTDetail>( getRarible != undefined ? getRarible : { address })
+  const [openseas, setOpensea] = useState<NFTDetail>( getOpensea != undefined ? getOpensea : { address })
+  const [platform, setPlatform] = useState<NFTPlatform>( getPlatform != undefined ? getPlatform : {current: 'opensea', check: {rarible: {status: false}, opensea: {status: false}}})
+>>>>>>> fc02037736c91b4e1db020fb425cacc0109cfe67
   useEffect(() => {
     (async () => {
-      // Rarible
-      const raribleCheck: ResponseDetail = await rarible.nftDetail(address, setNFT, setRarible)
-      const openseaCheck: ResponseDetail = await opensea.nftDetail(address, setNFT, setOpensea)
-      const checkCurrent = raribleCheck.status ? 'rarible' : openseaCheck.status ? 'opensea' : 'nifty'
-      const platform = {
-        current: checkCurrent,
-        check: {
-          opensea: {
-            link: openseaCheck.link,
-            status: openseaCheck.status
-          },
-          rarible: {
-            link: raribleCheck.link,
-            status: raribleCheck.status
+      if(current_update != undefined && checkDiff(current_update) ){
+        console.log('not load')
+        // TODO: load only offer and tradeHistory
+      }else{
+        // Rarible
+        const raribleCheck: ResponseDetail = await rarible.nftDetail(address, setNFT, setRarible)
+        const openseaCheck: ResponseDetail = await opensea.nftDetail(address, setNFT, setOpensea)
+        const checkCurrent = raribleCheck.status ? 'rarible' : openseaCheck.status ? 'opensea' : 'nifty'
+        const platform = {
+          current: checkCurrent,
+          check: {
+            opensea: {
+              link: openseaCheck.link,
+              status: openseaCheck.status
+            },
+            rarible: {
+              link: raribleCheck.link,
+              status: raribleCheck.status
+            }
           }
         }
+<<<<<<< HEAD
       }
       setPlatform(platform)
       await firebase.writeDocument('nft', address, {
@@ -149,48 +198,43 @@ const Page = ({ address, seo }: {
       switch (checkCurrent) {
         case 'opensea': openseaCheck.data && setNFT(openseaCheck.data); break;
         case 'rarible': raribleCheck.data && setNFT(raribleCheck.data); break;
+=======
+        setPlatform(platform)
+        switch(checkCurrent){
+          case 'opensea': openseaCheck.data && setNFT(openseaCheck.data); break;
+          case 'rarible': raribleCheck.data && setNFT(raribleCheck.data); break;
+        }
+        await firebase.writeDocument('nft',address, {
+          platform,
+          rarible: nftSanitizer(raribleCheck),
+          opensea: nftSanitizer(openseaCheck),
+          current_update: dayjs().unix()
+        })
+>>>>>>> fc02037736c91b4e1db020fb425cacc0109cfe67
       }
     })()
   }, []);
   const { image, title, description, pricing, offer, creator, owner, activity } = nft
   const getDate = (dayFormat: string) => dayjs(dayFormat).format('DD MMM YYYY')
-  const twitter = {
-    handle: '@handle',
-    site: '@site',
-    cardType: 'summary_large_image',
-  }
-  const constructImage = `https://api.placid.app/u/sxpwrxogf?&thumbnail[image]=${seo.image}&title[text]=${seo.title}&creator_name[text]=${seo.creator}`
-  const opengraph = {
-    url: 'https://www.url.ie/a',
-    title: seo.title,
-    description: seo.description,
-    images: [
-      {
-        url: constructImage,
-        width: 800,
-        height: 600,
-        alt: 'Og Image Alt',
-      },
-      {
-        url: constructImage,
-        width: 900,
-        height: 800,
-        alt: 'Og Image Alt Second',
-      },
-    ],
-    site_name: 'Galleryst',
-  }
   return <div className="w-screen h-screen z-20 bg-white fixed top-0 left-0 overflow-y-scroll overflow-x-hidden">
     <NextSeo
-      title="Simple Usage Example"
-      description="A short description goes here."
+      title={seo.title}
+      description={seo.description}
       canonical="https://www.canonical.ie/"
-      openGraph={opengraph}
-      twitter={twitter}
+      openGraph={{
+        site_name: 'Galleryst',
+        url: `https://www.galleryst.co/nft?address=${address}`,
+        title: seo.title,
+        description: seo.description,
+        images: [{ url: seo.image, alt: seo.title, width: 1200, height: 600 }]
+      }}
+      twitter={{
+        handle: '@handle',
+        site: '@site',
+        cardType: 'summary_large_image',
+      }}
     />
-    <Head>
-      <title>{seo.title}</title>
-    </Head>
+    <Head><title>{seo.title}</title></Head>
     <div className="flex flex-col">
       <div className="w-full relative flex items-center justify-center" style={{ background: 'rgba(92, 86, 86, 0.48)', height: '75vh' }}>
         <div className="p-4 flex items-center flex-col" style={{ height: '100%' }}>
@@ -222,7 +266,6 @@ const Page = ({ address, seo }: {
             <a href={platform.check['opensea']?.link} target="_blank" className="text-white bg-blue-500 opensea-logo logo-48 h-12 w-12 rounded-full" ></a>
           </div>}
         </div>
-
         <div className="lg:w-1/2 w-full lg:pl-6 pr-0 lg:sticky lg:flex lg:flex-col contents">
           <div className="order-3 mb-4">
             {pricing?.eth != undefined && <div className="flex text-xl ">
@@ -230,7 +273,6 @@ const Page = ({ address, seo }: {
                 {pricing.status ? 'Current price' : pricing.status}
               </span>
               <span className="text-right">{pricing?.eth} ETH</span>
-
             </div>}
             {offer?.status && <div className="flex text-xl ">
               <span className="flex-grow text-gray-500 text-left">
@@ -249,7 +291,7 @@ const Page = ({ address, seo }: {
                 <div className="flex w-full text-gray-700 mb-2">Created by</div>
                 {/* <span>{JSON.stringify(creator)}</span> */}
                 <a href={`/profile?address=${creator?.address}`} className="flex justify-between w-full mb-4 items-center	">
-                  {profileAddress(creator)}
+                  {profileAddress(creator, 0)}
                   {creator?.name}
                 </a>
               </div>
@@ -257,7 +299,7 @@ const Page = ({ address, seo }: {
               {owner !== undefined && owner.length > 0 && <div className="flex h-auto items-center flex-col w-full content-start">
                 <div className="flex w-full text-gray-700 mb-2">Collected by </div>
                 <div className="flex content-start w-full flex-wrap">
-                  {owner.map(owner => profileAddress(owner))}
+                  {owner.map((owner,index) => profileAddress(owner, index))}
                 </div>
               </div>}
             </div>
@@ -268,15 +310,15 @@ const Page = ({ address, seo }: {
     <div className="md:w-2/3 w-full m-auto">
       <div className="px-3 m-auto">
         <h2 className="mt-8 text-xl font-semibold">NFT History</h2>
-        {activity?.map(({ type, current_owner, previous_owner, date, value, price }) => {
+        {activity?.map(({ type, current_owner, previous_owner, date, value, price },index) => {
           switch (type) {
-            case 'order': return <div className="flex items-center my-4">
+            case 'order': return <div className="flex items-center my-4" key={index}>
               {profilePic(current_owner)} - {type} ({value}items | price {price}ETH) @ {getDate(date)}
             </div>
-            case 'transfer': return <div className="flex items-center my-5">
+            case 'transfer': return <div className="flex items-center my-5" key={index}>
               {profilePic(previous_owner)} - {type} to {profilePic(current_owner)} ({value}item) @ {getDate(date)}
             </div>
-            case 'mint': return <div className="flex items-center my-5">
+            case 'mint': return <div className="flex items-center my-5" key={index}>
               {profilePic(current_owner)} - {type} @ {getDate(date)}
             </div>
           }
@@ -295,18 +337,34 @@ export async function getServerSideProps(context: any) {
     creator: '',
     description: ''
   }
+<<<<<<< HEAD
   if (document.exists) {
     const response: any = document.data()
     const pickupWork = response[response.platform.current].data
+=======
+  if(document.exists){
+    const response : any = document.data()
+    const {
+      platform: getPlatform,
+      opensea: { data: getOpensea},
+      rarible: { data: getRarible },
+      current_update } = response
+    const getNFT = response[getPlatform.current].data
+    const constructImage = `https://api.placid.app/u/sxpwrxogf?&thumbnail[image]=${getNFT.image}&title[text]=${getNFT.title}&creator_name[text]=${getNFT.creator?.name}`
+>>>>>>> fc02037736c91b4e1db020fb425cacc0109cfe67
     seo = {
-      image: pickupWork.image,
-      title: pickupWork.title,
-      description: pickupWork.description,
-      creator: pickupWork.creator?.name,
+      image: constructImage,
+      title: getNFT.title != undefined ? getNFT.title : '-',
+      description: getNFT.description != undefined ? getNFT.description : '-',
+      creator: getNFT.creator?.name != undefined ? getNFT.creator.name : '-',
     }
-  }
-  return {
-    props: { address, seo },
+    return {
+      props: { address, seo, getPlatform, getNFT, current_update, getOpensea, getRarible },
+    }
+  }else{
+    return {
+      props: { address, seo },
+    }
   }
 }
 
