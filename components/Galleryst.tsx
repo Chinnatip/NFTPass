@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react'
 import * as firebase from "../method/firebase"
-import { faCopy, faSync, faCheck, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faCopy, faSync, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { mask } from 'utils/address.util'
 import { walletStore } from 'stores/wallet.store'
 import { observer } from 'mobx-react-lite'
@@ -60,7 +60,7 @@ export const CreatorHeader = ({ profile, parcel, claimable = false }: { profile:
 export const Toggle = ({ trigger, text, action, toggle, amount }: { trigger: string, text: string, action: any, toggle: string, amount: number }) => {
   return <button
     onClick={() => action(trigger)}
-    className={`${toggle == trigger ? 'bg-black text-white' : 'bg-white'} shadow-nft mx-2 px-3 py-2 font-semibold text-sm focus:outline-none appearance-none rounded-full `}>
+    className={`${toggle == trigger ? 'bg-black text-white' : 'bg-white'} active-shadow shadow-nft mx-2 px-3 py-2 font-semibold text-sm focus:outline-none appearance-none rounded-full `}>
     {text}
     <span className="p-1 ml-1 w-8 rounded-full bg-gray-main text-white inline-block">
       {amount}
@@ -93,7 +93,7 @@ export const AddressBox = ({ address }: { address: string | undefined }) => {
 const ClaimBox = ({ address, profile, action }: { address: string | undefined, profile: Profile, action: any }) => {
   return <button
     onClick={() => address != undefined && action(true)}
-    className="bg-black text-sm text-white rounded-full inline-block px-3 py-2 ml-3">
+    className="bg-black text-sm text-white rounded-full inline-block px-3 py-2 ml-3 active-shadow">
 
     {/* TODO: set roles of viewer and profile owner */}
     {profile.verified && address == profile.address ? 'Edit profile' : 'Claim this address'}
@@ -126,13 +126,13 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
   }
   return <>
     <div className="top-0 left-0 fixed w-screen h-screen bg-black opacity-50" />
-    <div className="fixed top-0 left-0 w-1/2 px-8 py-8 bg-white rounded-3xl shadow-nft text-left overflow-scroll " style={{ height: '70vh', transform: 'translate(-50%,-50%)', top: '50%', left: '50%' }}>
+    <div className="fixed top-0 left-0 md:w-1/2 w-full px-8 py-8 bg-white z-30 rounded-3xl shadow-nft text-left overflow-scroll " style={{ height: '70vh', transform: 'translate(-50%,-50%)', top: '50%', left: '50%' }}>
       <div className="relative w-full">
         <button onClick={() => modalAction(false)} className="absolute top-0 right-0 border rounded-full h-8 w-8 flex items-center justify-center">
-          <Icon fill={faTrash} noMargin />
+          <Icon fill={faTimes} noMargin />
         </button>
       </div>
-      <div className="text-center text-gray-600 text-sm">Edit Profile</div>
+      <div className="text-center text-gray-600 text-sm hidden">Edit Profile</div>
       <div className="text-center">
         <img src={profile.pic} className="h-20 rounded-full m-auto border" />
       </div>
@@ -326,18 +326,18 @@ export const Filter = ({ platform, profile }: { platform: 'rarible' | 'opensea' 
   const check = (platform: 'rarible' | 'opensea' | 'foundation' | 'nifty') => {
     switch (platform) {
       case 'rarible':
-        return { style: 'text-black bg-yellow-500 rarible-logo logo-48', text: '' }
+        return { style: 'text-black bg-yellow-500 rarible-logo ', text: '' }
       case 'opensea':
-        return { style: 'text-white bg-blue-500 opensea-logo logo-48', text: '' }
+        return { style: 'text-white bg-blue-500 opensea-logo ', text: '' }
       case 'foundation':
-        return { style: 'text-white bg-black foundation-logo logo-48', text: 'F' }
+        return { style: 'text-white bg-black foundation-logo ', text: 'F' }
       case 'nifty':
-        return { style: 'text-white bg-blue-700 nifty-logo logo-48', text: 'N' }
+        return { style: 'text-white bg-blue-700 nifty-logo ', text: 'N' }
     }
   }
   const default_style = 'border text-gray-400 bg-gray-200'
   const { text, style } = check(platform)
-  return <div className={`h-12 w-12 mx-2 flex items-center justify-center rounded-full shadow-nft text-lg logo-48 ${market[platform] ? style : default_style}`}>
+  return <div className={`h-8 w-8 mx-2 flex items-center justify-center rounded-full shadow-nft text-lg ${market[platform] ? style : default_style}`}>
     {text}
   </div>
 }

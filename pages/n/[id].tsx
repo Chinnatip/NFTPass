@@ -6,6 +6,8 @@ import * as rarible from '../../method/rarible/fetch'
 import * as opensea from '../../method/opensea/fetch'
 import * as firebase from "../../method/firebase"
 import dayjs from 'dayjs'
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
+import Icon from '@/Icon'
 
 const Picon = ({platform} : {platform: 'rarible' | 'opensea' | 'nifty' | 'foundation'}) => {
   let style = ''
@@ -30,8 +32,6 @@ const Picon = ({platform} : {platform: 'rarible' | 'opensea' | 'nifty' | 'founda
   `}
   />
 }
-
-
 
 export const Filter = ({ current, platform, action, targetAction, target }: {
   target?: NFTDetail,
@@ -161,7 +161,7 @@ const checkDiff = (current_update: number, diffAmount: number = 2) => {
   return diff
 }
 
-const Page = ({ address, seo, getPlatform , getNFT, getOpensea, getRarible, current_update, galleryst_id }: {
+const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, current_update, galleryst_id }: {
   address: string,
   seo: {
     image: string,
@@ -184,10 +184,10 @@ const Page = ({ address, seo, getPlatform , getNFT, getOpensea, getRarible, curr
   const gallerystID = galleryst_id != undefined ? galleryst_id : makeid(5)
   useEffect(() => {
     (async () => {
-      if(current_update != undefined && checkDiff(current_update) ){
+      if (current_update != undefined && checkDiff(current_update)) {
         console.log('not load')
         // TODO: load only offer and tradeHistory
-      }else{
+      } else {
         // Rarible
         const raribleCheck: ResponseDetail = await rarible.nftDetail(address, setNFT, setRarible)
         const openseaCheck: ResponseDetail = await opensea.nftDetail(address, setNFT, setOpensea)
@@ -206,16 +206,17 @@ const Page = ({ address, seo, getPlatform , getNFT, getOpensea, getRarible, curr
           }
         }
         setPlatform(platform)
-        switch(checkCurrent){
+        switch (checkCurrent) {
           case 'opensea': openseaCheck.data && setNFT(openseaCheck.data); break;
           case 'rarible': raribleCheck.data && setNFT(raribleCheck.data); break;
         }
-        await firebase.writeDocument('nft',address, {
+        await firebase.writeDocument('nft', address, {
           platform,
           rarible: nftSanitizer(raribleCheck),
           opensea: nftSanitizer(openseaCheck),
           current_update: dayjs().unix(),
-          galleryst_id: gallerystID
+          galleryst_id: gallerystID,
+          address
         })
       }
     })()
@@ -249,9 +250,12 @@ const Page = ({ address, seo, getPlatform , getNFT, getOpensea, getRarible, curr
     />
     <Head><title>{seo.title}</title></Head>
     <div className="flex flex-col">
-      <div className="w-full relative flex items-center justify-center" style={{ background: 'rgba(92, 86, 86, 0.48)', height: '75vh' }}>
-        <div className="p-4 flex items-center flex" style={{height: '100%'}}>
-          <img src={image} className="shadow-nft-img rounded-lg fit-wh-img" style={{ height: '80%' }} />
+      <div className="w-full relative flex items-center justify-center max-w-full m-auto" style={{ background: 'rgba(92, 86, 86, 0.48)', height: '75vh' }}>
+        <a href={`/`} className="absolute top-2 left-2 bg-white rounded-full h-8 md:w-auto w-8 md:px-2 flex items-center justify-center text-black active-shadow">
+          <Icon fill={faArrowLeft} noMargin /> <span className="md:block hidden ml-1">Back</span>
+        </a>
+        <div className="p-4 flex items-center" style={{ height: '100%' }}>
+          <img src={image} className="shadow-nft-img rounded-lg fit-wh-img" />
           {/* <div className="pt-3 text-center flex justify-center items-center">
             <Filter current="opensea" platform={platform}  action={setPlatform} targetAction={setNFT} target={openseas} />
             <Filter current="rarible" platform={platform}  action={setPlatform} targetAction={setNFT} target={raribles} />
@@ -269,14 +273,14 @@ const Page = ({ address, seo, getPlatform , getNFT, getOpensea, getRarible, curr
           <div className="text-gray-500 mb-4 break-words order-2 hidden">{address}</div>
           <div className="order-5 mb-3"><h3 >{description != null ? description : 'No description.'}</h3></div>
           {/* Link to Platform */}
-          { platform.check['rarible']?.status && <div className="order-6 flex mt-4 p-4 items-center rounded-xl bg-white shadow-nft">
+          {platform.check['rarible']?.status && <a href={platform.check['rarible']?.link} target="_blank" className="order-6 flex mt-4 p-4 items-center rounded-xl bg-white shadow-nft active-shadow">
             <span className="flex-grow ">Link to Rarible</span>
-            <a href={platform.check['rarible']?.link} target="_blank" className="text-black bg-yellow-500 rarible-logo logo-48 h-12 w-12 rounded-full" ></a>
-          </div>}
-          { platform.check['opensea']?.status && <div className="order-6 flex mt-4 p-4 items-center rounded-xl bg-white shadow-nft">
+            <div className="text-black bg-yellow-500 rarible-logo logo-48 h-12 w-12 rounded-full" ></div>
+          </a>}
+          {platform.check['opensea']?.status && <a href={platform.check['opensea']?.link} target="_blank" className="order-6 flex mt-4 p-4 items-center rounded-xl bg-white shadow-nft active-shadow">
             <span className="flex-grow ">Link to Opensea</span>
-            <a href={platform.check['opensea']?.link} target="_blank" className="text-white bg-blue-500 opensea-logo logo-48 h-12 w-12 rounded-full" ></a>
-          </div>}
+            <div className="text-white bg-blue-500 opensea-logo logo-48 h-12 w-12 rounded-full" ></div>
+          </a>}
         </div>
         <div className="lg:w-1/2 w-full lg:pl-6 pr-0 lg:sticky lg:flex lg:flex-col contents">
           <div className="order-3 mb-4">
@@ -292,16 +296,15 @@ const Page = ({ address, seo, getPlatform , getNFT, getOpensea, getRarible, curr
               </span>
               <span className="text-right">{raribles.pricing?.eth} ETH</span>
             </div>}
-            <hr />
-            { openseas.offer?.status && <div className="flex text-xl items-center py-2">
+            {openseas.offer?.status && <div className="flex text-xl items-center py-2">
               <span className="flex-grow text-gray-500 text-left flex items-center">
-              <Picon platform="opensea"></Picon> Best offer
+                <Picon platform="opensea"></Picon> Best offer
               </span>
               <span className="text-right"> {openseas.offer?.best_offer?.toFixed(2)} ETH</span>
             </div>}
-            { raribles.offer?.status && <div className="flex text-xl items-center py-2">
+            {raribles.offer?.status && <div className="flex text-xl items-center py-2">
               <span className="flex-grow text-gray-500 text-left flex items-center">
-              <Picon platform="rarible"></Picon> Best offer
+                <Picon platform="rarible"></Picon> Best offer
               </span>
               <span className="text-right"> {raribles.offer?.best_offer?.toFixed(2)} ETH</span>
             </div>}
@@ -316,15 +319,19 @@ const Page = ({ address, seo, getPlatform , getNFT, getOpensea, getRarible, curr
               <div className="flex h-auto items-center flex-col w-full ">
                 <div className="flex w-full text-gray-700 mb-2">Created by</div>
                 {/* <span>{JSON.stringify(creator)}</span> */}
-                <a href={`/profile?address=${creator?.address}`} className="flex justify-between w-full mb-4 items-center	">
+                <a href={`/profile?address=${creator?.address}`} className="flex justify-start w-full mb-4 items-center	">
                   {profileAddress(creator, 0)}
-                  {creator?.name}
+                  <div className="ml-2">
+
+                    {creator?.name}
+                    <div className="text-gray-500 underline">View Profile</div>
+                  </div>
                 </a>
               </div>
               {owner !== undefined && owner.length > 0 && <div className="flex h-auto items-center flex-col w-full content-start">
                 <div className="flex w-full text-gray-700 mb-2">Collected by </div>
                 <div className="flex content-start w-full flex-wrap">
-                  {owner.map((owner,index) => profileAddress(owner, index))}
+                  {owner.map((owner, index) => profileAddress(owner, index))}
                 </div>
               </div>}
             </div>
@@ -350,15 +357,15 @@ const Page = ({ address, seo, getPlatform , getNFT, getOpensea, getRarible, curr
     <div className="md:w-2/3 w-full m-auto">
       <div className="px-3 m-auto">
         <h2 className="mt-8 text-xl font-semibold">NFT History</h2>
-        { selectActivity(nft, openseas)?.map(({ type, current_owner, previous_owner, date, value, price },index) => {
+        {selectActivity(nft, openseas)?.map(({ type, current_owner, previous_owner, date, value, price }, index) => {
           switch (type) {
-            case 'order': return <div className="flex items-center my-4" key={index}>
+            case 'order': return <div className="flex items-center my-4 text-sm text-gray-500" key={index}>
               {profilePic(current_owner)} - {type} ({value}items | price {price}ETH) @ {getDate(date)}
             </div>
-            case 'transfer': return <div className="flex items-center my-5" key={index}>
+            case 'transfer': return <div className="flex items-center my-5 text-sm text-gray-500" key={index}>
               {profilePic(previous_owner)} - {type} to {profilePic(current_owner)} ({value}item) @ {getDate(date)}
             </div>
-            case 'mint': return <div className="flex items-center my-5" key={index}>
+            case 'mint': return <div className="flex items-center my-5 text-sm text-gray-500" key={index}>
               {profilePic(current_owner)} - {type} @ {getDate(date)}
             </div>
           }

@@ -31,8 +31,8 @@ const ProfilePage = ({ profile, action, lists }: {
 
           {/* Tabbar */}
           <div className="mb-8 inline-block" >
-            <Toggle text="Collections" trigger="collection" action={setToggle} toggle={toggle} amount={ownLists.length} />
-            <Toggle text="Creates" trigger="creates" action={setToggle} toggle={toggle} amount={createdLists.length} />
+            <Toggle text="Owned" trigger="collection" action={setToggle} toggle={toggle} amount={ownLists.length} />
+            <Toggle text="Created" trigger="creates" action={setToggle} toggle={toggle} amount={createdLists.length} />
             {dropLists.length > 0 &&
               <Toggle text="Drops" trigger="drops" action={setToggle} toggle={toggle} amount={dropLists.length} />
             }
@@ -42,7 +42,7 @@ const ProfilePage = ({ profile, action, lists }: {
 
       {/* NFT controller */}
       <div className="py-3 text-center flex justify-center items-center bg-gray-100">
-        <span className="text-sm text-gray-500 mr-1">Filter by marletplace</span>
+        <span className="text-sm text-gray-500 mr-1 hidden">Filter by marletplace</span>
         <Filter platform="rarible" profile={profile} />
         <Filter platform="opensea" profile={profile} />
         <Filter platform="foundation" profile={profile} />
