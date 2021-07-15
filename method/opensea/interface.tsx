@@ -87,6 +87,10 @@ export interface SaleOrder {
   prefixed_hash: string
 }
 
+export interface OpenSeaNFT {
+  assets: OpenseaItem[]
+}
+
 export interface OpenseaItem {
   id: number
   token_id: string
@@ -173,7 +177,9 @@ export interface OpenseaItem {
   },
   sell_orders?: SaleOrder[]
   creator: {
-      user?: string
+      user?: {
+        username: string
+      }
       profile_img_url: string
       address: string
       config: string

@@ -94,7 +94,9 @@ const ClaimBox = ({ address, profile, action }: { address: string | undefined, p
   return <button
     onClick={() => address != undefined && action(true)}
     className="bg-black text-sm text-white rounded-full inline-block px-3 py-2 ml-3">
-    {profile.verified ? 'Edit profile' : 'Claim this address'}
+
+    {/* TODO: set roles of viewer and profile owner */}
+    {profile.verified && address == profile.address ? 'Edit profile' : 'Claim this address'}
   </button>
 }
 

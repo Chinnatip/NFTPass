@@ -1,5 +1,10 @@
 import { Galleryst } from '../../interfaces/index'
 
+export interface RaribleOffer {
+  status: boolean,
+  best_offer: number | undefined
+}
+
 export interface RaribleGetResponse {
   onsale: string[]
   created: string[]

@@ -1,6 +1,7 @@
-export type User = {
-  id: number
-  name: string
+export interface ResponseDetail {
+  status: boolean
+  link?: string
+  data?: NFTDetail | undefined
 }
 
 export interface Galleryst {
@@ -78,4 +79,55 @@ export interface Profile {
     followings?: number
     likes?: number
   }
+}
+
+export interface User {
+  address: string
+  name?: string
+  desription?: string
+  image?: string
+  shortUrl?: string
+}
+
+export interface ActivityLog {
+  type: string
+  current_owner: User
+  previous_owner?: User
+  date: string
+  value: number
+  price?: number
+}
+
+export interface NFTDetail {
+  image?: string
+  address: string
+  owner?: User[]
+  creator?: User
+  title?: string
+  description?: string
+  pricing?: {
+    status?: string | boolean
+    eth?: number
+    usd?: number
+  }
+  offer?:{
+    status?: boolean
+    best_offer?: number
+  }
+  activity?: ActivityLog[]
+}
+
+export interface Activity {
+  "@type": string
+  date: string
+  id: string
+  owner: string
+  from?: string
+  token: string
+  tokenId: string
+  value: number
+  buyValue?: number
+  price?: number
+  buyToken?: string
+  transactionHash: string
 }

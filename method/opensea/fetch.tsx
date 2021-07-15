@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { OpenseaItem, SaleOrder } from './interface'
-import { Galleryst } from '../../interfaces/index'
+import { Galleryst, NFTDetail, ResponseDetail } from '../../interfaces/index'
 
 const OPENSEA_URL = 'https://api.opensea.io/api/v1/assets'
 
@@ -27,6 +27,26 @@ const constructOpensea = (nftLists: OpenseaItem[]) : Galleryst[] => {
   })
 }
 
+const getPriceHistory = async(contact_address: string, token_id: string) => {
+  const resp = await axios.get(`/api/opensea/tradeHistory?address=${contact_address}:${token_id}`)
+  console.log(resp.data)
+  if(resp.status ==200){
+    return resp.data
+  }else{
+    return undefined
+  }
+}
+
+const getBestOffer = async(contact_address: string, token_id: string) => {
+  const resp = await axios.get(`/api/opensea/offer?address=${contact_address}:${token_id}`)
+  console.log(resp.data)
+  if(resp.status ==200){
+    return resp.data
+  }else{
+    return undefined
+  }
+}
+
 export const ownByAddress = async(address: string) => {
   const parse_url = `${OPENSEA_URL}?owner=${address}&order_direction=desc&offset=0&limit=100`
   const resp = await axios.get(parse_url)
@@ -49,9 +69,49 @@ export const ownByAddress = async(address: string) => {
   }
 }
 
-export const nftDetail = async(address: string) => {
+export const nftDetail = async(address: string, defaultAction: any, action: any): Promise<ResponseDetail> => {
   const splitAddress = address.split(':')
   const contact_address = splitAddress[0]
   const token_id = splitAddress[1]
-  return await axios.get(`${OPENSEA_URL}?token_ids=${token_id}&asset_contract_address=${contact_address}&order_direction=desc&offset=0&limit=20`)
+
+  const resp = await axios.get(`${OPENSEA_URL}?token_ids=${token_id}&asset_contract_address=${contact_address}&order_direction=desc&offset=0&limit=20`)
+  if(resp.data['assets'].length > 0){
+    const os : OpenseaItem = resp.data['assets'][0]
+    const pricing = os.sell_orders != undefined  && os.sell_orders.length > 0 ? {
+      status: true,
+      eth: parseFloat(os.sell_orders[0]?.base_price) / 10**os.sell_orders[0]?.payment_token_contract.decimals,
+      usd: parseFloat(os.sell_orders[0]?.payment_token_contract.usd_price) * parseFloat(os.sell_orders[0]?.base_price) / 10**os.sell_orders[0]?.payment_token_contract.decimals
+    } : undefined
+    const offer = await getBestOffer(contact_address, token_id)
+    const activity = await getPriceHistory(contact_address, token_id)
+    const data : NFTDetail = {
+      address,
+      image: os.image_original_url,
+      title: os.name,
+      description: os.description,
+      owner: [{
+        address: os.owner?.address,
+        name: os.owner?.user?.username,
+        image: os.owner?.profile_img_url
+      }],
+      creator: {
+        address: os.creator?.address,
+        name: os.creator?.user?.username,
+        image: os.creator?.profile_img_url
+      },
+      pricing,
+      offer,
+      activity
+    }
+    // console.log(returner)
+    defaultAction(data)
+    action(data)
+    return {
+      status: true,
+      link: `https://opensea.io/assets/${contact_address}/${token_id}`,
+      data
+    }
+  }else{
+    return { status: false }
+  }
 }
