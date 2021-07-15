@@ -155,19 +155,20 @@ const Page = ({ address, seo }: {
     site: '@site',
     cardType: 'summary_large_image',
   }
+  const constructImage = `https://api.placid.app/u/sxpwrxogf?&thumbnail[image]=${seo.image}&title[text]=${seo.title}&creator_name[text]=${seo.creator}`
   const opengraph = {
     url: 'https://www.url.ie/a',
     title: seo.title,
     description: seo.description,
     images: [
       {
-        url: seo.image,
+        url: constructImage,
         width: 800,
         height: 600,
         alt: 'Og Image Alt',
       },
       {
-        url: seo.image,
+        url: constructImage,
         width: 900,
         height: 800,
         alt: 'Og Image Alt Second',
