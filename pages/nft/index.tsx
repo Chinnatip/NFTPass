@@ -92,6 +92,14 @@ const profileAddress = (user: User | undefined, index: number) => {
     <span className="inline-block w-10 h-10 rounded-full bg-purple-500 ml-2 flex items-center justify-center">{user?.name?.substr(0, 1)}</span>
 }
 
+const selectActivity = (nft: NFTDetail, openseas: NFTDetail) => {
+  if(openseas.activity != undefined){
+    return openseas.activity
+  } else{
+    return nft.activity
+  }
+}
+
 interface PlatformItem {
   link?: string
   status: boolean
@@ -127,7 +135,6 @@ export const nftSanitizer = (objs: ResponseDetail) => {
           previous_owner: clean({...ac.previous_owner, user: clean(ac.previous_owner?.user) })
         })
       } )
-
     })
   })
   return cleaning
@@ -195,7 +202,8 @@ const Page = ({ address, seo, getPlatform , getNFT, getOpensea, getRarible, curr
       }
     })()
   }, []);
-  const {image, title, description, creator, owner, activity } = nft
+
+  const {image, title, description, creator, owner } = nft
   const getDate = (dayFormat: string) => dayjs(dayFormat).format('DD MMM YYYY')
   return <div className="w-screen h-screen z-20 bg-white fixed top-0 left-0 overflow-y-scroll overflow-x-hidden">
     <NextSeo
@@ -302,7 +310,7 @@ const Page = ({ address, seo, getPlatform , getNFT, getOpensea, getRarible, curr
     <div className="md:w-2/3 w-full m-auto">
       <div className="px-3 m-auto">
         <h2 className="mt-8 text-xl font-semibold">NFT History</h2>
-        {activity?.map(({ type, current_owner, previous_owner, date, value, price },index) => {
+        { selectActivity(nft, openseas)?.map(({ type, current_owner, previous_owner, date, value, price },index) => {
           switch (type) {
             case 'order': return <div className="flex items-center my-4" key={index}>
               {profilePic(current_owner)} - {type} ({value}items | price {price}ETH) @ {getDate(date)}
