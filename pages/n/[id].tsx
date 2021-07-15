@@ -344,7 +344,7 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
               </div>
               <button
                 className="relative cursor-pointer bg-blue-500 text-white rounded-xl h-12 px-3 flex items-center justify-center"
-                onClick={() => useCopyToClipboard(`http://galleryst.co/n/${gallerystID}`)}>
+                onClick={() => useCopyToClipboard(`https://www.galleryst.co/n/${gallerystID}`)}>
                   {copied && <div className="absolute bg-black text-white top-0 right-0 p-1 px-2 -mt-10 -mr-2 text-sm rounded-full">Copied !</div>}
                   Share this NFT
               </button>
@@ -400,7 +400,7 @@ export async function getServerSideProps(context: any) {
       description: getNFT.description != undefined ? getNFT.description : '-',
       creator: getNFT.creator?.name != undefined ? getNFT.creator.name : '-',
     }
-    console.log({ address, seo, getPlatform, getNFT, current_update, getOpensea, getRarible, galleryst_id })
+    // console.log({ address, seo, getPlatform, getNFT, current_update, getOpensea, getRarible, galleryst_id })
     return { props: { address, seo, getPlatform, getNFT, current_update, getOpensea, getRarible, galleryst_id }}
   }else{
     return { props: { seo } }
