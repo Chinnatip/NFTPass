@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react'
 import * as firebase from "../method/firebase"
-import { faCopy, faSync, faCheck, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faCopy, faSync, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { mask } from 'utils/address.util'
 import { walletStore } from 'stores/wallet.store'
 import { observer } from 'mobx-react-lite'
@@ -126,13 +126,13 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
   }
   return <>
     <div className="top-0 left-0 fixed w-screen h-screen bg-black opacity-50" />
-    <div className="fixed top-0 left-0 w-1/2 px-8 py-8 bg-white rounded-3xl shadow-nft text-left overflow-scroll " style={{ height: '70vh', transform: 'translate(-50%,-50%)', top: '50%', left: '50%' }}>
+    <div className="fixed top-0 left-0 md:w-1/2 w-full px-8 py-8 bg-white z-30 rounded-3xl shadow-nft text-left overflow-scroll " style={{ height: '70vh', transform: 'translate(-50%,-50%)', top: '50%', left: '50%' }}>
       <div className="relative w-full">
         <button onClick={() => modalAction(false)} className="absolute top-0 right-0 border rounded-full h-8 w-8 flex items-center justify-center">
-          <Icon fill={faTrash} noMargin />
+          <Icon fill={faTimes} noMargin />
         </button>
       </div>
-      <div className="text-center text-gray-600 text-sm">Edit Profile</div>
+      <div className="text-center text-gray-600 text-sm hidden">Edit Profile</div>
       <div className="text-center">
         <img src={profile.pic} className="h-20 rounded-full m-auto border" />
       </div>
