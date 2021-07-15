@@ -6,6 +6,8 @@ import * as rarible from '../../method/rarible/fetch'
 import * as opensea from '../../method/opensea/fetch'
 import * as firebase from "../../method/firebase"
 import dayjs from 'dayjs'
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
+import Icon from '@/Icon'
 
 const Picon = ({ platform }: { platform: 'rarible' | 'opensea' | 'nifty' | 'foundation' }) => {
   let style = ''
@@ -60,8 +62,8 @@ export const Filter = ({ current, platform, action, targetAction, target }: {
   const { text, style } = check(current)
   return <div
     className={`
-      cursor-pointer h-12 w-12 mx-2 flex items-center
-      shadow-xl justify-center rounded-full shadow-nft text-lg logo-48
+      cursor-pointer h-8 w-8 mx-2 flex items-center
+      shadow-xl justify-center rounded-full shadow-nft text-lg
       ${platform.current == current && 'border-1 border-green-400 shadow-greenery'}
       ${market[current]?.status ? style : default_style}
     `}
@@ -75,11 +77,11 @@ export const Filter = ({ current, platform, action, targetAction, target }: {
 
 const profilePic = (user: User | undefined) => {
   if (user != undefined) {
-    return <a href={`/profile?address=${user.address}`} className="bg-gray-500 mx-2 w-8 h-8 rounded-full overflow-hidden inline-flex items-center justify-center">
-      <img src={user.image} className="h-8 inline " />
+    return <a href={`/profile?address=${user.address}`} className="bg-gray-500 mx-2 w-8 h-8 rounded-full inline-flex items-center justify-center">
+      <img src={user.image} className="h-8 inline w-8 fix-w-h-xs rounded-full" />
     </a>
   } else {
-    return <div className="w-8 h-8 inline bg-gray-600 rounded-full" />
+    return <div className="w-8 h-8 inline bg-gray-600 rounded-full fix-w-h-xs" />
   }
 }
 
@@ -227,9 +229,12 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
     />
     <Head><title>{seo.title}</title></Head>
     <div className="flex flex-col">
-      <div className="w-full relative flex items-center justify-center" style={{ background: 'rgba(92, 86, 86, 0.48)', height: '75vh' }}>
-        <div className="p-4 flex items-center flex" style={{ height: '100%' }}>
-          <img src={image} className="shadow-nft-img rounded-lg fit-wh-img" style={{ height: '80%' }} />
+      <div className="w-full relative flex items-center justify-center max-w-full m-auto" style={{ background: 'rgba(92, 86, 86, 0.48)', height: '75vh' }}>
+        <a href={`/`} className="absolute top-2 left-2 bg-white rounded-full h-8 md:w-auto w-8 md:px-2 flex items-center justify-center text-black active-shadow">
+          <Icon fill={faArrowLeft} noMargin /> <span className="md:block hidden ml-1">Back</span>
+        </a>
+        <div className="p-4 flex items-center" style={{ height: '100%' }}>
+          <img src={image} className="shadow-nft-img rounded-lg fit-wh-img" />
           {/* <div className="pt-3 text-center flex justify-center items-center">
             <Filter current="opensea" platform={platform}  action={setPlatform} targetAction={setNFT} target={openseas} />
             <Filter current="rarible" platform={platform}  action={setPlatform} targetAction={setNFT} target={raribles} />
@@ -247,11 +252,11 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
           <div className="text-gray-500 mb-4 break-words order-2 hidden">{address}</div>
           <div className="order-5 mb-3"><h3 >{description != null ? description : 'No description.'}</h3></div>
           {/* Link to Platform */}
-          {platform.check['rarible']?.status && <div className="order-6 flex mt-4 p-4 items-center rounded-xl bg-white shadow-nft">
+          {platform.check['rarible']?.status && <a href={platform.check['rarible']?.link} target="_blank" className="order-6 flex mt-4 p-4 items-center rounded-xl bg-white shadow-nft active-shadow">
             <span className="flex-grow ">Link to Rarible</span>
-            <a href={platform.check['rarible']?.link} target="_blank" className="text-black bg-yellow-500 rarible-logo logo-48 h-12 w-12 rounded-full" ></a>
-          </div>}
-          {platform.check['opensea']?.status && <a href={platform.check['opensea']?.link} target="_blank" className="order-6 flex mt-4 p-4 items-center rounded-xl bg-white shadow-nft">
+            <div className="text-black bg-yellow-500 rarible-logo logo-48 h-12 w-12 rounded-full" ></div>
+          </a>}
+          {platform.check['opensea']?.status && <a href={platform.check['opensea']?.link} target="_blank" className="order-6 flex mt-4 p-4 items-center rounded-xl bg-white shadow-nft active-shadow">
             <span className="flex-grow ">Link to Opensea</span>
             <div className="text-white bg-blue-500 opensea-logo logo-48 h-12 w-12 rounded-full" ></div>
           </a>}
@@ -270,7 +275,6 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
               </span>
               <span className="text-right">{raribles.pricing?.eth} ETH</span>
             </div>}
-            <hr />
             {openseas.offer?.status && <div className="flex text-xl items-center py-2">
               <span className="flex-grow text-gray-500 text-left flex items-center">
                 <Picon platform="opensea"></Picon> Best offer
@@ -295,6 +299,7 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
                 <a href={`/profile?address=${creator?.address}`} className="flex justify-start w-full mb-4 items-center	">
                   {profileAddress(creator, 0)}
                   <div className="ml-2">
+
                     {creator?.name}
                     <div className="text-gray-500 underline">View Profile</div>
                   </div>
@@ -317,13 +322,13 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
         <h2 className="mt-8 text-xl font-semibold">NFT History</h2>
         {selectActivity(nft, openseas)?.map(({ type, current_owner, previous_owner, date, value, price }, index) => {
           switch (type) {
-            case 'order': return <div className="flex items-center my-4" key={index}>
+            case 'order': return <div className="flex items-center my-4 text-sm text-gray-500" key={index}>
               {profilePic(current_owner)} - {type} ({value}items | price {price}ETH) @ {getDate(date)}
             </div>
-            case 'transfer': return <div className="flex items-center my-5" key={index}>
+            case 'transfer': return <div className="flex items-center my-5 text-sm text-gray-500" key={index}>
               {profilePic(previous_owner)} - {type} to {profilePic(current_owner)} ({value}item) @ {getDate(date)}
             </div>
-            case 'mint': return <div className="flex items-center my-5" key={index}>
+            case 'mint': return <div className="flex items-center my-5 text-sm text-gray-500" key={index}>
               {profilePic(current_owner)} - {type} @ {getDate(date)}
             </div>
           }

@@ -50,7 +50,7 @@ button {
 }
 
 .bg-gray-main {
-  background-color: #989898;
+  background-color: #9898985e;
 }
 
 .text-ss {
@@ -1416,9 +1416,28 @@ body.video-react-full-window .video-react-fullscreen {
   transform: translateY(-30px);
 }
 
+.active-shadow {
+  box-shadow: 0px 12px 40px 8px rgba(0, 0, 0, 0.08);
+  transition: all ease-in-out 0.15s;
+  -webkit-transition: all ease-in-out 0.15s;
+  -moz-transition: all ease-in-out 0.15s;
+  -ms-transition: all ease-in-out 0.15s;
+  -o-transition: all ease-in-out 0.15s;
+}
+.active-shadow:hover {
+  box-shadow: 0px 4px 20px 8px rgba(0, 0, 0, 0.1);
+  transform: scale(1.025);
+  -webkit-transform: scale(1.025);
+  -moz-transform: scale(1.025);
+  -ms-transform: scale(1.025);
+  -o-transform: scale(1.025);
+}
+
+
 .shadow-nft {
   box-shadow: 0px 12px 40px 8px rgba(0, 0, 0, 0.08);
 }
+
 
 .shadow-greenery {
   box-shadow: 0 6px 20px #9eff9e !important;
@@ -1481,6 +1500,11 @@ img.fit-wh-img {
   width: auto;
   height: fit-content;
   object-fit: cover;
+}
+
+.fix-w-h-xs {
+  min-height: 2rem;
+  min-width: 2rem;
 }
 
 .w-min {
@@ -1581,4 +1605,12 @@ div.address-text-wrapper > span {
   display: inline-flex;
   width: calc(50% - 1em);
   justify-content: flex-end;
+}
+
+.top-2 {
+  top: 0.5rem;
+}
+
+.left-2 {
+  left: 0.5rem;
 }
