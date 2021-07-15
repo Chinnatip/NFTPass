@@ -186,11 +186,11 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
   galleryst_id?: string
 }) => {
   const [nft, setNFT] = useState<NFTDetail>(getNFT != undefined ? getNFT : { address })
+  const [gallerystID] = useState( galleryst_id != undefined ? galleryst_id : makeid(5))
   const [raribles, setRarible] = useState<NFTDetail>( getRarible != undefined ? getRarible : { address })
   const [openseas, setOpensea] = useState<NFTDetail>( getOpensea != undefined ? getOpensea : { address })
   const [platform, setPlatform] = useState<NFTPlatform>( getPlatform != undefined ? getPlatform : {current: 'opensea', check: {rarible: {status: false}, opensea: {status: false}}})
   const [copied, setCopied] = useState(false)
-  const gallerystID = galleryst_id != undefined ? galleryst_id : makeid(5)
   useEffect(() => {
     (async () => {
       if (current_update != undefined && checkDiff(current_update)) {
