@@ -162,7 +162,7 @@ const checkDiff = (current_update: number, diffAmount: number = 2) => {
 }
 
 const prepareURI = (text: string) => {
-  const rep = text.split("#").join("@")
+  const rep = text.split("#").join("@").split("&").join("-").split("?").join("-")
   return encodeURI(rep)
 }
 
