@@ -43,6 +43,7 @@ export const Filter = ({ current, platform, action, targetAction, target }: {
     `}
     onClick={() => {
       action({ ...platform , current: current})
+      console.log(target)
       if(targetAction != undefined) targetAction(target)
     }}>
     {text}
@@ -59,9 +60,9 @@ const profilePic = (user: User | undefined) => {
   }
 }
 
-const profileAddress = (user: User | undefined) => {
+const profileAddress = (user: User | undefined, index: number) => {
   return user != undefined && user?.image != '' ?
-    <a href={`/profile?address=${user.address}`} target="_blank" className="ml-2 bg-gray-500 w-10 h-10 rounded-full overflow-hidden inline-flex items-center justify-center">
+    <a key={index} href={`/profile?address=${user.address}`} target="_blank" className="ml-2 bg-gray-500 w-10 h-10 rounded-full overflow-hidden inline-flex items-center justify-center">
       <img src={user?.image} className="h-10 inline" />
     </a> :
     <span className="inline-block w-10 h-10 rounded-full bg-purple-500 ml-2 flex items-center justify-center">{user?.name?.substr(0, 1)}</span>
@@ -105,12 +106,17 @@ export const nftSanitizer = (objs: ResponseDetail) => {
 
     })
   })
-  console.log(cleaning)
   return cleaning
 }
 
+const checkDiff = (current_update: number, diffAmount: number = 2) => {
+  const today = dayjs()
+  const updatedAt = dayjs.unix(current_update)
+  const diff = diffAmount >= today.diff(updatedAt, 'days')
+  return diff
+}
 
-const Page = ({ address, seo, getPlatform , getNFT }: {
+const Page = ({ address, seo, getPlatform , getNFT, getOpensea, getRarible, current_update }: {
   address: string,
   seo: {
     image: string,
@@ -120,41 +126,49 @@ const Page = ({ address, seo, getPlatform , getNFT }: {
   },
   getPlatform?: NFTPlatform,
   getNFT?: NFTDetail,
+  getOpensea?: NFTDetail,
+  getRarible?: NFTDetail,
+  current_update?: number
 }) => {
   const [nft, setNFT] = useState<NFTDetail>(getNFT != undefined ? getNFT : { address })
-  const [raribles, setRarible] = useState<NFTDetail>({ address })
-  const [openseas, setOpensea] = useState<NFTDetail>({ address })
+  const [raribles, setRarible] = useState<NFTDetail>( getRarible != undefined ? getRarible : { address })
+  const [openseas, setOpensea] = useState<NFTDetail>( getOpensea != undefined ? getOpensea : { address })
   const [platform, setPlatform] = useState<NFTPlatform>( getPlatform != undefined ? getPlatform : {current: 'opensea', check: {rarible: {status: false}, opensea: {status: false}}})
   useEffect(() => {
     (async () => {
-      // Rarible
-      const raribleCheck: ResponseDetail = await rarible.nftDetail(address, setNFT, setRarible)
-      const openseaCheck: ResponseDetail = await opensea.nftDetail(address, setNFT, setOpensea)
-      const checkCurrent = raribleCheck.status ? 'rarible' : openseaCheck.status ? 'opensea' : 'nifty'
-      const platform = {
-        current: checkCurrent,
-        check: {
-          opensea: {
-            link: openseaCheck.link,
-            status: openseaCheck.status
-          },
-          rarible: {
-            link: raribleCheck.link,
-            status: raribleCheck.status
+      if(current_update != undefined && checkDiff(current_update) ){
+        console.log('not load')
+        // TODO: load only offer and tradeHistory
+      }else{
+        // Rarible
+        const raribleCheck: ResponseDetail = await rarible.nftDetail(address, setNFT, setRarible)
+        const openseaCheck: ResponseDetail = await opensea.nftDetail(address, setNFT, setOpensea)
+        const checkCurrent = raribleCheck.status ? 'rarible' : openseaCheck.status ? 'opensea' : 'nifty'
+        const platform = {
+          current: checkCurrent,
+          check: {
+            opensea: {
+              link: openseaCheck.link,
+              status: openseaCheck.status
+            },
+            rarible: {
+              link: raribleCheck.link,
+              status: raribleCheck.status
+            }
           }
         }
+        setPlatform(platform)
+        switch(checkCurrent){
+          case 'opensea': openseaCheck.data && setNFT(openseaCheck.data); break;
+          case 'rarible': raribleCheck.data && setNFT(raribleCheck.data); break;
+        }
+        await firebase.writeDocument('nft',address, {
+          platform,
+          rarible: nftSanitizer(raribleCheck),
+          opensea: nftSanitizer(openseaCheck),
+          current_update: dayjs().unix()
+        })
       }
-      setPlatform(platform)
-      switch(checkCurrent){
-        case 'opensea': openseaCheck.data && setNFT(openseaCheck.data); break;
-        case 'rarible': raribleCheck.data && setNFT(raribleCheck.data); break;
-      }
-      await firebase.writeDocument('nft',address, {
-        platform,
-        rarible: nftSanitizer(raribleCheck),
-        opensea: nftSanitizer(openseaCheck),
-        current_update: dayjs().unix()
-      })
     })()
   }, []);
   const {image, title, description, pricing, offer, creator, owner, activity } = nft
@@ -234,7 +248,7 @@ const Page = ({ address, seo, getPlatform , getNFT }: {
                 <div className="flex w-full text-gray-700 mb-2">Created by</div>
                 {/* <span>{JSON.stringify(creator)}</span> */}
                 <a href={`/profile?address=${creator?.address}`} className="flex justify-between w-full mb-4 items-center	">
-                  {profileAddress(creator)}
+                  {profileAddress(creator, 0)}
                   {creator?.name}
                 </a>
               </div>
@@ -242,7 +256,7 @@ const Page = ({ address, seo, getPlatform , getNFT }: {
               {owner !== undefined && owner.length > 0 && <div className="flex h-auto items-center flex-col w-full content-start">
                 <div className="flex w-full text-gray-700 mb-2">Collected by </div>
                 <div className="flex content-start w-full flex-wrap">
-                  {owner.map(owner => profileAddress(owner))}
+                  {owner.map((owner,index) => profileAddress(owner, index))}
                 </div>
               </div>}
             </div>
@@ -253,15 +267,15 @@ const Page = ({ address, seo, getPlatform , getNFT }: {
     <div className="md:w-2/3 w-full m-auto">
       <div className="px-3 m-auto">
         <h2 className="mt-8 text-xl font-semibold">NFT History</h2>
-        {activity?.map(({ type, current_owner, previous_owner, date, value, price }) => {
+        {activity?.map(({ type, current_owner, previous_owner, date, value, price },index) => {
           switch (type) {
-            case 'order': return <div className="flex items-center my-4">
+            case 'order': return <div className="flex items-center my-4" key={index}>
               {profilePic(current_owner)} - {type} ({value}items | price {price}ETH) @ {getDate(date)}
             </div>
-            case 'transfer': return <div className="flex items-center my-5">
+            case 'transfer': return <div className="flex items-center my-5" key={index}>
               {profilePic(previous_owner)} - {type} to {profilePic(current_owner)} ({value}item) @ {getDate(date)}
             </div>
-            case 'mint': return <div className="flex items-center my-5">
+            case 'mint': return <div className="flex items-center my-5" key={index}>
               {profilePic(current_owner)} - {type} @ {getDate(date)}
             </div>
           }
@@ -282,7 +296,11 @@ export async function getServerSideProps(context: any) {
   }
   if(document.exists){
     const response : any = document.data()
-    const { platform: getPlatform, current_update } = response
+    const {
+      platform: getPlatform,
+      opensea: { data: getOpensea},
+      rarible: { data: getRarible },
+      current_update } = response
     const getNFT = response[getPlatform.current].data
     const constructImage = `https://api.placid.app/u/sxpwrxogf?&thumbnail[image]=${getNFT.image}&title[text]=${getNFT.title}&creator_name[text]=${getNFT.creator?.name}`
     seo = {
@@ -292,7 +310,7 @@ export async function getServerSideProps(context: any) {
       creator: getNFT.creator?.name != undefined ? getNFT.creator.name : '-',
     }
     return {
-      props: { address, seo, getPlatform, getNFT, current_update },
+      props: { address, seo, getPlatform, getNFT, current_update, getOpensea, getRarible },
     }
   }else{
     return {
