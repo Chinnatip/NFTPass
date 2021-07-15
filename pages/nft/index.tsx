@@ -24,7 +24,6 @@ const Picon = ({ platform }: { platform: 'rarible' | 'opensea' | 'nifty' | 'foun
     case 'nifty':
       style = 'text-white bg-blue-700 nifty-logo logo-48'
   }
-
   return <div
     className={`
      mr-3 h-12 w-12 inline-flex items-center justify-center rounded-full shadow-nft
@@ -32,8 +31,6 @@ const Picon = ({ platform }: { platform: 'rarible' | 'opensea' | 'nifty' | 'foun
   `}
   />
 }
-
-
 
 export const Filter = ({ current, platform, action, targetAction, target }: {
   target?: NFTDetail,
@@ -265,12 +262,6 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
         </a>
         <div className="p-4 flex items-center" style={{ height: '100%' }}>
           <img src={image} className="shadow-nft-img rounded-lg fit-wh-img" />
-          {/* <div className="pt-3 text-center flex justify-center items-center">
-            <Filter current="opensea" platform={platform}  action={setPlatform} targetAction={setNFT} target={openseas} />
-            <Filter current="rarible" platform={platform}  action={setPlatform} targetAction={setNFT} target={raribles} />
-            <Filter current="foundation" platform={platform}  action={setPlatform} />
-            <Filter current="nifty" platform={platform}  action={setPlatform} />
-          </div> */}
         </div>
       </div>
       <div className="text-center mt-10 mb-12 hidden">
