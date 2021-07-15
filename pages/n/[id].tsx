@@ -393,7 +393,7 @@ export async function getServerSideProps(context: any) {
       rarible: { data: getRarible },
       address , current_update, galleryst_id } = response
     const getNFT = response[getPlatform.current].data
-    const constructImage = `https://api.placid.app/u/sxpwrxogf?&thumbnail[image]=${getNFT.image}&title[text]=${getNFT.title}&creator_name[text]=${getNFT.creator?.name}`
+    const constructImage = `https://api.placid.app/u/sxpwrxogf?&thumbnail[image]=${encodeURI(getNFT.image)}&title[text]=${encodeURI(getNFT.title)}&creator_name[text]=${encodeURI(getNFT.creator?.name)}`
     seo = {
       image: constructImage,
       title: getNFT.title != undefined ? getNFT.title : '-',
@@ -408,6 +408,5 @@ export async function getServerSideProps(context: any) {
 }
 
 export default Page
-
 
 
