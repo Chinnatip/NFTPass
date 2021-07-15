@@ -75,6 +75,17 @@ export const Filter = ({ current, platform, action, targetAction, target }: {
   </div>
 }
 
+const makeid = (length: number) => {
+  var result = '';
+  var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var charactersLength = characters.length;
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() *
+      charactersLength));
+  }
+  return result;
+}
+
 const profilePic = (user: User | undefined) => {
   if (user != undefined) {
     return <a href={`/profile?address=${user.address}`} className="bg-gray-500 mx-2 w-8 h-8 rounded-full inline-flex items-center justify-center">
@@ -152,7 +163,7 @@ const checkDiff = (current_update: number, diffAmount: number = 2) => {
   return diff
 }
 
-const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, current_update }: {
+const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, current_update, galleryst_id }: {
   address: string,
   seo: {
     image: string,
@@ -164,7 +175,8 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
   getNFT?: NFTDetail,
   getOpensea?: NFTDetail,
   getRarible?: NFTDetail,
-  current_update?: number
+  current_update?: number,
+  galleryst_id?: string
 }) => {
   const [nft, setNFT] = useState<NFTDetail>(getNFT != undefined ? getNFT : { address })
   const [raribles, setRarible] = useState<NFTDetail>(getRarible != undefined ? getRarible : { address })
@@ -202,7 +214,8 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
           platform,
           rarible: nftSanitizer(raribleCheck),
           opensea: nftSanitizer(openseaCheck),
-          current_update: dayjs().unix()
+          current_update: dayjs().unix(),
+          galleryst_id: galleryst_id != undefined ? galleryst_id : makeid(5)
         })
       }
     })()
@@ -353,7 +366,7 @@ export async function getServerSideProps(context: any) {
       platform: getPlatform,
       opensea: { data: getOpensea },
       rarible: { data: getRarible },
-      current_update } = response
+      current_update, galleryst_id } = response
     const getNFT = response[getPlatform.current].data
     const constructImage = `https://api.placid.app/u/sxpwrxogf?&thumbnail[image]=${getNFT.image}&title[text]=${getNFT.title}&creator_name[text]=${getNFT.creator?.name}`
     seo = {
@@ -363,7 +376,7 @@ export async function getServerSideProps(context: any) {
       creator: getNFT.creator?.name != undefined ? getNFT.creator.name : '-',
     }
     return {
-      props: { address, seo, getPlatform, getNFT, current_update, getOpensea, getRarible },
+      props: { address, seo, getPlatform, getNFT, current_update, getOpensea, getRarible, galleryst_id },
     }
   } else {
     return {
