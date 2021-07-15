@@ -94,7 +94,7 @@ const Page = ({ address }: { address: string }) => {
       <a href={`/profile?address=${user.id}`} target="_blank" className="mr-2 mb-2 ¸ bg-gray-500 w-10 h-10 rounded-full overflow-hidden inline-flex items-center justify-center">
         <img src={user?.image} className="h-10 inline w-10" />
       </a> :
-      <span className="inline-block w-10 h-10 rounded-full bg-purple-500 ml-2 mb-2 flex items-center justify-center">{user?.name?.substr(0, 1)}</span>
+      <span className="inline-block w-10 h-10 rounded-full bg-purple-500 mr-2 mb-2 flex items-center justify-center">{user?.name?.substr(0, 1)}</span>
   }
 
   return <div className="w-screen h-screen z-20 bg-white fixed top-0 left-0 overflow-y-scroll overflow-x-hidden">
