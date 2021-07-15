@@ -35,14 +35,14 @@ export const Filter = ({ current, platform, action, targetAction, target }: {
   target?: NFTDetail,
   targetAction?: any,
   platform: any,
-  action: any ,
+  action: any,
   current: 'rarible' | 'opensea' | 'foundation' | 'nifty',
 }) => {
   const market: {
-    rarible?: { status:  boolean }
-    opensea?: { status:  boolean }
-    foundation?: { status:  boolean }
-    nifty?: { status:  boolean }
+    rarible?: { status: boolean }
+    opensea?: { status: boolean }
+    foundation?: { status: boolean }
+    nifty?: { status: boolean }
   } = platform.check != undefined ? platform.check : {}
   const check = (platform: 'rarible' | 'opensea' | 'foundation' | 'nifty') => {
     switch (platform) {
@@ -62,12 +62,11 @@ export const Filter = ({ current, platform, action, targetAction, target }: {
     className={`
       cursor-pointer h-12 w-12 mx-2 flex items-center
       shadow-xl justify-center rounded-full shadow-nft text-lg logo-48
-      ${ platform.current == current && 'border-1 border-green-400 shadow-greenery'}
+      ${platform.current == current && 'border-1 border-green-400 shadow-greenery'}
       ${market[current]?.status ? style : default_style}
     `}
     onClick={() => {
       action({ ...platform , current: current})
-      console.log(target)
       if(targetAction != undefined) targetAction(target)
     }}>
     {text}
@@ -75,11 +74,11 @@ export const Filter = ({ current, platform, action, targetAction, target }: {
 }
 
 const profilePic = (user: User | undefined) => {
-  if(user != undefined ){
+  if (user != undefined) {
     return <a href={`/profile?address=${user.address}`} className="bg-gray-500 mx-2 w-8 h-8 rounded-full overflow-hidden inline-flex items-center justify-center">
       <img src={user.image} className="h-8 inline " />
     </a>
-  }else{
+  } else {
     return <div className="w-8 h-8 inline bg-gray-600 rounded-full" />
   }
 }
@@ -119,7 +118,9 @@ export const nftSanitizer = (objs: ResponseDetail) => {
   const clean = (obj: any) => {
     for (var propName in obj) {
       if (obj[propName] === null || obj[propName] === undefined) {
-        delete obj[propName] }}
+        delete obj[propName]
+      }
+    }
     return obj
   }
   const cleaning = clean({...objs,
@@ -202,8 +203,7 @@ const Page = ({ address, seo, getPlatform , getNFT, getOpensea, getRarible, curr
       }
     })()
   }, []);
-
-  const {image, title, description, creator, owner } = nft
+  const { image, title, description, creator, owner } = nft
   const getDate = (dayFormat: string) => dayjs(dayFormat).format('DD MMM YYYY')
   return <div className="w-screen h-screen z-20 bg-white fixed top-0 left-0 overflow-y-scroll overflow-x-hidden">
     <NextSeo
@@ -248,11 +248,11 @@ const Page = ({ address, seo, getPlatform , getNFT, getOpensea, getRarible, curr
           { platform.check['rarible']?.status && <div className="order-6 flex mt-4 p-4 items-center rounded-xl bg-white shadow-nft">
             <span className="flex-grow ">Link to Rarible</span>
             <a href={platform.check['rarible']?.link} target="_blank" className="text-black bg-yellow-500 rarible-logo logo-48 h-12 w-12 rounded-full" ></a>
-          </div> }
+          </div>}
           { platform.check['opensea']?.status && <div className="order-6 flex mt-4 p-4 items-center rounded-xl bg-white shadow-nft">
             <span className="flex-grow ">Link to Opensea</span>
             <a href={platform.check['opensea']?.link} target="_blank" className="text-white bg-blue-500 opensea-logo logo-48 h-12 w-12 rounded-full" ></a>
-          </div> }
+          </div>}
         </div>
         <div className="lg:w-1/2 w-full lg:pl-6 pr-0 lg:sticky lg:flex lg:flex-col contents">
           <div className="order-3 mb-4">
