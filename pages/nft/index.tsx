@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
+import Head from 'next/head'
 import { NextSeo } from 'next-seo';
 import { User, NFTDetail, ResponseDetail } from '../../interfaces/index'
 import * as rarible from '../../method/rarible/fetch'
 import * as opensea from '../../method/opensea/fetch'
+import * as firebase from "../../method/firebase"
 import dayjs from 'dayjs'
 
 export const Filter = ({ current, platform, action, targetAction, target }: {
@@ -80,7 +82,36 @@ interface NFTPlatform {
   }
 }
 
-const Page = ({ address }: { address: string }) => {
+export const nftSanitizer = (objs: ResponseDetail) => {
+  const clean = (obj: any) => {
+    for (var propName in obj) {
+      if (obj[propName] === null || obj[propName] === undefined) {
+        delete obj[propName] }}
+    return obj
+  }
+  if( objs['data'] !== undefined ){
+    delete objs['data']['activity']
+    delete objs['data']['offer']
+    delete objs['data']['pricing']
+    delete objs['data']['owner']
+  }
+  return clean({...objs,
+    data: clean({...objs.data,
+      creator: clean(objs.data?.creator),
+    })
+  })
+}
+
+
+const Page = ({ address, seo }: {
+  address: string,
+  seo: {
+    image: string,
+    title: string,
+    creator: string,
+    description: string
+   }
+}) => {
   const [nft, setNFT] = useState<NFTDetail>({ address })
   const [raribles, setRarible] = useState<NFTDetail>({ address })
   const [openseas, setOpensea] = useState<NFTDetail>({ address })
@@ -90,8 +121,8 @@ const Page = ({ address }: { address: string }) => {
       // Rarible
       const raribleCheck: ResponseDetail = await rarible.nftDetail(address, setNFT, setRarible)
       const openseaCheck: ResponseDetail = await opensea.nftDetail(address, setNFT, setOpensea)
-      const checkCurrent = openseaCheck.status ? 'opensea' : raribleCheck.status ? 'rarible' : 'nifty'
-      setPlatform({
+      const checkCurrent = raribleCheck.status ? 'rarible' : openseaCheck.status ? 'opensea' : 'nifty'
+      const platform = {
         current: checkCurrent,
         check: {
           opensea: {
@@ -103,6 +134,13 @@ const Page = ({ address }: { address: string }) => {
             status: raribleCheck.status
           }
         }
+      }
+      setPlatform(platform)
+      await firebase.writeDocument('nft',address, {
+        platform,
+        rarible: nftSanitizer(raribleCheck),
+        opensea: nftSanitizer(openseaCheck),
+        current_update: dayjs().unix()
       })
       switch(checkCurrent){
         case 'opensea': openseaCheck.data && setNFT(openseaCheck.data); break;
@@ -112,37 +150,42 @@ const Page = ({ address }: { address: string }) => {
   }, []);
   const {image, title, description, pricing, offer, creator, owner, activity } = nft
   const getDate = (dayFormat: string) => dayjs(dayFormat).format('DD MMM YYYY')
+  const twitter = {
+    handle: '@handle',
+    site: '@site',
+    cardType: 'summary_large_image',
+  }
+  const opengraph = {
+    url: 'https://www.url.ie/a',
+    title: seo.title,
+    description: seo.description,
+    images: [
+      {
+        url: seo.image,
+        width: 800,
+        height: 600,
+        alt: 'Og Image Alt',
+      },
+      {
+        url: seo.image,
+        width: 900,
+        height: 800,
+        alt: 'Og Image Alt Second',
+      },
+    ],
+    site_name: 'Galleryst',
+  }
   return <div className="w-screen h-screen z-20 bg-white fixed top-0 left-0 overflow-y-scroll overflow-x-hidden">
     <NextSeo
       title="Simple Usage Example"
       description="A short description goes here."
       canonical="https://www.canonical.ie/"
-      openGraph={{
-        url: 'https://www.url.ie/a',
-        title: 'Open Graph Title',
-        description: 'Open Graph Description',
-        images: [
-          {
-            url: 'https://guttercatgang.s3.us-east-2.amazonaws.com/i/1409.png',
-            width: 800,
-            height: 600,
-            alt: 'Og Image Alt',
-          },
-          {
-            url: 'https://guttercatgang.s3.us-east-2.amazonaws.com/i/1409.png',
-            width: 900,
-            height: 800,
-            alt: 'Og Image Alt Second',
-          },
-        ],
-        site_name: 'SiteName',
-      }}
-      twitter={{
-        handle: '@handle',
-        site: '@site',
-        cardType: 'summary_large_image',
-      }}
+      openGraph={opengraph}
+      twitter={twitter}
     />
+    <Head>
+      <title>{seo.title}</title>
+    </Head>
     <div className="flex flex-col">
       <div className="w-full relative flex items-center justify-center" style={{ background: 'rgba(92, 86, 86, 0.48)', height: '75vh' }}>
         <div className="p-4 flex items-center flex-col" style={{height: '100%'}}>
@@ -240,8 +283,25 @@ const Page = ({ address }: { address: string }) => {
 
 export async function getServerSideProps(context: any) {
   const { address } = context.query
+  const document = await firebase.findbyAddress("nft", address)
+  let seo = {
+    image: '',
+    title: '',
+    creator: '',
+    description: ''
+  }
+  if(document.exists){
+    const response : any = document.data()
+    const pickupWork = response[response.platform.current].data
+    seo = {
+      image: pickupWork.image,
+      title: pickupWork.title,
+      description: pickupWork.description,
+      creator: pickupWork.creator?.name,
+    }
+  }
   return {
-    props: { address },
+    props: { address, seo },
   }
 }
 
