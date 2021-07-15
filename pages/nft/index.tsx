@@ -89,33 +89,42 @@ export const nftSanitizer = (objs: ResponseDetail) => {
         delete obj[propName] }}
     return obj
   }
-  if( objs['data'] !== undefined ){
-    delete objs['data']['activity']
-    delete objs['data']['offer']
-    delete objs['data']['pricing']
-    delete objs['data']['owner']
-  }
-  return clean({...objs,
+  const cleaning = clean({...objs,
     data: clean({...objs.data,
       creator: clean(objs.data?.creator),
+      owner: objs.data?.owner?.map(ow => clean(ow)),
+      offer: clean(objs.data?.offer),
+      pricing: clean(objs.data?.pricing),
+      activity: objs.data?.activity?.map( ac => {
+        return clean({
+          ...ac,
+          current_owner: clean({...ac.current_owner, user: clean(ac.current_owner.user) }),
+          previous_owner: clean({...ac.previous_owner, user: clean(ac.previous_owner?.user) })
+        })
+      } )
+
     })
   })
+  console.log(cleaning)
+  return cleaning
 }
 
 
-const Page = ({ address, seo }: {
+const Page = ({ address, seo, getPlatform , getNFT }: {
   address: string,
   seo: {
     image: string,
     title: string,
     creator: string,
     description: string
-   }
+  },
+  getPlatform?: NFTPlatform,
+  getNFT?: NFTDetail,
 }) => {
-  const [nft, setNFT] = useState<NFTDetail>({ address })
+  const [nft, setNFT] = useState<NFTDetail>(getNFT != undefined ? getNFT : { address })
   const [raribles, setRarible] = useState<NFTDetail>({ address })
   const [openseas, setOpensea] = useState<NFTDetail>({ address })
-  const [platform, setPlatform] = useState<NFTPlatform>({current: 'opensea', check: {rarible: {status: false}, opensea: {status: false}}})
+  const [platform, setPlatform] = useState<NFTPlatform>( getPlatform != undefined ? getPlatform : {current: 'opensea', check: {rarible: {status: false}, opensea: {status: false}}})
   useEffect(() => {
     (async () => {
       // Rarible
@@ -136,57 +145,39 @@ const Page = ({ address, seo }: {
         }
       }
       setPlatform(platform)
+      switch(checkCurrent){
+        case 'opensea': openseaCheck.data && setNFT(openseaCheck.data); break;
+        case 'rarible': raribleCheck.data && setNFT(raribleCheck.data); break;
+      }
       await firebase.writeDocument('nft',address, {
         platform,
         rarible: nftSanitizer(raribleCheck),
         opensea: nftSanitizer(openseaCheck),
         current_update: dayjs().unix()
       })
-      switch(checkCurrent){
-        case 'opensea': openseaCheck.data && setNFT(openseaCheck.data); break;
-        case 'rarible': raribleCheck.data && setNFT(raribleCheck.data); break;
-      }
     })()
   }, []);
   const {image, title, description, pricing, offer, creator, owner, activity } = nft
   const getDate = (dayFormat: string) => dayjs(dayFormat).format('DD MMM YYYY')
-  const twitter = {
-    handle: '@handle',
-    site: '@site',
-    cardType: 'summary_large_image',
-  }
-  const constructImage = `https://api.placid.app/u/sxpwrxogf?&thumbnail[image]=${seo.image}&title[text]=${seo.title}&creator_name[text]=${seo.creator}`
-  const opengraph = {
-    url: 'https://www.url.ie/a',
-    title: seo.title,
-    description: seo.description,
-    images: [
-      {
-        url: constructImage,
-        width: 800,
-        height: 600,
-        alt: 'Og Image Alt',
-      },
-      {
-        url: constructImage,
-        width: 900,
-        height: 800,
-        alt: 'Og Image Alt Second',
-      },
-    ],
-    site_name: 'Galleryst',
-  }
   return <div className="w-screen h-screen z-20 bg-white fixed top-0 left-0 overflow-y-scroll overflow-x-hidden">
     <NextSeo
-      title="Simple Usage Example"
-      description="A short description goes here."
+      title={seo.title}
+      description={seo.description}
       canonical="https://www.canonical.ie/"
-      openGraph={opengraph}
-      twitter={twitter}
+      openGraph={{
+        site_name: 'Galleryst',
+        url: `https://www.galleryst.co/nft?address=${address}`,
+        title: seo.title,
+        description: seo.description,
+        images: [{ url: seo.image, alt: seo.title, width: 1200, height: 600 }]
+      }}
+      twitter={{
+        handle: '@handle',
+        site: '@site',
+        cardType: 'summary_large_image',
+      }}
     />
-    <Head>
-      <title>{seo.title}</title>
-    </Head>
+    <Head><title>{seo.title}</title></Head>
     <div className="flex flex-col">
       <div className="w-full relative flex items-center justify-center" style={{ background: 'rgba(92, 86, 86, 0.48)', height: '75vh' }}>
         <div className="p-4 flex items-center flex-col" style={{height: '100%'}}>
@@ -218,7 +209,6 @@ const Page = ({ address, seo }: {
             <a href={platform.check['opensea']?.link} target="_blank" className="text-white bg-blue-500 opensea-logo logo-48 h-12 w-12 rounded-full" ></a>
           </div> }
         </div>
-
         <div className="lg:w-1/2 w-full lg:pl-6 pr-0 lg:sticky lg:flex lg:flex-col contents">
           <div className="order-3 mb-4">
             {pricing?.eth != undefined && <div className="flex text-xl ">
@@ -226,7 +216,6 @@ const Page = ({ address, seo }: {
                 {pricing.status ? 'Current price' : pricing.status}
               </span>
               <span className="text-right">{pricing?.eth} ETH</span>
-
             </div>}
             { offer?.status && <div className="flex text-xl ">
               <span className="flex-grow text-gray-500 text-left">
@@ -293,16 +282,22 @@ export async function getServerSideProps(context: any) {
   }
   if(document.exists){
     const response : any = document.data()
-    const pickupWork = response[response.platform.current].data
+    const { platform: getPlatform, current_update } = response
+    const getNFT = response[getPlatform.current].data
+    const constructImage = `https://api.placid.app/u/sxpwrxogf?&thumbnail[image]=${getNFT.image}&title[text]=${getNFT.title}&creator_name[text]=${getNFT.creator?.name}`
     seo = {
-      image: pickupWork.image,
-      title: pickupWork.title,
-      description: pickupWork.description,
-      creator: pickupWork.creator?.name,
+      image: constructImage,
+      title: getNFT.title != undefined ? getNFT.title : '-',
+      description: getNFT.description != undefined ? getNFT.description : '-',
+      creator: getNFT.creator?.name != undefined ? getNFT.creator.name : '-',
     }
-  }
-  return {
-    props: { address, seo },
+    return {
+      props: { address, seo, getPlatform, getNFT, current_update },
+    }
+  }else{
+    return {
+      props: { address, seo },
+    }
   }
 }
 

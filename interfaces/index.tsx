@@ -87,6 +87,7 @@ export interface User {
   desription?: string
   image?: string
   shortUrl?: string
+  user?: any
 }
 
 export interface ActivityLog {
