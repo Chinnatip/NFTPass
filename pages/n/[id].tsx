@@ -215,8 +215,7 @@ const Page = ({ address, seo, getPlatform , getNFT, getOpensea, getRarible, curr
           rarible: nftSanitizer(raribleCheck),
           opensea: nftSanitizer(openseaCheck),
           current_update: dayjs().unix(),
-          galleryst_id: gallerystID,
-          address
+          galleryst_id: gallerystID
         })
       }
     })()
@@ -253,6 +252,12 @@ const Page = ({ address, seo, getPlatform , getNFT, getOpensea, getRarible, curr
       <div className="w-full relative flex items-center justify-center" style={{ background: 'rgba(92, 86, 86, 0.48)', height: '75vh' }}>
         <div className="p-4 flex items-center flex" style={{height: '100%'}}>
           <img src={image} className="shadow-nft-img rounded-lg fit-wh-img" style={{ height: '80%' }} />
+          {/* <div className="pt-3 text-center flex justify-center items-center">
+            <Filter current="opensea" platform={platform}  action={setPlatform} targetAction={setNFT} target={openseas} />
+            <Filter current="rarible" platform={platform}  action={setPlatform} targetAction={setNFT} target={raribles} />
+            <Filter current="foundation" platform={platform}  action={setPlatform} />
+            <Filter current="nifty" platform={platform}  action={setPlatform} />
+          </div> */}
         </div>
       </div>
       <div className="text-center mt-10 mb-12 hidden">
@@ -364,21 +369,22 @@ const Page = ({ address, seo, getPlatform , getNFT, getOpensea, getRarible, curr
 }
 
 export async function getServerSideProps(context: any) {
-  const { address } = context.query
-  const document = await firebase.findbyAddress("nft", address)
+  const { id } = context.params
   let seo = {
     image: '',
     title: '',
     creator: '',
     description: ''
   }
-  if(document.exists){
-    const response : any = document.data()
+  const document = await firebase.findDocument("nft", id, "galleryst_id")
+  if(document.docs.length > 0){
+    const doc : any = document.docs[0]
+    const response : any = doc.data()
     const {
       platform: getPlatform,
       opensea: { data: getOpensea},
       rarible: { data: getRarible },
-      current_update, galleryst_id } = response
+      address , current_update, galleryst_id } = response
     const getNFT = response[getPlatform.current].data
     const constructImage = `https://api.placid.app/u/sxpwrxogf?&thumbnail[image]=${getNFT.image}&title[text]=${getNFT.title}&creator_name[text]=${getNFT.creator?.name}`
     seo = {
@@ -387,13 +393,10 @@ export async function getServerSideProps(context: any) {
       description: getNFT.description != undefined ? getNFT.description : '-',
       creator: getNFT.creator?.name != undefined ? getNFT.creator.name : '-',
     }
-    return {
-      props: { address, seo, getPlatform, getNFT, current_update, getOpensea, getRarible, galleryst_id },
-    }
+    console.log({ address, seo, getPlatform, getNFT, current_update, getOpensea, getRarible, galleryst_id })
+    return { props: { address, seo, getPlatform, getNFT, current_update, getOpensea, getRarible, galleryst_id }}
   }else{
-    return {
-      props: { address, seo },
-    }
+    return { props: { seo } }
   }
 }
 
