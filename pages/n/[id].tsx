@@ -9,7 +9,7 @@ import dayjs from 'dayjs'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import Icon from '@/Icon'
 
-const Picon = ({ platform }: { platform: 'rarible' | 'opensea' | 'nifty' | 'foundation' }) => {
+const Picon = ({platform} : {platform: 'rarible' | 'opensea' | 'nifty' | 'foundation'}) => {
   let style = ''
   switch (platform) {
     case 'rarible':
@@ -24,8 +24,9 @@ const Picon = ({ platform }: { platform: 'rarible' | 'opensea' | 'nifty' | 'foun
     case 'nifty':
       style = 'text-white bg-blue-700 nifty-logo logo-48'
   }
+
   return <div
-    className={`
+  className={`
      mr-3 h-12 w-12 inline-flex items-center justify-center rounded-full shadow-nft
     ${style}
   `}
@@ -61,52 +62,52 @@ export const Filter = ({ current, platform, action, targetAction, target }: {
   const { text, style } = check(current)
   return <div
     className={`
-      cursor-pointer h-8 w-8 mx-2 flex items-center
-      shadow-xl justify-center rounded-full shadow-nft text-lg
+      cursor-pointer h-12 w-12 mx-2 flex items-center
+      shadow-xl justify-center rounded-full shadow-nft text-lg logo-48
       ${platform.current == current && 'border-1 border-green-400 shadow-greenery'}
       ${market[current]?.status ? style : default_style}
     `}
     onClick={() => {
-      action({ ...platform, current: current })
-      if (targetAction != undefined) targetAction(target)
+      action({ ...platform , current: current})
+      if(targetAction != undefined) targetAction(target)
     }}>
     {text}
   </div>
 }
 
 const makeid = (length: number) => {
-  var result = '';
-  var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var result           = '';
+  var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   var charactersLength = characters.length;
-  for (var i = 0; i < length; i++) {
+  for ( var i = 0; i < length; i++ ) {
     result += characters.charAt(Math.floor(Math.random() *
-      charactersLength));
-  }
-  return result;
+charactersLength));
+ }
+ return result;
 }
 
 const profilePic = (user: User | undefined) => {
   if (user != undefined) {
-    return <a href={`/profile?address=${user.address}`} className="bg-gray-500 mx-2 w-8 h-8 rounded-full inline-flex items-center justify-center">
-      <img src={user.image} className="h-8 inline w-8 fix-w-h-xs rounded-full" />
+    return <a href={`/profile?address=${user.address}`} className="bg-gray-500 mx-2 w-8 h-8 rounded-full overflow-hidden inline-flex items-center justify-center">
+      <img src={user.image} className="h-8 inline " />
     </a>
   } else {
-    return <div className="w-8 h-8 inline bg-gray-600 rounded-full fix-w-h-xs" />
+    return <div className="w-8 h-8 inline bg-gray-600 rounded-full" />
   }
 }
 
 const profileAddress = (user: User | undefined, index: number) => {
   return user != undefined && user?.image != '' ?
-    <a key={index} href={`/profile?address=${user.address}`} target="_blank" className="ml-2 mb-2 bg-gray-500 w-10 h-10 rounded-full overflow-hidden inline-flex items-center justify-center">
+    <a key={index} href={`/profile?address=${user.address}`} target="_blank" className="ml-2 bg-gray-500 w-10 h-10 rounded-full overflow-hidden inline-flex items-center justify-center">
       <img src={user?.image} className="h-10 inline" />
     </a> :
     <span className="inline-block w-10 h-10 rounded-full bg-purple-500 ml-2 flex items-center justify-center">{user?.name?.substr(0, 1)}</span>
 }
 
 const selectActivity = (nft: NFTDetail, openseas: NFTDetail) => {
-  if (openseas.activity != undefined) {
+  if(openseas.activity != undefined){
     return openseas.activity
-  } else {
+  } else{
     return nft.activity
   }
 }
@@ -135,21 +136,19 @@ export const nftSanitizer = (objs: ResponseDetail) => {
     }
     return obj
   }
-  const cleaning = clean({
-    ...objs,
-    data: clean({
-      ...objs.data,
+  const cleaning = clean({...objs,
+    data: clean({...objs.data,
       creator: clean(objs.data?.creator),
       owner: objs.data?.owner?.map(ow => clean(ow)),
       offer: clean(objs.data?.offer),
       pricing: clean(objs.data?.pricing),
-      activity: objs.data?.activity?.map(ac => {
+      activity: objs.data?.activity?.map( ac => {
         return clean({
           ...ac,
-          current_owner: clean({ ...ac.current_owner, user: clean(ac.current_owner.user) }),
-          previous_owner: clean({ ...ac.previous_owner, user: clean(ac.previous_owner?.user) })
+          current_owner: clean({...ac.current_owner, user: clean(ac.current_owner.user) }),
+          previous_owner: clean({...ac.previous_owner, user: clean(ac.previous_owner?.user) })
         })
-      })
+      } )
     })
   })
   return cleaning
@@ -163,7 +162,7 @@ const checkDiff = (current_update: number, diffAmount: number = 2) => {
 }
 
 const prepareURI = (text: string) => {
-  let rep = text.split("#").join("@").split("&").join("-").split("?").join("-")
+  const rep = text.split("#").join("@").split("&").join("-").split("?").join("-")
   return encodeURI(rep)
 }
 
@@ -286,25 +285,25 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
           <div className="order-3 mb-4">
             {openseas.pricing?.eth != undefined && <div className="flex text-xl items-center py-2">
               <span className="flex-grow text-gray-500 text-left flex items-center">
-                <Picon platform="opensea"></Picon> <span className="text-sm">Lowest listing price</span>
+                <Picon platform="opensea"></Picon> Current price
               </span>
               <span className="text-right">{openseas.pricing?.eth} ETH</span>
             </div>}
             {raribles.pricing?.eth != undefined && <div className="flex text-xl items-center py-2">
               <span className="flex-grow text-gray-500 text-left flex items-center">
-                <Picon platform="rarible"></Picon> <span className="text-sm">Lowest listing price</span>
+                <Picon platform="rarible"></Picon> Current price
               </span>
               <span className="text-right">{raribles.pricing?.eth} ETH</span>
             </div>}
             {openseas.offer?.status && <div className="flex text-xl items-center py-2">
               <span className="flex-grow text-gray-500 text-left flex items-center">
-                <Picon platform="opensea"></Picon> <span className="text-sm">Current best offer</span>
+                <Picon platform="opensea"></Picon> Best offer
               </span>
               <span className="text-right"> {openseas.offer?.best_offer?.toFixed(2)} ETH</span>
             </div>}
             {raribles.offer?.status && <div className="flex text-xl items-center py-2">
               <span className="flex-grow text-gray-500 text-left flex items-center">
-                <Picon platform="rarible"></Picon> <span className="text-sm">Current best offer</span>
+                <Picon platform="rarible"></Picon> Best offer
               </span>
               <span className="text-right"> {raribles.offer?.best_offer?.toFixed(2)} ETH</span>
             </div>}
@@ -376,21 +375,22 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
 }
 
 export async function getServerSideProps(context: any) {
-  const { address } = context.query
-  const document = await firebase.findbyAddress("nft", address)
+  const { id } = context.params
   let seo = {
     image: '',
     title: '',
     creator: '',
     description: ''
   }
-  if (document.exists) {
-    const response: any = document.data()
+  const document = await firebase.findDocument("nft", id, "galleryst_id")
+  if(document.docs.length > 0){
+    const doc : any = document.docs[0]
+    const response : any = doc.data()
     const {
       platform: getPlatform,
-      opensea: { data: getOpensea },
+      opensea: { data: getOpensea},
       rarible: { data: getRarible },
-      current_update, galleryst_id } = response
+      address , current_update, galleryst_id } = response
     const getNFT = response[getPlatform.current].data
     const constructImage = `https://api.placid.app/u/sxpwrxogf?&thumbnail[image]=${prepareURI(getNFT.image)}&title[text]=${prepareURI(getNFT.title)}&creator_name[text]=${prepareURI(getNFT.creator?.name)}`
     seo = {
@@ -399,14 +399,13 @@ export async function getServerSideProps(context: any) {
       description: getNFT.description != undefined ? getNFT.description : '-',
       creator: getNFT.creator?.name != undefined ? getNFT.creator.name : '-',
     }
-    return {
-      props: { address, seo, getPlatform, getNFT, current_update, getOpensea, getRarible, galleryst_id },
-    }
-  } else {
-    return {
-      props: { address, seo },
-    }
+    // console.log({ address, seo, getPlatform, getNFT, current_update, getOpensea, getRarible, galleryst_id })
+    return { props: { address, seo, getPlatform, getNFT, current_update, getOpensea, getRarible, galleryst_id }}
+  }else{
+    return { props: { seo } }
   }
 }
 
 export default Page
+
+
