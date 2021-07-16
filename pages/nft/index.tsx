@@ -278,25 +278,25 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
           <div className="order-3 mb-4">
             {openseas.pricing?.eth != undefined && <div className="flex text-xl items-center py-2">
               <span className="flex-grow text-gray-500 text-left flex items-center">
-                <Picon platform="opensea"></Picon> Current price
+                <Picon platform="opensea"></Picon> <span className="text-sm">Lowest listing price</span>
               </span>
               <span className="text-right">{openseas.pricing?.eth} ETH</span>
             </div>}
             {raribles.pricing?.eth != undefined && <div className="flex text-xl items-center py-2">
               <span className="flex-grow text-gray-500 text-left flex items-center">
-                <Picon platform="rarible"></Picon> Current price
+                <Picon platform="rarible"></Picon> <span className="text-sm">Lowest listing price</span>
               </span>
               <span className="text-right">{raribles.pricing?.eth} ETH</span>
             </div>}
             {openseas.offer?.status && <div className="flex text-xl items-center py-2">
               <span className="flex-grow text-gray-500 text-left flex items-center">
-                <Picon platform="opensea"></Picon> Best offer
+                <Picon platform="opensea"></Picon> <span className="text-sm">Current best offer</span>
               </span>
               <span className="text-right"> {openseas.offer?.best_offer?.toFixed(2)} ETH</span>
             </div>}
             {raribles.offer?.status && <div className="flex text-xl items-center py-2">
               <span className="flex-grow text-gray-500 text-left flex items-center">
-                <Picon platform="rarible"></Picon> Best offer
+                <Picon platform="rarible"></Picon> <span className="text-sm">Current best offer</span>
               </span>
               <span className="text-right"> {raribles.offer?.best_offer?.toFixed(2)} ETH</span>
             </div>}
