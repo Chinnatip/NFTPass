@@ -6,8 +6,9 @@ import * as rarible from '../../method/rarible/fetch'
 import * as opensea from '../../method/opensea/fetch'
 import * as firebase from "../../method/firebase"
 import dayjs from 'dayjs'
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faShareAlt } from '@fortawesome/free-solid-svg-icons'
 import Icon from '@/Icon'
+import { ConnectBtn } from '@/Galleryst'
 
 const Picon = ({ platform }: { platform: 'rarible' | 'opensea' | 'nifty' | 'foundation' }) => {
   let style = ''
@@ -183,10 +184,10 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
   galleryst_id?: string
 }) => {
   const [nft, setNFT] = useState<NFTDetail>(getNFT != undefined ? getNFT : { address })
-  const [gallerystID] = useState( galleryst_id != undefined ? galleryst_id : makeid(5))
-  const [raribles, setRarible] = useState<NFTDetail>( getRarible != undefined ? getRarible : { address })
-  const [openseas, setOpensea] = useState<NFTDetail>( getOpensea != undefined ? getOpensea : { address })
-  const [platform, setPlatform] = useState<NFTPlatform>( getPlatform != undefined ? getPlatform : {current: 'opensea', check: {rarible: {status: false}, opensea: {status: false}}})
+  const [gallerystID] = useState(galleryst_id != undefined ? galleryst_id : makeid(5))
+  const [raribles, setRarible] = useState<NFTDetail>(getRarible != undefined ? getRarible : { address })
+  const [openseas, setOpensea] = useState<NFTDetail>(getOpensea != undefined ? getOpensea : { address })
+  const [platform, setPlatform] = useState<NFTPlatform>(getPlatform != undefined ? getPlatform : { current: 'opensea', check: { rarible: { status: false }, opensea: { status: false } } })
   const [copied, setCopied] = useState(false)
   useEffect(() => {
     (async () => {
@@ -255,9 +256,16 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
       }}
     />
     <Head><title>{seo.title}</title></Head>
-    <div className="flex flex-col">
-      <div className="w-full relative flex items-center justify-center max-w-full m-auto" style={{ background: 'rgba(92, 86, 86, 0.48)', height: '75vh' }}>
-        <a href={`/`} className="absolute top-2 left-2 bg-white rounded-full h-8 md:w-auto w-8 md:px-2 flex items-center justify-center text-black active-shadow">
+    <div className="flex flex-col pt-8" style={{ background: 'url("image/bg_blur.jpg")' }}>
+      <div className="w-full flex justify-between">
+        <a className="focus:outline-none" href="{'/}">
+          <img className="md:h-8 h-6 ml-2" src="/image/ic_galleryst_logo.png" alt="" />
+        </a>
+        <ConnectBtn />
+      </div>
+      <div className="w-full relative flex items-center justify-center max-w-full m-auto" style={{ height: '75vh' }}>
+
+        <a href={`/`} className="hidden absolute top-2 left-2 bg-white rounded-full h-8 md:w-auto w-8 md:px-2 flex items-center justify-center text-black active-shadow">
           <Icon fill={faArrowLeft} noMargin /> <span className="md:block hidden ml-1">Back</span>
         </a>
         <div className="p-4 flex items-center" style={{ height: '100%' }}>
@@ -267,7 +275,22 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
       <div className="text-center mt-10 mb-12 hidden">
         <a href={`/profile?address=${address}`} className="bg-blue-500 p-3 text-white rounded-xl">See creator profile</a>
       </div>
-      <div className="mt-10 m-auto md:w-2/3 w-full md:px-0 px-3 flex lg:flex-row flex-col justify-between">
+    </div>
+    <div className="md:w-2/3 w-full m-auto relative">
+      {/* Share Galleryst component */}
+      {gallerystID != undefined && <div className="shadow-nft flex h-auto absolute right-2 top--12 rounded-full">
+        <div className="flex-grow text-xl hidden">
+          <span className="text-sm text-gray-600">Galleryst ID</span><br />
+          {gallerystID}
+        </div>
+        <button
+          className="bg-white w-auto rounded-full py-2 md:w-auto px-3  text-black active-shadow flex items-center justify-center"
+          onClick={() => useCopyToClipboard(`https://www.galleryst.co/n/${gallerystID}`)}>
+          {copied && <div className="absolute bg-black text-white top-0 right-0 p-1 px-2 -mt-10 -mr-2 text-sm rounded-full">Copied !</div>}
+          <Icon fill={faShareAlt} noMargin /> <span className="ml-2">Share </span>
+        </button>
+      </div>}
+      <div className="mt-10 m-auto w-full md:px-0 px-3 flex lg:flex-row flex-col justify-between">
         <div className="lg:w-1/2 w-full lg:flex lg:flex-col contents">
           <div className="text-2xl order-1 font-black mb-4">{title != null ? title : 'Untitled'}</div>
           <div className="text-gray-500 mb-4 break-words order-2 hidden">{address}</div>
@@ -336,25 +359,12 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
               </div>}
             </div>
 
-            {/* Share Galleryst component */}
-            { gallerystID != undefined && <div className="shadow-nft mt-5 p-4 rounded-24 flex h-auto items-center w-full ">
-              <div className="flex-grow text-xl">
-                <span className="text-sm text-gray-600">Galleryst ID</span><br />
-                {gallerystID}
-              </div>
-              <button
-                className="relative cursor-pointer bg-blue-500 text-white rounded-xl h-12 px-3 flex items-center justify-center"
-                onClick={() => useCopyToClipboard(`https://www.galleryst.co/n/${gallerystID}`)}>
-                  {copied && <div className="absolute bg-black text-white top-0 right-0 p-1 px-2 -mt-10 -mr-2 text-sm rounded-full">Copied !</div>}
-                  Share this NFT
-              </button>
-            </div>}
+
 
           </div>
         </div>
       </div>
-    </div>
-    <div className="md:w-2/3 w-full m-auto">
+
       <div className="px-3 m-auto">
         <h2 className="mt-8 text-xl font-semibold">NFT History</h2>
         {selectActivity(nft, openseas)?.map(({ type, current_owner, previous_owner, date, value, price }, index) => {
