@@ -8,6 +8,7 @@ import * as firebase from "../../method/firebase"
 import dayjs from 'dayjs'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import Icon from '@/Icon'
+import { contractQuerierService } from 'services/contract-querier.service';
 
 const Picon = ({ platform }: { platform: 'rarible' | 'opensea' | 'nifty' | 'foundation' }) => {
   let style = ''
@@ -197,7 +198,7 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
         // Rarible
         const raribleCheck: ResponseDetail = await rarible.nftDetail(address, setNFT, setRarible)
         const openseaCheck: ResponseDetail = await opensea.nftDetail(address, setNFT, setOpensea)
-        const checkCurrent = raribleCheck.status ? 'rarible' : openseaCheck.status ? 'opensea' : 'nifty'
+        const checkCurrent = raribleCheck.status ? 'rarible' : openseaCheck.status ? 'opensea' : 'galleryst'
         const platform = {
           current: checkCurrent,
           check: {
@@ -211,6 +212,30 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
             }
           }
         }
+        // Draft
+        const [contractAddress, tokenId] = address.split(':')
+        const gallerystTokenMetadata = await contractQuerierService.getMetadataUri(contractAddress, +tokenId)
+        const mediaList = [
+          { type: 'image', src: gallerystTokenMetadata.image },
+          ...(gallerystTokenMetadata.media_list ?? [])
+        ]
+        if (!!gallerystTokenMetadata.animation_url) {
+          mediaList.unshift({ type: 'video', src: gallerystTokenMetadata.animation_url })
+        }
+        const gallerystNftDetail = { 
+          status: true, 
+          data: { 
+            title: gallerystTokenMetadata.name,
+            description: gallerystTokenMetadata.description,
+            image: gallerystTokenMetadata.image, 
+            metadata: gallerystTokenMetadata, 
+            mediaList,
+            creator: {
+              name: ''
+            }
+          }
+        }
+        // End Draft
         setPlatform(platform)
         switch (checkCurrent) {
           case 'opensea': openseaCheck.data && setNFT(openseaCheck.data); break;
@@ -220,6 +245,7 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
           platform,
           rarible: nftSanitizer(raribleCheck),
           opensea: nftSanitizer(openseaCheck),
+          galleryst: gallerystNftDetail,
           current_update: dayjs().unix(),
           galleryst_id: gallerystID,
           address

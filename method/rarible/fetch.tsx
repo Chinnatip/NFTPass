@@ -12,57 +12,61 @@ export const userInfo = async (address: string) => {
 export const userMeta = async (address: string) => await axios.get(`/api/rarible/meta?address=${address}`)
 
 export const nftDetail = async (address: string, defaultAction: any, action: any): Promise<ResponseDetail> => {
-  const nfts: RaribleNFTFull  = await collectNFTS([address])
-  const offer : RaribleOffer = await getBestOffer([address])
-  const stringAddress = address.split(':')
-  const useAddress = stringAddress[0]
-  const token_id = stringAddress[1]
-  const activities: Activity[] = await getNFTactivity(nfts.item?.token, nfts.item?.tokenId)
-  if(nfts != undefined) {
-    let lists : string[] = []
-    activities.map(({owner, from}) => {
-      lists.push(owner)
-      if (from != undefined) { lists.push(from) }
-    })
+  try {
+    const nfts: RaribleNFTFull  = await collectNFTS([address])
+    const offer : RaribleOffer = await getBestOffer([address])
+    const stringAddress = address.split(':')
+    const useAddress = stringAddress[0]
+    const token_id = stringAddress[1]
+    const activities: Activity[] = await getNFTactivity(nfts.item?.token, nfts.item?.tokenId)
+    if(nfts != undefined) {
+      let lists : string[] = []
+      activities.map(({owner, from}) => {
+        lists.push(owner)
+        if (from != undefined) { lists.push(from) }
+      })
 
-    lists = [...new Set([...lists, nfts.item.creator, ...nfts.item.owners])]
-    const profileResp = await collectPROFILE(lists)
-    const userLists = profileResp.data.map((user: any) => {
-      const { id: address, name, description, shortUrl, image  } = user
-      return {
-        address, name, description, shortUrl,
-        image: raribleImg(image)
-      }
-    })
-    const data = {
-      address,
-      image: nfts.properties?.imageBig,
-      title: nfts.properties?.name,
-      description: nfts.properties?.description,
-      owner: userLists.filter((user: User) => nfts.item.owners.indexOf(user.address) != -1),
-      creator: userLists.find((user: User) => user.address == nfts.item.creator),
-      pricing: {
-        status: nfts.item?.ownership?.status,
-        eth: nfts.item?.ownership?.priceEth,
-      },
-      offer,
-      activity: activities.map(act => {
-        const { owner, date, value, price, from } = act
+      lists = [...new Set([...lists, nfts.item.creator, ...nfts.item.owners])]
+      const profileResp = await collectPROFILE(lists)
+      const userLists = profileResp.data.map((user: any) => {
+        const { id: address, name, description, shortUrl, image  } = user
         return {
-          type: act['@type'], date, value, price,
-          current_owner:  userLists.find((user: User) => user.address == owner),
-          previous_owner: userLists.find((user: User) => user.address == from)
+          address, name, description, shortUrl,
+          image: raribleImg(image)
         }
       })
+      const data = {
+        address,
+        image: nfts.properties?.imageBig,
+        title: nfts.properties?.name,
+        description: nfts.properties?.description,
+        owner: userLists.filter((user: User) => nfts.item.owners.indexOf(user.address) != -1),
+        creator: userLists.find((user: User) => user.address == nfts.item.creator),
+        pricing: {
+          status: nfts.item?.ownership?.status,
+          eth: nfts.item?.ownership?.priceEth,
+        },
+        offer,
+        activity: activities.map(act => {
+          const { owner, date, value, price, from } = act
+          return {
+            type: act['@type'], date, value, price,
+            current_owner:  userLists.find((user: User) => user.address == owner),
+            previous_owner: userLists.find((user: User) => user.address == from)
+          }
+        })
+      }
+      defaultAction(data)
+      action(data)
+      return {
+        status: true,
+        link: `https://rarible.com/token/${useAddress}:${token_id}?tab=owners`,
+        data
+      }
+    } else {
+      return { status: false }
     }
-    defaultAction(data)
-    action(data)
-    return {
-      status: true,
-      link: `https://rarible.com/token/${useAddress}:${token_id}?tab=owners`,
-      data
-    }
-  }else{
+  } catch {
     return { status: false }
   }
 }

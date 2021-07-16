@@ -32,7 +32,7 @@ export const findDocument = async (doc: string, shortUrl: string, rules: string)
 
 export const writeDocument = async (doc: string, address: string, parcel: any) => {
   const db = firebase.firestore().collection(doc).doc(address)
-  await db.set(parcel)
+  await db.set(JSON.parse(JSON.stringify(parcel)))
 }
 
 export default fire;
