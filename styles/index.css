@@ -1622,3 +1622,11 @@ div.address-text-wrapper > span {
 .top--12 {
   top: -3.75rem;
 }
+
+.centered-connectbtn > .flex.justify-end {
+      justify-content: center !important;
+}
+
+.centered-connectbtn > .flex.justify-end > button {
+  font-size: 18px !important;
+}

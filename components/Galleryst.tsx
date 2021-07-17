@@ -259,7 +259,7 @@ export const ConnectBtn = observer(() => {
         onClick={handleClick}
         disabled={!walletStore.isMetaMaskInstalled}
         style={{ color: '#9a6b6b', backgroundColor: '#9a6b6b29' }}
-        className={`py-2 px-3 mx-5 font-semibold text-sm focus:outline-none appearance-none rounded-full ${walletStore.isMetaMaskInstalled ? 'cursor-pointer' : 'cursor-default'}`}
+        className={`py-3 px-4 mx-5 font-semibold text-s focus:outline-none appearance-none rounded-full ${walletStore.isMetaMaskInstalled ? 'cursor-pointer' : 'cursor-default'}`}
       >
         {getBtnText()}
       </button>
