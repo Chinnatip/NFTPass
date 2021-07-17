@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { RARIBLE_PREFIX } from './static'
-import { Galleryst, Activity, User, ResponseDetail } from '../../interfaces/index'
-import { RaribleNFTFull, RaribleOffer } from './interface'
+import { Galleryst, Activity, User, NFTDetail, ResponseDetail } from '../../interfaces/index'
+import { RaribleNFTFull, RaribleOffer  } from './interface'
 import { raribleImg } from './method'
 
 export const userInfo = async (address: string) => {
@@ -10,6 +10,17 @@ export const userInfo = async (address: string) => {
 }
 
 export const userMeta = async (address: string) => await axios.get(`/api/rarible/meta?address=${address}`)
+
+export const getOfferandActivity = async(address: string, setRarible: any, detail: NFTDetail) => {
+  const splitAddress = address.split(':')
+  const contact_address = splitAddress[0]
+  const token_id = splitAddress[1]
+  const offer : RaribleOffer = await getBestOffer([address])
+  const activity : Activity[] = await getNFTactivity(contact_address, token_id)
+  if(offer != undefined && activity != []){
+    setRarible({ ...detail, offer, activity });
+  }
+}
 
 export const nftDetail = async (address: string, defaultAction: any, action: any): Promise<ResponseDetail> => {
   const nfts: RaribleNFTFull  = await collectNFTS([address])
