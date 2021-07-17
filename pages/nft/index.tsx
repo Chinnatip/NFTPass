@@ -184,6 +184,7 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
   galleryst_id?: string
 }) => {
   const [nft, setNFT] = useState<NFTDetail>(getNFT != undefined ? getNFT : { address })
+  const [ loading, setLoad ] = useState(true)
   const [gallerystID] = useState(galleryst_id != undefined ? galleryst_id : makeid(5))
   const [raribles, setRarible] = useState<NFTDetail>(getRarible != undefined ? getRarible : { address })
   const [openseas, setOpensea] = useState<NFTDetail>(getOpensea != undefined ? getOpensea : { address })
@@ -192,8 +193,10 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
   useEffect(() => {
     (async () => {
       if (current_update != undefined && checkDiff(current_update)) {
-        console.log('not load')
-        // TODO: load only offer and tradeHistory
+        // Fetch lastest activity of NFT
+        await opensea.getOfferandActivity(address, setOpensea, openseas)
+        await rarible.getOfferandActivity(address, setRarible, raribles)
+        setLoad(false)
       } else {
         // Rarible
         const raribleCheck: ResponseDetail = await rarible.nftDetail(address, setNFT, setRarible)
@@ -225,6 +228,7 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
           galleryst_id: gallerystID,
           address
         })
+        setLoad(false)
       }
     })()
   }, []);
@@ -256,6 +260,7 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
       }}
     />
     <Head><title>{seo.title}</title></Head>
+    { loading && <div className="fixed bottom-0 right-0 m-6 bg-black text-white text-lg rounded-full px-4 py-2">Loading ...</div> }
     <div className="flex flex-col pt-8" style={{ background: 'url("image/bg_blur.jpg")' }}>
       <div className="w-full flex justify-between">
         <a className="focus:outline-none" href="{'/}">
