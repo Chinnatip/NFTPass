@@ -257,8 +257,8 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
     />
     <Head><title>{seo.title}</title></Head>
     <div className="flex flex-col pt-8" style={{ background: 'url("image/bg_blur.jpg")' }}>
-      <div className="w-full flex justify-between">
-        <a className="focus:outline-none" href="{'/}">
+      <div className="md:w-4/5 w-full m-auto flex justify-between">
+        <a className="focus:outline-none" href={`/`}>
           <img className="md:h-8 h-6 ml-2" src="/image/ic_galleryst_logo.png" alt="" />
         </a>
         <ConnectBtn />
@@ -278,13 +278,13 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
     </div>
     <div className="md:w-2/3 w-full m-auto relative">
       {/* Share Galleryst component */}
-      {gallerystID != undefined && <div className="shadow-nft flex h-auto absolute right-2 top--12 rounded-full">
+      {gallerystID != undefined && <div className="shadow-nft flex h-auto absolute md:right-0 right-2 top--12 rounded-full">
         <div className="flex-grow text-xl hidden">
           <span className="text-sm text-gray-600">Galleryst ID</span><br />
           {gallerystID}
         </div>
         <button
-          className="bg-white w-auto rounded-full py-2 md:w-auto px-3  text-black active-shadow flex items-center justify-center"
+          className="bg-white w-auto rounded-full py-3 md:w-auto px-4  text-black active-shadow flex items-center justify-center"
           onClick={() => useCopyToClipboard(`https://www.galleryst.co/n/${gallerystID}`)}>
           {copied && <div className="absolute bg-black text-white top-0 right-0 p-1 px-2 -mt-10 -mr-2 text-sm rounded-full">Copied !</div>}
           <Icon fill={faShareAlt} noMargin /> <span className="ml-2">Share </span>
@@ -296,11 +296,11 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
           <div className="text-gray-500 mb-4 break-words order-2 hidden">{address}</div>
           <div className="order-5 mb-3"><h3 >{description != null ? description : 'No description.'}</h3></div>
           {/* Link to Platform */}
-          {platform.check['rarible']?.status && <a href={platform.check['rarible']?.link} target="_blank" className="order-6 flex mt-4 p-4 items-center rounded-xl bg-white shadow-nft active-shadow">
+          {platform.check['rarible']?.status && <a href={platform.check['rarible']?.link} target="_blank" className="order-6 flex mt-4 p-4 items-center rounded-24 bg-white shadow-nft active-shadow">
             <span className="flex-grow ">Link to Rarible</span>
             <div className="text-black bg-yellow-500 rarible-logo logo-48 h-12 w-12 rounded-full" ></div>
           </a>}
-          {platform.check['opensea']?.status && <a href={platform.check['opensea']?.link} target="_blank" className="order-6 flex mt-4 p-4 items-center rounded-xl bg-white shadow-nft active-shadow">
+          {platform.check['opensea']?.status && <a href={platform.check['opensea']?.link} target="_blank" className="order-6 flex mt-4 p-4 items-center rounded-24 bg-white shadow-nft active-shadow">
             <span className="flex-grow ">Link to Opensea</span>
             <div className="text-white bg-blue-500 opensea-logo logo-48 h-12 w-12 rounded-full" ></div>
           </a>}
