@@ -36,15 +36,12 @@ const Page = ({ shortUrl }: { shortUrl: string }) => {
 
     <div className="w-full">
       <div className="md:w-4/5 w-full m-auto flex justify-between">
-        <a className="focus:outline-none" href="{'/}">
+        <a className="focus:outline-none" href="/">
           <img className="md:h-8 h-6 ml-2" src="/image/ic_galleryst_logo.png" alt="" />
         </a>
         <ConnectBtn />
       </div>
-
-
       <ProfilePage profile={profile} action={stateAction} lists={stateLists} />
-
     </div>
   </div>
 }

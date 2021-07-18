@@ -91,12 +91,16 @@ export const AddressBox = ({ address }: { address: string | undefined }) => {
 }
 
 const ClaimBox = ({ address, profile, action }: { address: string | undefined, profile: Profile, action: any }) => {
+  console.log('Read walletStore >>>')
+  console.log(walletStore)
   return <button
     onClick={() => address != undefined && action(true)}
     className="bg-black text-sm text-white rounded-full inline-block px-3 py-2 ml-3 active-shadow">
 
     {/* TODO: set roles of viewer and profile owner */}
-    {profile.verified && address == profile.address ? 'Edit profile' : 'Claim this address'}
+    <div>
+      { profile.verified ? 'Edit profile' : 'Claim this address' }
+    </div>
   </button>
 }
 
@@ -317,7 +321,7 @@ export const UpdateAction = ({ action, profile }: { action: any, profile: Profil
     }}
     className="absolute top-0 right-0 mt-5 mr-5 flex items-center button-red py-2 px-3 rounded-full cursor-pointer text-sm font-semibold">
     {show && <div className="absolute bg-black text-white top-0 right-0 p-1 px-2 -mt-10 text-sm rounded-full w-300">Updating...</div>}
-    <Icon fill={faSync} noMargin /><span className="md:block hidden ml-3"> Update address Info</span>
+    <Icon fill={faSync} noMargin /><span className="md:block hidden ml-3"> Refresh Address Info</span>
   </div>
 }
 

@@ -4,7 +4,6 @@ import { Profile } from '../../method/rarible/interface'
 import { Drop } from '../../method/nifty/interface'
 import { creatorFetch } from '../../method/integrate'
 import { Galleryst } from '../../interfaces/index'
-import { walletStore } from 'stores/wallet.store'
 import { observer } from 'mobx-react-lite'
 import { ConnectBtn } from '@/Galleryst'
 import ProfilePage from '@/ProfilePage'
@@ -37,12 +36,12 @@ const Page = observer(({ address, nifty_slug }: { address: string, nifty_slug: s
   }, []);
   return <div className="w-screen h-screen pt-8 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")' }}>
     <div className="md:w-4/5 w-full m-auto flex justify-between">
-      <a className="focus:outline-none" href="{'/}">
+      <a className="focus:outline-none" href="/">
         <img className="md:h-8 h-6 ml-2" src="/image/ic_galleryst_logo.png" alt="" />
       </a>
       <ConnectBtn />
     </div>
-    <ProfilePage wallet={walletStore} profile={profile} action={stateAction} lists={stateLists} />
+    <ProfilePage profile={profile} action={stateAction} lists={stateLists} />
   </div>
 })
 
