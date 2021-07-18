@@ -253,17 +253,17 @@ export const ConnectBtn = observer(() => {
     }
   }
   return (
-    <div className="flex justify-end">
+    <div className="flex justify-end relative">
       <button
         ref={btnRef}
         onClick={handleClick}
         disabled={!walletStore.isMetaMaskInstalled}
         style={{ color: '#9a6b6b', backgroundColor: '#9a6b6b29' }}
-        className={`py-3 px-4 mx-5 font-semibold text-s focus:outline-none appearance-none rounded-full ${walletStore.isMetaMaskInstalled ? 'cursor-pointer' : 'cursor-default'}`}
+        className={`py-3 px-4 mx-5 font-semibold text-s focus:outline-none appearance-none mt-4 rounded-full ${walletStore.isMetaMaskInstalled ? 'cursor-pointer' : 'cursor-default'}`}
       >
         {getBtnText()}
       </button>
-      <div ref={popperRef} className={`${show ? '' : 'hidden'} p-2 rounded-2xl bg-white`}>
+      <div ref={popperRef} className={`${show ? '' : 'hidden'} p-4 rounded-2xl bg-white absolute mt-4 right-0 z-50 shadow-nft`}>
         {(!walletStore.isConnected && walletStore.accounts.length > 0) && walletStore.accounts.map((account, index) => {
           return (
             <React.Fragment key={account} >
@@ -291,6 +291,12 @@ export const ConnectBtn = observer(() => {
             Disconnect
           </button>
         )}
+        <button className=" w-full inline-block mt-4 bg-white focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft">
+          View My Page
+        </button>
+        <button className=" w-full inline-block mt-4 bg-white focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft">
+          Disconnect Wallet
+        </button>
       </div>
     </div>
   )
