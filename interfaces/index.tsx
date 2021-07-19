@@ -132,3 +132,8 @@ export interface Activity {
   buyToken?: string
   transactionHash: string
 }
+
+export interface Media {
+  type: 'video' | 'image'
+  src: string
+}

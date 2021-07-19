@@ -1,3 +1,5 @@
+import { Media } from "interfaces"
+
 export interface ERC1155Metadata {
   name: string
   description?: string
@@ -50,5 +52,6 @@ export interface OpenSeaTokenMetadata extends ERC1155Metadata {
 }
 
 export interface GallerystTokenMetadata extends OpenSeaTokenMetadata {
-  media_list?: Array<{ type: string; src: string }>
+  creator?: string
+  media_list?: Media[]
 }

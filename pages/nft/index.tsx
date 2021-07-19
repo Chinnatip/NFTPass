@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { NextSeo } from 'next-seo';
-import { User, NFTDetail, ResponseDetail } from '../../interfaces/index'
+import { User, NFTDetail, ResponseDetail, Media } from '../../interfaces/index'
 import * as rarible from '../../method/rarible/fetch'
 import * as opensea from '../../method/opensea/fetch'
 import * as firebase from "../../method/firebase"
@@ -164,7 +164,7 @@ const checkDiff = (current_update: number, diffAmount: number = 2) => {
 }
 
 const prepareURI = (text: string) => {
-  let rep = text.split("#").join("@").split("&").join("-").split("?").join("-")
+  let rep = (text ?? '').split("#").join("@").split("&").join("-").split("?").join("-")
   return encodeURI(rep)
 }
 
@@ -189,16 +189,34 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
   const [openseas, setOpensea] = useState<NFTDetail>( getOpensea != undefined ? getOpensea : { address })
   const [platform, setPlatform] = useState<NFTPlatform>( getPlatform != undefined ? getPlatform : {current: 'opensea', check: {rarible: {status: false}, opensea: {status: false}}})
   const [copied, setCopied] = useState(false)
+  const [mediaList, setMediaList] = useState<Media[]>([])
+  const [displayMedia, setDisplayMedia] = useState<Media>({ type: 'image', src: ''})
+  const [displayIdx, setDisplayIdx] = useState<number>(0)
   useEffect(() => {
     (async () => {
       if (current_update != undefined && checkDiff(current_update)) {
         console.log('not load')
+        setNFT(getNFT!)
+        if (getPlatform?.current === 'galleryst') {
+          setMediaList((getNFT as any).mediaList)
+          setDisplayMedia((getNFT as any).mediaList[0])
+        } else {
+          const media: Media = { type: 'image', src: getNFT?.image! }
+          setMediaList([media])
+          setDisplayMedia(media)
+        }
         // TODO: load only offer and tradeHistory
       } else {
         // Rarible
+        const [contractAddress, tokenId] = address.split(':')
+        const gallerystTokenMetadata = await contractQuerierService.getMetadataUri(contractAddress, +tokenId)
         const raribleCheck: ResponseDetail = await rarible.nftDetail(address, setNFT, setRarible)
         const openseaCheck: ResponseDetail = await opensea.nftDetail(address, setNFT, setOpensea)
-        const checkCurrent = raribleCheck.status ? 'rarible' : openseaCheck.status ? 'opensea' : 'galleryst'
+        const checkCurrent = 
+          gallerystTokenMetadata !== null ? 'galleryst' :
+          raribleCheck.status ? 'rarible' : 
+          openseaCheck.status ? 'opensea' : 
+          ''
         const platform = {
           current: checkCurrent,
           check: {
@@ -212,40 +230,54 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
             }
           }
         }
-        // Draft
-        const [contractAddress, tokenId] = address.split(':')
-        const gallerystTokenMetadata = await contractQuerierService.getMetadataUri(contractAddress, +tokenId)
-        const mediaList = [
-          { type: 'image', src: gallerystTokenMetadata.image },
-          ...(gallerystTokenMetadata.media_list ?? [])
-        ]
-        if (!!gallerystTokenMetadata.animation_url) {
-          mediaList.unshift({ type: 'video', src: gallerystTokenMetadata.animation_url })
-        }
-        const gallerystNftDetail = { 
-          status: true, 
-          data: { 
-            title: gallerystTokenMetadata.name,
-            description: gallerystTokenMetadata.description,
-            image: gallerystTokenMetadata.image, 
-            metadata: gallerystTokenMetadata, 
-            mediaList,
-            creator: {
-              name: ''
+        
+        let gallerystCheck;
+        if (gallerystTokenMetadata !== null) {
+          const tmpMediaList: Media[] = [
+            { type: 'image', src: gallerystTokenMetadata.image }, // main image
+            ...(gallerystTokenMetadata.media_list ?? []) // other media
+          ]
+          if (!!gallerystTokenMetadata.animation_url) {
+            tmpMediaList.unshift({ type: 'video', src: gallerystTokenMetadata.animation_url }) // main video
+          }
+          setMediaList(tmpMediaList)
+          gallerystCheck = { 
+            status: true, 
+            data: { 
+              title: gallerystTokenMetadata.name,
+              description: gallerystTokenMetadata.description,
+              image: gallerystTokenMetadata.image, 
+              metadata: gallerystTokenMetadata, 
+              mediaList: tmpMediaList,
+              creator: {
+                address: gallerystTokenMetadata.creator ?? ''
+              }
             }
           }
         }
-        // End Draft
+
         setPlatform(platform)
         switch (checkCurrent) {
-          case 'opensea': openseaCheck.data && setNFT(openseaCheck.data); break;
-          case 'rarible': raribleCheck.data && setNFT(raribleCheck.data); break;
+          case 'galleryst' : {
+            setDisplayMedia(mediaList[0]);
+            break;
+          }
+          case 'opensea': {
+            setNFT(openseaCheck.data!);
+            setDisplayMedia({ type: 'image', src: openseaCheck.data!.image!})
+            break; 
+          }
+          case 'rarible': {
+            setNFT(raribleCheck.data!); 
+            setDisplayMedia({ type: 'image', src: raribleCheck.data!.image!});
+            break;
+          }
         }
         await firebase.writeDocument('nft', address, {
           platform,
           rarible: nftSanitizer(raribleCheck),
           opensea: nftSanitizer(openseaCheck),
-          galleryst: gallerystNftDetail,
+          galleryst: gallerystCheck,
           current_update: dayjs().unix(),
           galleryst_id: gallerystID,
           address
@@ -253,7 +285,7 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
       }
     })()
   }, []);
-  const { image, title, description, creator, owner } = nft
+  const { title, description, creator, owner } = nft
   const getDate = (dayFormat: string) => dayjs(dayFormat).format('DD MMM YYYY')
 
   const useCopyToClipboard = (text: string) => {
@@ -282,12 +314,35 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
     />
     <Head><title>{seo.title}</title></Head>
     <div className="flex flex-col">
-      <div className="w-full relative flex items-center justify-center max-w-full m-auto" style={{ background: 'rgba(92, 86, 86, 0.48)', height: '75vh' }}>
+      <div className="w-full relative flex flex-col items-center justify-center max-w-full m-auto p-10" style={{ background: 'rgba(92, 86, 86, 0.48)', height: '75vh' }}>
         <a href={`/`} className="absolute top-2 left-2 bg-white rounded-full h-8 md:w-auto w-8 md:px-2 flex items-center justify-center text-black active-shadow">
           <Icon fill={faArrowLeft} noMargin /> <span className="md:block hidden ml-1">Back</span>
         </a>
-        <div className="p-4 flex items-center" style={{ height: '100%' }}>
-          <img src={image} className="shadow-nft-img rounded-lg fit-wh-img" />
+        <div className="p-4 flex items-center" style={{ height: mediaList.length > 1 ? '80%' : '100%' }}>
+          {displayMedia.type === 'image' && <img src={displayMedia.src} className="shadow-nft-img rounded-lg fit-wh-img" />}
+          {displayMedia.type === 'video' && <video src={displayMedia.src} poster="" className="" autoPlay loop muted /*controls*/ />}
+        </div>
+        <div className="pt-3 text-center flex justify-center items-center">
+          {mediaList.length > 1 && mediaList.map((media, idx) => {
+            const isDisplaying = displayIdx === idx
+            return (
+              <div
+                className={`
+                  cursor-pointer 
+                  mx-2 shadow-xl 
+                  rounded-sm 
+                  transition-width duration-300
+                  ${isDisplaying ? 'w-16 sm:w-24 md:w-32' : 'w-12 sm:w-18 md:w-24'} 
+                `}
+                onClick={() => { setDisplayMedia(media); setDisplayIdx(idx); }}
+              >
+                <div className='flex items-center h-full my-auto'>
+                  {media.type === 'image' && <img src={media.src} />}
+                  {media.type === 'video' && <video src={media.src} muted autoPlay loop />}
+                </div>
+              </div>
+            )
+          })}
         </div>
       </div>
       <div className="text-center mt-10 mb-12 hidden">
@@ -307,6 +362,14 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
             <span className="flex-grow ">Link to Opensea</span>
             <div className="text-white bg-blue-500 opensea-logo logo-48 h-12 w-12 rounded-full" ></div>
           </a>}
+          {!!(getNFT as any).metadata && <div className='flex flex-wrap order-6 mt-3'>
+            {(getNFT as any).metadata?.attributes?.map((attr: any) => {
+              return <div className='bg-white rounded-lg flex flex-col p-3 mr-2 flex-grow shadow-nft'>
+                <p className="text-xs text-gray-600">#{attr.trait_type}</p>
+                <p className="truncate">{attr.value}</p>
+              </div>
+            })}
+          </div>}
         </div>
         <div className="lg:w-1/2 w-full lg:pl-6 pr-0 lg:sticky lg:flex lg:flex-col contents">
           <div className="order-3 mb-4">
