@@ -132,3 +132,23 @@ export interface Activity {
   buyToken?: string
   transactionHash: string
 }
+
+export interface Media {
+  type: 'video' | 'image'
+  src: string
+}
+
+export interface PlatformItem {
+  link?: string
+  status: boolean
+}
+
+export interface NFTPlatform {
+  current: string
+  check: {
+    opensea?: PlatformItem
+    rarible?: PlatformItem
+    nifty?: PlatformItem
+    foundation?: PlatformItem
+  }
+}

@@ -85,7 +85,7 @@ export const getOfferandActivity = async(address: string, setOpensea: any, detai
   }
 }
 
-export const nftDetail = async(address: string, defaultAction: any, action: any): Promise<ResponseDetail> => {
+export const nftDetail = async(address: string, defaultAction?: (data: any) => void, action?: (data: any) => void): Promise<ResponseDetail> => {
   const splitAddress = address.split(':')
   const contact_address = splitAddress[0]
   const token_id = splitAddress[1]
@@ -125,8 +125,8 @@ export const nftDetail = async(address: string, defaultAction: any, action: any)
       activity
     }
     // console.log(returner)
-    defaultAction(data)
-    action(data)
+    defaultAction?.(data)
+    action?.(data)
     return {
       status: true,
       link: `https://opensea.io/assets/${contact_address}/${token_id}`,

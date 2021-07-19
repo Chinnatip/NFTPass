@@ -17,6 +17,29 @@ const Icon = ({ fill, noMargin = false }: Props) => {
 
 export default Icon
 
+export const Picon = ({ platform }: { platform: 'rarible' | 'opensea' | 'nifty' | 'foundation' }) => {
+  let style = ''
+  switch (platform) {
+    case 'rarible':
+      style = 'text-black bg-yellow-500 rarible-logo logo-48'
+      break
+    case 'opensea':
+      style = 'text-white bg-blue-500 opensea-logo logo-48'
+      break
+    case 'foundation':
+      style = 'text-white bg-black foundation-logo logo-48'
+      break
+    case 'nifty':
+      style = 'text-white bg-blue-700 nifty-logo logo-48'
+  }
+  return <div
+    className={`
+     mr-3 h-12 w-12 inline-flex items-center justify-center rounded-full shadow-nft
+    ${style}
+  `}
+  />
+}
+
 export const AppIcon = () => {
   return (
     <svg
@@ -307,8 +330,8 @@ export const LocationIcon = () => {
 export const TwitterIcon = () => {
   return (
     <svg viewBox="328 355 335 276" xmlns="http://www.w3.org/2000/svg" className="svg-inline--fa fa-plus fa-w-20 fa-show">
-  <path 
-  fill="currentColor" 
+  <path
+  fill="currentColor"
   d="
     M 630, 425
     A 195, 195 0 0 1 331, 600

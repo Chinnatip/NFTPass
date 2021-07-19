@@ -8,7 +8,7 @@ import { walletService } from 'services/wallet.service'
 import { createPopper } from '@popperjs/core'
 import { Profile } from '../method/rarible/interface'
 import { creatorFetch } from '../method/integrate'
-import { Galleryst } from '../interfaces/index'
+import { Galleryst, User } from '../interfaces/index'
 import { Drop } from '../method/nifty/interface'
 import Icon from '@/Icon'
 
@@ -348,4 +348,66 @@ export const Filter = ({ platform, profile }: { platform: 'rarible' | 'opensea' 
   return <div className={`h-8 w-8 mx-2 flex items-center justify-center rounded-full shadow-nft text-lg ${market[platform] ? style : default_style}`}>
     {text}
   </div>
+}
+
+
+// export const FilterOnNFT = ({ current, platform, action, targetAction, target }: {
+//   target?: NFTDetail,
+//   targetAction?: any,
+//   platform: any,
+//   action: any,
+//   current: 'rarible' | 'opensea' | 'foundation' | 'nifty',
+// }) => {
+//   const market: {
+//     rarible?: { status: boolean }
+//     opensea?: { status: boolean }
+//     foundation?: { status: boolean }
+//     nifty?: { status: boolean }
+//   } = platform.check != undefined ? platform.check : {}
+//   const check = (platform: 'rarible' | 'opensea' | 'foundation' | 'nifty') => {
+//     switch (platform) {
+//       case 'rarible':
+//         return { style: 'text-black bg-yellow-500 rarible-logo logo-48', text: '' }
+//       case 'opensea':
+//         return { style: 'text-white bg-blue-500 opensea-logo logo-48', text: '' }
+//       case 'foundation':
+//         return { style: 'text-white bg-black foundation-logo logo-48', text: 'F' }
+//       case 'nifty':
+//         return { style: 'text-white bg-blue-700 nifty-logo logo-48', text: 'N' }
+//     }
+//   }
+//   const default_style = 'border text-gray-400 bg-gray-200'
+//   const { text, style } = check(current)
+//   return <div
+//     className={`
+//       cursor-pointer h-8 w-8 mx-2 flex items-center
+//       shadow-xl justify-center rounded-full shadow-nft text-lg
+//       ${platform.current == current && 'border-1 border-green-400 shadow-greenery'}
+//       ${market[current]?.status ? style : default_style}
+//     `}
+//     onClick={() => {
+//       action({ ...platform, current: current })
+//       if (targetAction != undefined) targetAction(target)
+//     }}>
+//     {text}
+//   </div>
+// }
+
+
+export const profilePic = (user: User | undefined) => {
+  if (user != undefined) {
+    return <a href={`/profile?address=${user.address}`} className="bg-gray-500 mx-2 w-8 h-8 rounded-full inline-flex items-center justify-center">
+      <img src={user.image} className="h-8 inline w-8 fix-w-h-xs rounded-full" />
+    </a>
+  } else {
+    return <div className="w-8 h-8 inline bg-gray-600 rounded-full fix-w-h-xs" />
+  }
+}
+
+export const profileAddress = (user: User | undefined, index: number) => {
+  return user != undefined && user?.image != '' ?
+    <a key={index} href={`/profile?address=${user.address}`} target="_blank" className="ml-2 mb-2 bg-gray-500 w-10 h-10 rounded-full overflow-hidden inline-flex items-center justify-center">
+      <img src={user?.image} className="h-10 inline" />
+    </a> :
+    <span className="inline-block w-10 h-10 rounded-full bg-purple-500 ml-2 flex items-center justify-center">{user?.name?.substr(0, 1)}</span>
 }
