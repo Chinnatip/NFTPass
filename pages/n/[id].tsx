@@ -170,8 +170,7 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
         </a>
         <ConnectBtn />
       </div>
-      <div className="w-full relative flex items-center justify-center max-w-full m-auto" style={{ height: '75vh' }}>
-
+      <div className="w-full relative flex-col flex items-center justify-center max-w-full m-auto" style={{ height: '75vh' }}>
         <a href={`/`} className="hidden absolute top-2 left-2 bg-white rounded-full h-8 md:w-auto w-8 md:px-2 flex items-center justify-center text-black active-shadow">
           <Icon fill={faArrowLeft} noMargin /> <span className="md:block hidden ml-1">Back</span>
         </a>
