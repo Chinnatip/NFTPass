@@ -176,7 +176,7 @@ export const NFTDrop = ({ lists, text = '' }: { lists: Drop[], text: string }) =
       <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 md:p-4 p-0 gap-2 w-full">
         {lists.map(item => {
           const { address, title, image } = item
-          return image != undefined && <a target="_blank" href={`/nft?address=${address}`} className="relative cursor-pointer bg-white rounded-16 mb-2" key={`${address}`}>
+          return image != undefined && <a target="_blank" href={`/nft?address=${address}`} className="relative cursor-pointer bg-white rounded-16 mb-2 active-shadow" key={`${address}`}>
             <div className="thumbnail-wrapper w-full relative">
               {image.slice(image.length - 3, image.length) == 'mp4' ?
                 <video className="rounded-16 border-8 border-white thumbnail-height" src={image} autoPlay loop muted /> :
@@ -203,7 +203,7 @@ export const NFTGroup = ({ lists, nfts, text = '', type = '' }: { type?: string,
       <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 md:p-4 p-0 gap-2 w-full">
         {nfts.filter(item => lists.includes(item.id)).map(item => {
           const { imagePreview, check } = item
-          return imagePreview != undefined && <a target="_blank" href={`/nft?address=${item.id}`} className="relative cursor-pointer bg-white rounded-16 mb-2" key={`${item.id}`}>
+          return imagePreview != undefined && <a target="_blank" href={`/nft?address=${item.id}`} className="relative cursor-pointer bg-white rounded-16 mb-2 active-shadow" key={`${item.id}`}>
             <div className="thumbnail-wrapper w-full relative">
               {imagePreview.slice(imagePreview.length - 3, imagePreview.length) == 'mp4' ?
                 <video className="rounded-16 border-8 border-white thumbnail-height" src={imagePreview} autoPlay loop muted /> :
