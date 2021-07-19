@@ -99,7 +99,7 @@ const ClaimBox = ({ address, profile, action }: { address: string | undefined, p
 
     {/* TODO: set roles of viewer and profile owner */}
     <div>
-      { profile.verified ? 'Edit profile' : 'Claim this address' }
+      {profile.verified ? 'Edit profile' : 'Claim this address'}
     </div>
   </button>
 }
@@ -176,7 +176,7 @@ export const NFTDrop = ({ lists, text = '' }: { lists: Drop[], text: string }) =
       <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 md:p-4 p-0 gap-2 w-full">
         {lists.map(item => {
           const { address, title, image } = item
-          return image != undefined && <a target="_blank" href={`/nft?address=${address}`} className="relative cursor-pointer bg-white rounded-16 mb-2" key={`${address}`}>
+          return image != undefined && <a target="_blank" href={`/nft?address=${address}`} className="relative cursor-pointer bg-white rounded-16 mb-2 active-shadow" key={`${address}`}>
             <div className="thumbnail-wrapper w-full relative">
               {image.slice(image.length - 3, image.length) == 'mp4' ?
                 <video className="rounded-16 border-8 border-white thumbnail-height" src={image} autoPlay loop muted /> :
@@ -203,7 +203,7 @@ export const NFTGroup = ({ lists, nfts, text = '', type = '' }: { type?: string,
       <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 md:p-4 p-0 gap-2 w-full">
         {nfts.filter(item => lists.includes(item.id)).map(item => {
           const { imagePreview, check } = item
-          return imagePreview != undefined && <a target="_blank" href={`/nft?address=${item.id}`} className="relative cursor-pointer bg-white rounded-16 mb-2" key={`${item.id}`}>
+          return imagePreview != undefined && <a target="_blank" href={`/nft?address=${item.id}`} className="relative cursor-pointer bg-white rounded-16 mb-2 active-shadow" key={`${item.id}`}>
             <div className="thumbnail-wrapper w-full relative">
               {imagePreview.slice(imagePreview.length - 3, imagePreview.length) == 'mp4' ?
                 <video className="rounded-16 border-8 border-white thumbnail-height" src={imagePreview} autoPlay loop muted /> :
@@ -263,12 +263,12 @@ export const ConnectBtn = observer(() => {
         onClick={handleClick}
         disabled={!walletStore.isMetaMaskInstalled}
         style={{ color: '#9a6b6b', backgroundColor: '#9a6b6b29' }}
-        className={`py-3 px-4 mx-5 font-semibold text-s focus:outline-none appearance-none mt-4 rounded-full ${walletStore.isMetaMaskInstalled ? 'cursor-pointer' : 'cursor-default'}`}
+        className={`py-3 px-4 mx-5 font-semibold text-s focus:outline-none appearance-none my-4 rounded-full ${walletStore.isMetaMaskInstalled ? 'cursor-pointer' : 'cursor-default'}`}
       >
         {getBtnText()}
       </button>
       <div ref={popperRef} className={`${show ? '' : 'hidden'} p-4 rounded-2xl bg-white absolute mt-6 right-0 z-50 shadow-nft`}>
-        { !walletStore.isConnected && walletStore.accounts.length > 0 && <div className="text-sm mb-3 text-center">
+        {!walletStore.isConnected && walletStore.accounts.length > 0 && <div className="text-sm mb-3 text-center">
           we found {walletStore.accounts.length} account in your wallets <br />
           please select account to verify
         </div>}
@@ -290,7 +290,7 @@ export const ConnectBtn = observer(() => {
         })}
         {walletStore.isConnected && (
           <>
-            { walletStore.address != '' && <a href={`/profile?address=${walletStore.address}`} className=" w-full inline-block mt-4 bg-white focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft">
+            {walletStore.address != '' && <a href={`/profile?address=${walletStore.address}`} className=" w-full inline-block mt-4 bg-white focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft">
               View My Page
             </a>}
             <button className=" w-full inline-block mt-4 bg-white focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft" onClick={() => {

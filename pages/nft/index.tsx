@@ -184,7 +184,7 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
   galleryst_id?: string
 }) => {
   const [nft, setNFT] = useState<NFTDetail>(getNFT != undefined ? getNFT : { address })
-  const [ loading, setLoad ] = useState(true)
+  const [loading, setLoad] = useState(true)
   const [gallerystID] = useState(galleryst_id != undefined ? galleryst_id : makeid(5))
   const [raribles, setRarible] = useState<NFTDetail>(getRarible != undefined ? getRarible : { address })
   const [openseas, setOpensea] = useState<NFTDetail>(getOpensea != undefined ? getOpensea : { address })
@@ -260,7 +260,7 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
       }}
     />
     <Head><title>{seo.title}</title></Head>
-    { loading && <div className="fixed bottom-0 right-0 m-6 bg-black text-white text-lg rounded-full px-4 py-2">Loading ...</div> }
+    {loading && <div className="fixed bottom-0 right-0 m-6 bg-black text-white text-lg rounded-full px-4 py-2">Loading ...</div>}
     <div className="flex flex-col pt-8" style={{ background: 'url("image/bg_blur.jpg")' }}>
       <div className="md:w-4/5 w-full m-auto flex justify-between">
         <a className="focus:outline-none" href={`/`}>
@@ -294,6 +294,7 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
           {copied && <div className="absolute bg-black text-white top-0 right-0 p-1 px-2 -mt-10 -mr-2 text-sm rounded-full">Copied !</div>}
           <Icon fill={faShareAlt} noMargin /> <span className="ml-2">Share </span>
         </button>
+
       </div>}
       <div className="mt-10 m-auto w-full md:px-0 px-3 flex lg:flex-row flex-col justify-between">
         <div className="lg:w-1/2 w-full lg:flex lg:flex-col contents">

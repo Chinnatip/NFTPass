@@ -22,7 +22,7 @@ const Card = ({ src, nfts_lists, creator }: {
       </button>
       <div className="thumbnail-wrapper w-full">
         <img src={`/image/opensea_icon.png`} className="absolute z-10 top-0 right-0 mt-4 mr-4 h-6" />
-        <img className="rounded-16 border-8 border-white thumbnail-height" src={src?.image?.preview} />
+        <img className="rounded-16 border-8 border-white thumbnail-height active-shadow" src={src?.image?.preview} />
         <div className="absolute flex justify-end	z-10 bottom-0 w-full mb-2 px-2 pt-6" style={{}}>
           <div className="flex px-2 rounded-b-16 pt-10 justify-end w-full" style={{ background: 'linear-gradient(360deg, #00000085 10%, rgba(196, 196, 196, 0) 50%)' }}>
             <div className="text-white text-sm flex-grow flex items-center hidden">
