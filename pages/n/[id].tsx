@@ -212,7 +212,8 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
           <span className="text-sm text-gray-600">Galleryst ID</span><br />
           {gallerystID}
         </div>
-        <a target="_blank" href={`https://twitter.com/intent/tweet?text=${encodeURI(`https://www.galleryst.co/n/${gallerystID}`)}`} data-size="large" className="shadow-nft mr-4 bg-blue-500 text-white w-auto rounded-full py-3 md:w-auto px-4  text-black active-shadow flex items-center justify-center">share to twitter</a>
+        <a target="_blank" href={`https://twitter.com/intent/tweet?text=${encodeURI(`Visit my portfolio at Galleryst. https://www.galleryst.co/n/${gallerystID}`)}`} data-size="large" className="shadow-nft mr-4 bg-white text-black w-auto rounded-full py-3 md:w-auto px-4  text-black active-shadow flex items-center justify-center">
+          <img src="/image/twitter_logo.svg" style={{ height: '20px' }} className="mr-1" /> <span className="md:block hidden">Tweet</span></a>
         <button
           className="shadow-nft  bg-white w-auto rounded-full py-3 md:w-auto px-4  text-black active-shadow flex items-center justify-center"
           onClick={() => useCopyToClipboard(`https://www.galleryst.co/n/${gallerystID}`)}>
