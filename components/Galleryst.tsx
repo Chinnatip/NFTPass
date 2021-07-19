@@ -265,10 +265,10 @@ export const ConnectBtn = observer(() => {
       >
         {getBtnText()}
       </button>
-      <div ref={popperRef} className={`${show ? '' : 'hidden'} p-4 rounded-2xl bg-white absolute mt-20 right-0 z-50 shadow-nft`}>
+      <div ref={popperRef} className={`${show ? '' : 'hidden'} p-4 rounded-2xl bg-white text-gray-500 absolute mt-20 right-0 z-50 shadow-nft`}>
         {!walletStore.isMetaMaskInstalled && <div>
-          To connect galleryst please install Metamask in your browser.
-        </div> }
+          To connect to Galleryst please install Metamask to your browser. <a href="https://metamask.io/download.html" target="_blank" className="underline text-black">Get Metamask</a>
+        </div>}
         {walletStore.isMetaMaskInstalled && !walletStore.isConnected && walletStore.accounts.length > 0 && <div className="text-sm mb-3 text-center">
           we found {walletStore.accounts.length} account in your wallets <br />
           please select account to verify
