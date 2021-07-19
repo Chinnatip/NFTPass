@@ -249,7 +249,7 @@ export const ConnectBtn = observer(() => {
   }
   const getBtnText = () => {
     if (!walletStore.isMetaMaskInstalled) {
-      return 'Cannot find Metamask!'
+      return 'To connect galleryst please install Metamask in your browser.'
     } else if (walletStore.verified) {
       return `${mask(walletStore.address)} | ${walletStore.readableBalance}`
     } else {
