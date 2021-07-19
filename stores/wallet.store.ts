@@ -21,7 +21,7 @@ class WalletStore {
   }
 
   get readableBalance() {
-    return `${this.balance.toFixed(2)} ETH`
+    return `${this.balance.toFixed(3)} ETH`
   }
 
   init = () => {

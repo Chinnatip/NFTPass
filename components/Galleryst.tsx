@@ -91,8 +91,6 @@ export const AddressBox = ({ address }: { address: string | undefined }) => {
 }
 
 const ClaimBox = ({ address, profile, action }: { address: string | undefined, profile: Profile, action: any }) => {
-  console.log('Read walletStore >>>')
-  console.log(walletStore)
   return <button
     onClick={() => address != undefined && action(true)}
     className="bg-black text-sm text-white rounded-full inline-block px-3 py-2 ml-3 active-shadow">

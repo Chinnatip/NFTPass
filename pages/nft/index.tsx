@@ -283,13 +283,14 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
     </div>
     <div className="md:w-2/3 w-full m-auto relative">
       {/* Share Galleryst component */}
-      {gallerystID != undefined && <div className="shadow-nft flex h-auto absolute md:right-0 right-2 top--12 rounded-full">
+      {gallerystID != undefined && <div className="flex h-auto absolute md:right-0 right-2 top--12 rounded-full">
         <div className="flex-grow text-xl hidden">
           <span className="text-sm text-gray-600">Galleryst ID</span><br />
           {gallerystID}
         </div>
+        <a target="_blank" href={`https://twitter.com/intent/tweet?text=${encodeURI(`https://www.galleryst.co/n/${gallerystID}`)}`} data-size="large" className="shadow-nft mr-4 bg-blue-500 text-white w-auto rounded-full py-3 md:w-auto px-4  text-black active-shadow flex items-center justify-center">share to twitter</a>
         <button
-          className="bg-white w-auto rounded-full py-3 md:w-auto px-4  text-black active-shadow flex items-center justify-center"
+          className="shadow-nft  bg-white w-auto rounded-full py-3 md:w-auto px-4  text-black active-shadow flex items-center justify-center"
           onClick={() => useCopyToClipboard(`https://www.galleryst.co/n/${gallerystID}`)}>
           {copied && <div className="absolute bg-black text-white top-0 right-0 p-1 px-2 -mt-10 -mr-2 text-sm rounded-full">Copied !</div>}
           <Icon fill={faShareAlt} noMargin /> <span className="ml-2">Share </span>
@@ -364,9 +365,6 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
                 </div>
               </div>}
             </div>
-
-
-
           </div>
         </div>
       </div>
