@@ -1,3 +1,5 @@
+import dayjs from 'dayjs'
+
 import { Profile, RaribleGetResponse } from './rarible/interface'
 import { OpenseaGetResponse } from './opensea/interface'
 import { NiftyGetResponse } from './nifty/interface'
@@ -6,9 +8,9 @@ import * as rarible from './rarible/fetch'
 import * as opensea from './opensea/fetch'
 import * as nifty from './nifty/fetch'
 import * as foundation from './foundation/fetch'
-import { Galleryst } from '../interfaces/index'
 import { withError } from 'utils/promise.util'
 import { raribleImg } from './rarible/method'
+import { NFTDetail, ResponseDetail, Galleryst } from '../interfaces/index'
 
 const checkMarket = (action: any, profile: Profile, lists: any, market: string) => {
   if(lists.allID.length > 0) {
@@ -140,4 +142,65 @@ export const creatorFetch = async (address: string, action: any , nifty_slug: st
     createdLists,
     dropLists
   }
+}
+
+
+export const makeid = (length: number) => {
+  var result = '';
+  var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var charactersLength = characters.length;
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() *
+      charactersLength));
+  }
+  return result;
+}
+
+export const selectActivity = (nft: NFTDetail, openseas: NFTDetail) => {
+  if (openseas.activity != undefined) {
+    return openseas.activity
+  } else {
+    return nft.activity
+  }
+}
+
+export const nftSanitizer = (objs: ResponseDetail) => {
+  const clean = (obj: any) => {
+    for (var propName in obj) {
+      if (obj[propName] === null || obj[propName] === undefined) {
+        delete obj[propName]
+      }
+    }
+    return obj
+  }
+  const cleaning = clean({
+    ...objs,
+    data: clean({
+      ...objs.data,
+      creator: clean(objs.data?.creator),
+      owner: objs.data?.owner?.map(ow => clean(ow)),
+      offer: clean(objs.data?.offer),
+      pricing: clean(objs.data?.pricing),
+      activity: objs.data?.activity?.map(ac => {
+        return clean({
+          ...ac,
+          current_owner: clean({ ...ac.current_owner, user: clean(ac.current_owner.user) }),
+          previous_owner: clean({ ...ac.previous_owner, user: clean(ac.previous_owner?.user) })
+        })
+      })
+    })
+  })
+  return cleaning
+}
+
+export const checkDiff = (current_update: number, diffAmount: number = 2) => {
+  const today = dayjs()
+  const updatedAt = dayjs.unix(current_update)
+  const diff = diffAmount >= today.diff(updatedAt, 'days')
+  return diff
+}
+
+export const prepareURI = (text: string) => {
+  let rep = (text ?? '').split("#").join("@").split("&").join("-").split("?").join("-")
+  return encodeURI(rep)
 }

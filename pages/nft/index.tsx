@@ -1,173 +1,16 @@
-import { useState, useEffect } from 'react'
 import Head from 'next/head'
+import dayjs from 'dayjs'
+import { useState, useEffect } from 'react'
 import { NextSeo } from 'next-seo';
-import { User, NFTDetail, ResponseDetail, Media } from '../../interfaces/index'
 import * as rarible from '../../method/rarible/fetch'
 import * as opensea from '../../method/opensea/fetch'
 import * as firebase from "../../method/firebase"
-import dayjs from 'dayjs'
 import { faArrowLeft, faShareAlt } from '@fortawesome/free-solid-svg-icons'
-import Icon from '@/Icon'
+import Icon , { Picon } from '@/Icon'
+import { NFTDetail, ResponseDetail, Media, NFTPlatform } from '../../interfaces/index'
 import { contractQuerierService } from 'services/contract-querier.service';
-import { ConnectBtn } from '@/Galleryst'
-
-const Picon = ({ platform }: { platform: 'rarible' | 'opensea' | 'nifty' | 'foundation' }) => {
-  let style = ''
-  switch (platform) {
-    case 'rarible':
-      style = 'text-black bg-yellow-500 rarible-logo logo-48'
-      break
-    case 'opensea':
-      style = 'text-white bg-blue-500 opensea-logo logo-48'
-      break
-    case 'foundation':
-      style = 'text-white bg-black foundation-logo logo-48'
-      break
-    case 'nifty':
-      style = 'text-white bg-blue-700 nifty-logo logo-48'
-  }
-  return <div
-    className={`
-     mr-3 h-12 w-12 inline-flex items-center justify-center rounded-full shadow-nft
-    ${style}
-  `}
-  />
-}
-
-export const Filter = ({ current, platform, action, targetAction, target }: {
-  target?: NFTDetail,
-  targetAction?: any,
-  platform: any,
-  action: any,
-  current: 'rarible' | 'opensea' | 'foundation' | 'nifty',
-}) => {
-  const market: {
-    rarible?: { status: boolean }
-    opensea?: { status: boolean }
-    foundation?: { status: boolean }
-    nifty?: { status: boolean }
-  } = platform.check != undefined ? platform.check : {}
-  const check = (platform: 'rarible' | 'opensea' | 'foundation' | 'nifty') => {
-    switch (platform) {
-      case 'rarible':
-        return { style: 'text-black bg-yellow-500 rarible-logo logo-48', text: '' }
-      case 'opensea':
-        return { style: 'text-white bg-blue-500 opensea-logo logo-48', text: '' }
-      case 'foundation':
-        return { style: 'text-white bg-black foundation-logo logo-48', text: 'F' }
-      case 'nifty':
-        return { style: 'text-white bg-blue-700 nifty-logo logo-48', text: 'N' }
-    }
-  }
-  const default_style = 'border text-gray-400 bg-gray-200'
-  const { text, style } = check(current)
-  return <div
-    className={`
-      cursor-pointer h-8 w-8 mx-2 flex items-center
-      shadow-xl justify-center rounded-full shadow-nft text-lg
-      ${platform.current == current && 'border-1 border-green-400 shadow-greenery'}
-      ${market[current]?.status ? style : default_style}
-    `}
-    onClick={() => {
-      action({ ...platform, current: current })
-      if (targetAction != undefined) targetAction(target)
-    }}>
-    {text}
-  </div>
-}
-
-const makeid = (length: number) => {
-  var result = '';
-  var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  var charactersLength = characters.length;
-  for (var i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() *
-      charactersLength));
-  }
-  return result;
-}
-
-const profilePic = (user: User | undefined) => {
-  if (user != undefined) {
-    return <a href={`/profile?address=${user.address}`} className="bg-gray-500 mx-2 w-8 h-8 rounded-full inline-flex items-center justify-center">
-      <img src={user.image} className="h-8 inline w-8 fix-w-h-xs rounded-full" />
-    </a>
-  } else {
-    return <div className="w-8 h-8 inline bg-gray-600 rounded-full fix-w-h-xs" />
-  }
-}
-
-const profileAddress = (user: User | undefined, index: number) => {
-  return user != undefined && user?.image != '' ?
-    <a key={index} href={`/profile?address=${user.address}`} target="_blank" className="ml-2 mb-2 bg-gray-500 w-10 h-10 rounded-full overflow-hidden inline-flex items-center justify-center">
-      <img src={user?.image} className="h-10 inline" />
-    </a> :
-    <span className="inline-block w-10 h-10 rounded-full bg-purple-500 ml-2 flex items-center justify-center">{user?.name?.substr(0, 1)}</span>
-}
-
-const selectActivity = (nft: NFTDetail, openseas: NFTDetail) => {
-  if (openseas.activity != undefined) {
-    return openseas.activity
-  } else {
-    return nft.activity
-  }
-}
-
-interface PlatformItem {
-  link?: string
-  status: boolean
-}
-
-interface NFTPlatform {
-  current: string
-  check: {
-    opensea?: PlatformItem
-    rarible?: PlatformItem
-    nifty?: PlatformItem
-    foundation?: PlatformItem
-  }
-}
-
-export const nftSanitizer = (objs: ResponseDetail) => {
-  const clean = (obj: any) => {
-    for (var propName in obj) {
-      if (obj[propName] === null || obj[propName] === undefined) {
-        delete obj[propName]
-      }
-    }
-    return obj
-  }
-  const cleaning = clean({
-    ...objs,
-    data: clean({
-      ...objs.data,
-      creator: clean(objs.data?.creator),
-      owner: objs.data?.owner?.map(ow => clean(ow)),
-      offer: clean(objs.data?.offer),
-      pricing: clean(objs.data?.pricing),
-      activity: objs.data?.activity?.map(ac => {
-        return clean({
-          ...ac,
-          current_owner: clean({ ...ac.current_owner, user: clean(ac.current_owner.user) }),
-          previous_owner: clean({ ...ac.previous_owner, user: clean(ac.previous_owner?.user) })
-        })
-      })
-    })
-  })
-  return cleaning
-}
-
-const checkDiff = (current_update: number, diffAmount: number = 2) => {
-  const today = dayjs()
-  const updatedAt = dayjs.unix(current_update)
-  const diff = diffAmount >= today.diff(updatedAt, 'days')
-  return diff
-}
-
-const prepareURI = (text: string) => {
-  let rep = (text ?? '').split("#").join("@").split("&").join("-").split("?").join("-")
-  return encodeURI(rep)
-}
+import { ConnectBtn , profilePic, profileAddress } from '@/Galleryst'
+import { prepareURI, checkDiff, nftSanitizer, makeid, selectActivity } from '../../method/integrate'
 
 const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, current_update, galleryst_id }: {
   address: string,
@@ -211,17 +54,16 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
           setMediaList([media])
           setDisplayMedia(media)
         }
-        
       } else {
         // Rarible
         const [contractAddress, tokenId] = address.split(':')
         const gallerystTokenMetadata = await contractQuerierService.getMetadataUri(contractAddress, +tokenId)
         const raribleCheck: ResponseDetail = await rarible.nftDetail(address, setNFT, setRarible)
         const openseaCheck: ResponseDetail = await opensea.nftDetail(address, setNFT, setOpensea)
-        const checkCurrent = 
+        const checkCurrent =
           gallerystTokenMetadata !== null ? 'galleryst' :
-          raribleCheck.status ? 'rarible' : 
-          openseaCheck.status ? 'opensea' : 
+          raribleCheck.status ? 'rarible' :
+          openseaCheck.status ? 'opensea' :
           ''
         const platform = {
           current: checkCurrent,
@@ -236,7 +78,7 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
             }
           }
         }
-        
+
         let gallerystCheck;
         if (gallerystTokenMetadata !== null) {
           const tmpMediaList: Media[] = [
@@ -247,13 +89,13 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
             tmpMediaList.unshift({ type: 'video', src: gallerystTokenMetadata.animation_url }) // main video
           }
           setMediaList(tmpMediaList)
-          gallerystCheck = { 
-            status: true, 
-            data: { 
+          gallerystCheck = {
+            status: true,
+            data: {
               title: gallerystTokenMetadata.name,
               description: gallerystTokenMetadata.description,
-              image: gallerystTokenMetadata.image, 
-              metadata: gallerystTokenMetadata, 
+              image: gallerystTokenMetadata.image,
+              metadata: gallerystTokenMetadata,
               mediaList: tmpMediaList,
               creator: {
                 address: gallerystTokenMetadata.creator ?? ''
@@ -271,10 +113,10 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
           case 'opensea': {
             setNFT(openseaCheck.data!);
             setDisplayMedia({ type: 'image', src: openseaCheck.data!.image!})
-            break; 
+            break;
           }
           case 'rarible': {
-            setNFT(raribleCheck.data!); 
+            setNFT(raribleCheck.data!);
             setDisplayMedia({ type: 'image', src: raribleCheck.data!.image!});
             break;
           }
@@ -329,7 +171,6 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
         <ConnectBtn />
       </div>
       <div className="w-full relative flex items-center justify-center max-w-full m-auto" style={{ height: '75vh' }}>
-
         <a href={`/`} className="hidden absolute top-2 left-2 bg-white rounded-full h-8 md:w-auto w-8 md:px-2 flex items-center justify-center text-black active-shadow">
           <Icon fill={faArrowLeft} noMargin /> <span className="md:block hidden ml-1">Back</span>
         </a>
@@ -343,11 +184,11 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
             return (
               <div
                 className={`
-                  cursor-pointer 
-                  mx-2 shadow-xl 
-                  rounded-sm 
+                  cursor-pointer
+                  mx-2 shadow-xl
+                  rounded-sm
                   transition-width duration-300
-                  ${isDisplaying ? 'w-16 sm:w-24 md:w-32' : 'w-12 sm:w-18 md:w-24'} 
+                  ${isDisplaying ? 'w-16 sm:w-24 md:w-32' : 'w-12 sm:w-18 md:w-24'}
                 `}
                 onClick={() => { setDisplayMedia(media); setDisplayIdx(idx); }}
               >
