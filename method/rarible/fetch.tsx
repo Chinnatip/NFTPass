@@ -22,9 +22,10 @@ export const getOfferandActivity = async(address: string, setRarible: any, detai
   }
 }
 
-export const nftDetail = async (address: string, defaultAction: any, action: any): Promise<ResponseDetail> => {
+export const nftDetail = async (address: string, defaultAction?: (data: any) => void, action?: (data: any) => void): Promise<ResponseDetail> => {
   try {
     const nfts: RaribleNFTFull  = await collectNFTS([address])
+    defaultAction?.(nfts)
     const offer : RaribleOffer = await getBestOffer([address])
     const stringAddress = address.split(':')
     const useAddress = stringAddress[0]
@@ -67,8 +68,8 @@ export const nftDetail = async (address: string, defaultAction: any, action: any
           }
         })
       }
-      defaultAction(data)
-      action(data)
+      defaultAction?.(data)
+      action?.(data)
       return {
         status: true,
         link: `https://rarible.com/token/${useAddress}:${token_id}?tab=owners`,
