@@ -6,9 +6,10 @@ import * as rarible from '../../method/rarible/fetch'
 import * as opensea from '../../method/opensea/fetch'
 import * as firebase from "../../method/firebase"
 import dayjs from 'dayjs'
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faShareAlt } from '@fortawesome/free-solid-svg-icons'
 import Icon from '@/Icon'
 import { contractQuerierService } from 'services/contract-querier.service';
+import { ConnectBtn } from '@/Galleryst'
 
 const Picon = ({ platform }: { platform: 'rarible' | 'opensea' | 'nifty' | 'foundation' }) => {
   let style = ''
@@ -184,10 +185,11 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
   galleryst_id?: string
 }) => {
   const [nft, setNFT] = useState<NFTDetail>(getNFT != undefined ? getNFT : { address })
-  const [gallerystID] = useState( galleryst_id != undefined ? galleryst_id : makeid(5))
-  const [raribles, setRarible] = useState<NFTDetail>( getRarible != undefined ? getRarible : { address })
-  const [openseas, setOpensea] = useState<NFTDetail>( getOpensea != undefined ? getOpensea : { address })
-  const [platform, setPlatform] = useState<NFTPlatform>( getPlatform != undefined ? getPlatform : {current: 'opensea', check: {rarible: {status: false}, opensea: {status: false}}})
+  const [loading, setLoad] = useState(true)
+  const [gallerystID] = useState(galleryst_id != undefined ? galleryst_id : makeid(5))
+  const [raribles, setRarible] = useState<NFTDetail>(getRarible != undefined ? getRarible : { address })
+  const [openseas, setOpensea] = useState<NFTDetail>(getOpensea != undefined ? getOpensea : { address })
+  const [platform, setPlatform] = useState<NFTPlatform>(getPlatform != undefined ? getPlatform : { current: 'opensea', check: { rarible: { status: false }, opensea: { status: false } } })
   const [copied, setCopied] = useState(false)
   const [mediaList, setMediaList] = useState<Media[]>([])
   const [displayMedia, setDisplayMedia] = useState<Media>({ type: 'image', src: ''})
@@ -195,7 +197,11 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
   useEffect(() => {
     (async () => {
       if (current_update != undefined && checkDiff(current_update)) {
-        console.log('not load')
+        // Fetch lastest activity of NFT
+        await opensea.getOfferandActivity(address, setOpensea, openseas)
+        await rarible.getOfferandActivity(address, setRarible, raribles)
+        setLoad(false)
+        // parse display media
         setNFT(getNFT!)
         if (getPlatform?.current === 'galleryst') {
           setMediaList((getNFT as any).mediaList)
@@ -205,7 +211,7 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
           setMediaList([media])
           setDisplayMedia(media)
         }
-        // TODO: load only offer and tradeHistory
+        
       } else {
         // Rarible
         const [contractAddress, tokenId] = address.split(':')
@@ -282,6 +288,7 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
           galleryst_id: gallerystID,
           address
         })
+        setLoad(false)
       }
     })()
   }, []);
@@ -313,9 +320,17 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
       }}
     />
     <Head><title>{seo.title}</title></Head>
-    <div className="flex flex-col">
-      <div className="w-full relative flex flex-col items-center justify-center max-w-full m-auto p-10" style={{ background: 'rgba(92, 86, 86, 0.48)', height: '75vh' }}>
-        <a href={`/`} className="absolute top-2 left-2 bg-white rounded-full h-8 md:w-auto w-8 md:px-2 flex items-center justify-center text-black active-shadow">
+    {loading && <div className="fixed bottom-0 right-0 m-6 bg-black text-white text-lg rounded-full px-4 py-2">Loading ...</div>}
+    <div className="flex flex-col pt-8" style={{ background: 'url("image/bg_blur.jpg")' }}>
+      <div className="md:w-4/5 w-full m-auto flex justify-between">
+        <a className="focus:outline-none" href={`/`}>
+          <img className="md:h-8 h-6 ml-2" src="/image/ic_galleryst_logo.png" alt="" />
+        </a>
+        <ConnectBtn />
+      </div>
+      <div className="w-full relative flex items-center justify-center max-w-full m-auto" style={{ height: '75vh' }}>
+
+        <a href={`/`} className="hidden absolute top-2 left-2 bg-white rounded-full h-8 md:w-auto w-8 md:px-2 flex items-center justify-center text-black active-shadow">
           <Icon fill={faArrowLeft} noMargin /> <span className="md:block hidden ml-1">Back</span>
         </a>
         <div className="p-4 flex items-center" style={{ height: mediaList.length > 1 ? '80%' : '100%' }}>
@@ -348,17 +363,33 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
       <div className="text-center mt-10 mb-12 hidden">
         <a href={`/profile?address=${address}`} className="bg-blue-500 p-3 text-white rounded-xl">See creator profile</a>
       </div>
-      <div className="mt-10 m-auto md:w-2/3 w-full md:px-0 px-3 flex lg:flex-row flex-col justify-between">
+    </div>
+    <div className="md:w-2/3 w-full m-auto relative">
+      {/* Share Galleryst component */}
+      {gallerystID != undefined && <div className="shadow-nft flex h-auto absolute md:right-0 right-2 top--12 rounded-full">
+        <div className="flex-grow text-xl hidden">
+          <span className="text-sm text-gray-600">Galleryst ID</span><br />
+          {gallerystID}
+        </div>
+        <button
+          className="bg-white w-auto rounded-full py-3 md:w-auto px-4  text-black active-shadow flex items-center justify-center"
+          onClick={() => useCopyToClipboard(`https://www.galleryst.co/n/${gallerystID}`)}>
+          {copied && <div className="absolute bg-black text-white top-0 right-0 p-1 px-2 -mt-10 -mr-2 text-sm rounded-full">Copied !</div>}
+          <Icon fill={faShareAlt} noMargin /> <span className="ml-2">Share </span>
+        </button>
+
+      </div>}
+      <div className="mt-10 m-auto w-full md:px-0 px-3 flex lg:flex-row flex-col justify-between">
         <div className="lg:w-1/2 w-full lg:flex lg:flex-col contents">
           <div className="text-2xl order-1 font-black mb-4">{title != null ? title : 'Untitled'}</div>
           <div className="text-gray-500 mb-4 break-words order-2 hidden">{address}</div>
           <div className="order-5 mb-3"><h3 >{description != null ? description : 'No description.'}</h3></div>
           {/* Link to Platform */}
-          {platform.check['rarible']?.status && <a href={platform.check['rarible']?.link} target="_blank" className="order-6 flex mt-4 p-4 items-center rounded-xl bg-white shadow-nft active-shadow">
+          {platform.check['rarible']?.status && <a href={platform.check['rarible']?.link} target="_blank" className="order-6 flex mt-4 p-4 items-center rounded-24 bg-white shadow-nft active-shadow">
             <span className="flex-grow ">Link to Rarible</span>
             <div className="text-black bg-yellow-500 rarible-logo logo-48 h-12 w-12 rounded-full" ></div>
           </a>}
-          {platform.check['opensea']?.status && <a href={platform.check['opensea']?.link} target="_blank" className="order-6 flex mt-4 p-4 items-center rounded-xl bg-white shadow-nft active-shadow">
+          {platform.check['opensea']?.status && <a href={platform.check['opensea']?.link} target="_blank" className="order-6 flex mt-4 p-4 items-center rounded-24 bg-white shadow-nft active-shadow">
             <span className="flex-grow ">Link to Opensea</span>
             <div className="text-white bg-blue-500 opensea-logo logo-48 h-12 w-12 rounded-full" ></div>
           </a>}
@@ -375,25 +406,25 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
           <div className="order-3 mb-4">
             {openseas.pricing?.eth != undefined && <div className="flex text-xl items-center py-2">
               <span className="flex-grow text-gray-500 text-left flex items-center">
-                <Picon platform="opensea"></Picon> Current price
+                <Picon platform="opensea"></Picon> <span className="text-sm">Lowest listing price</span>
               </span>
               <span className="text-right">{openseas.pricing?.eth} ETH</span>
             </div>}
             {raribles.pricing?.eth != undefined && <div className="flex text-xl items-center py-2">
               <span className="flex-grow text-gray-500 text-left flex items-center">
-                <Picon platform="rarible"></Picon> Current price
+                <Picon platform="rarible"></Picon> <span className="text-sm">Lowest listing price</span>
               </span>
               <span className="text-right">{raribles.pricing?.eth} ETH</span>
             </div>}
             {openseas.offer?.status && <div className="flex text-xl items-center py-2">
               <span className="flex-grow text-gray-500 text-left flex items-center">
-                <Picon platform="opensea"></Picon> Best offer
+                <Picon platform="opensea"></Picon> <span className="text-sm">Current best offer</span>
               </span>
               <span className="text-right"> {openseas.offer?.best_offer?.toFixed(2)} ETH</span>
             </div>}
             {raribles.offer?.status && <div className="flex text-xl items-center py-2">
               <span className="flex-grow text-gray-500 text-left flex items-center">
-                <Picon platform="rarible"></Picon> Best offer
+                <Picon platform="rarible"></Picon> <span className="text-sm">Current best offer</span>
               </span>
               <span className="text-right"> {raribles.offer?.best_offer?.toFixed(2)} ETH</span>
             </div>}
@@ -425,25 +456,12 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
               </div>}
             </div>
 
-            {/* Share Galleryst component */}
-            { gallerystID != undefined && <div className="shadow-nft mt-5 p-4 rounded-24 flex h-auto items-center w-full ">
-              <div className="flex-grow text-xl">
-                <span className="text-sm text-gray-600">Galleryst ID</span><br />
-                {gallerystID}
-              </div>
-              <button
-                className="relative cursor-pointer bg-blue-500 text-white rounded-xl h-12 px-3 flex items-center justify-center"
-                onClick={() => useCopyToClipboard(`https://www.galleryst.co/n/${gallerystID}`)}>
-                  {copied && <div className="absolute bg-black text-white top-0 right-0 p-1 px-2 -mt-10 -mr-2 text-sm rounded-full">Copied !</div>}
-                  Share this NFT
-              </button>
-            </div>}
+
 
           </div>
         </div>
       </div>
-    </div>
-    <div className="md:w-2/3 w-full m-auto">
+
       <div className="px-3 m-auto">
         <h2 className="mt-8 text-xl font-semibold">NFT History</h2>
         {selectActivity(nft, openseas)?.map(({ type, current_owner, previous_owner, date, value, price }, index) => {

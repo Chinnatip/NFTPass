@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { Profile } from '../method/rarible/interface'
 import { sanitizeArray } from '../method/integrate'
+import { walletStore } from 'stores/wallet.store'
 import { CreatorHeader, UpdateAction, Filter, Toggle, NFTDrop, NFTGroup } from '@/Galleryst'
 
 const ProfilePage = ({ profile, action, lists }: {
   profile: Profile,
-  wallet?: any,
   action: any,
   lists: any
 }) => {
@@ -19,8 +19,9 @@ const ProfilePage = ({ profile, action, lists }: {
     createdLists,
     dropLists
   }
-  // const address = profile.address
-  const claimCheck = true //address == wallet?.address && profile?.verified != true //true
+  const wallet = walletStore
+  const address = profile.address
+  const claimCheck = address == wallet?.address && profile?.verified != true //true
   return <div className="md:w-4/5 w-full m-auto z-10 relative">
     <UpdateAction profile={profile} action={action} />
     <div className="rounded-24 border border-white shadow-nft mt-20 mb-20 pb-10" style={{ background: 'rgba(185, 184, 184, 0.32)', borderRadius: '24px' }}>

@@ -68,11 +68,27 @@ export const ownByAddress = async(address: string) => {
   }
 }
 
+export const getOfferandActivity = async(address: string, setOpensea: any, detail: NFTDetail) => {
+  const splitAddress = address.split(':')
+  const contact_address = splitAddress[0]
+  const token_id = splitAddress[1]
+  let activity = undefined
+  let offer = undefined
+  try{ offer = await getBestOffer(contact_address, token_id) }catch(e){
+    console.log('get error while catch offer')
+  }
+  try{ activity = await getPriceHistory(contact_address, token_id) }catch(e){
+    console.log('get error while catch history')
+  }
+  if(offer != undefined && activity != undefined){
+    setOpensea({ ...detail, offer, activity });
+  }
+}
+
 export const nftDetail = async(address: string, defaultAction: any, action: any): Promise<ResponseDetail> => {
   const splitAddress = address.split(':')
   const contact_address = splitAddress[0]
   const token_id = splitAddress[1]
-
   const resp = await axios.get(`${OPENSEA_URL}?token_ids=${token_id}&asset_contract_address=${contact_address}&order_direction=desc&offset=0&limit=20`)
   if(resp.data['assets'].length > 0){
     let activity = undefined

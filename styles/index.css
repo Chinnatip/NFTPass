@@ -1614,3 +1614,19 @@ div.address-text-wrapper > span {
 .left-2 {
   left: 0.5rem;
 }
+
+.right-2 {
+  right: 0.5rem;
+}
+
+.top--12 {
+  top: -3.75rem;
+}
+
+.centered-connectbtn > .flex.justify-end {
+      justify-content: center !important;
+}
+
+.centered-connectbtn > .flex.justify-end > button {
+  font-size: 18px !important;
+}

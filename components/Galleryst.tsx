@@ -91,12 +91,16 @@ export const AddressBox = ({ address }: { address: string | undefined }) => {
 }
 
 const ClaimBox = ({ address, profile, action }: { address: string | undefined, profile: Profile, action: any }) => {
+  console.log('Read walletStore >>>')
+  console.log(walletStore)
   return <button
     onClick={() => address != undefined && action(true)}
     className="bg-black text-sm text-white rounded-full inline-block px-3 py-2 ml-3 active-shadow">
 
     {/* TODO: set roles of viewer and profile owner */}
-    {profile.verified && address == profile.address ? 'Edit profile' : 'Claim this address'}
+    <div>
+      {profile.verified ? 'Edit profile' : 'Claim this address'}
+    </div>
   </button>
 }
 
@@ -172,7 +176,7 @@ export const NFTDrop = ({ lists, text = '' }: { lists: Drop[], text: string }) =
       <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 md:p-4 p-0 gap-2 w-full">
         {lists.map(item => {
           const { address, title, image } = item
-          return image != undefined && <a target="_blank" href={`/nft?address=${address}`} className="relative cursor-pointer bg-white rounded-16 mb-2" key={`${address}`}>
+          return image != undefined && <a target="_blank" href={`/nft?address=${address}`} className="relative cursor-pointer bg-white rounded-16 mb-2 active-shadow" key={`${address}`}>
             <div className="thumbnail-wrapper w-full relative">
               {image.slice(image.length - 3, image.length) == 'mp4' ?
                 <video className="rounded-16 border-8 border-white thumbnail-height" src={image} autoPlay loop muted /> :
@@ -199,7 +203,7 @@ export const NFTGroup = ({ lists, nfts, text = '', type = '' }: { type?: string,
       <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 md:p-4 p-0 gap-2 w-full">
         {nfts.filter(item => lists.includes(item.id)).map(item => {
           const { imagePreview, check } = item
-          return imagePreview != undefined && <a target="_blank" href={`/nft?address=${item.id}`} className="relative cursor-pointer bg-white rounded-16 mb-2" key={`${item.id}`}>
+          return imagePreview != undefined && <a target="_blank" href={`/nft?address=${item.id}`} className="relative cursor-pointer bg-white rounded-16 mb-2 active-shadow" key={`${item.id}`}>
             <div className="thumbnail-wrapper w-full relative">
               {imagePreview.slice(imagePreview.length - 3, imagePreview.length) == 'mp4' ?
                 <video className="rounded-16 border-8 border-white thumbnail-height" src={imagePreview} autoPlay loop muted /> :
@@ -245,30 +249,34 @@ export const ConnectBtn = observer(() => {
   }
   const getBtnText = () => {
     if (!walletStore.isMetaMaskInstalled) {
-      return 'MetaMask not detected'
+      return 'Cannot find Metamask!'
     } else if (walletStore.verified) {
       return `${mask(walletStore.address)} | ${walletStore.readableBalance}`
     } else {
-      return 'Connect'
+      return 'Connect to Wallet'
     }
   }
   return (
-    <div className="flex justify-end">
+    <div className="flex justify-end relative">
       <button
         ref={btnRef}
         onClick={handleClick}
         disabled={!walletStore.isMetaMaskInstalled}
-        style={{ color: '#9A6B6B', backgroundColor: '#C7AAAA' }}
-        className={`py-2 px-3 mx-5 font-semibold text-sm focus:outline-none appearance-none rounded-full ${walletStore.isMetaMaskInstalled ? 'cursor-pointer' : 'cursor-default'}`}
+        style={{ color: '#9a6b6b', backgroundColor: '#9a6b6b29' }}
+        className={`py-3 px-4 mx-5 font-semibold text-s focus:outline-none appearance-none my-4 rounded-full ${walletStore.isMetaMaskInstalled ? 'cursor-pointer' : 'cursor-default'}`}
       >
         {getBtnText()}
       </button>
-      <div ref={popperRef} className={`${show ? '' : 'hidden'} p-2 rounded-2xl bg-white`}>
+      <div ref={popperRef} className={`${show ? '' : 'hidden'} p-4 rounded-2xl bg-white absolute mt-6 right-0 z-50 shadow-nft`}>
+        {!walletStore.isConnected && walletStore.accounts.length > 0 && <div className="text-sm mb-3 text-center">
+          we found {walletStore.accounts.length} account in your wallets <br />
+          please select account to verify
+        </div>}
         {(!walletStore.isConnected && walletStore.accounts.length > 0) && walletStore.accounts.map((account, index) => {
           return (
             <React.Fragment key={account} >
               <button
-                className='text-xs'
+                className='text-xs bg-gray-300 p-3 rounded-full'
                 onClick={() => {
                   setShow(false)
                   walletService.connect(account)
@@ -281,15 +289,17 @@ export const ConnectBtn = observer(() => {
           )
         })}
         {walletStore.isConnected && (
-          <button
-            className='text-md'
-            onClick={() => {
+          <>
+            {walletStore.address != '' && <a href={`/profile?address=${walletStore.address}`} className=" w-full inline-block mt-4 bg-white focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft">
+              View My Page
+            </a>}
+            <button className=" w-full inline-block mt-4 bg-white focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft" onClick={() => {
               setShow(false)
               walletService.disconnect()
-            }}
-          >
-            Disconnect
-          </button>
+            }}>
+              Disconnect Wallet
+            </button>
+          </>
         )}
       </div>
     </div>
@@ -311,7 +321,7 @@ export const UpdateAction = ({ action, profile }: { action: any, profile: Profil
     }}
     className="absolute top-0 right-0 mt-5 mr-5 flex items-center button-red py-2 px-3 rounded-full cursor-pointer text-sm font-semibold">
     {show && <div className="absolute bg-black text-white top-0 right-0 p-1 px-2 -mt-10 text-sm rounded-full w-300">Updating...</div>}
-    <Icon fill={faSync} noMargin /><span className="md:block hidden ml-3"> Update address Info</span>
+    <Icon fill={faSync} noMargin /><span className="md:block hidden ml-3"> Refresh Address Info</span>
   </div>
 }
 

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Card from "../components/Card"
 import Navbar from "../components/Navbar"
 import { getCreator, getNFTS, Creator, shuffle, randomNFT, profileNFT, NFT } from '../method/fetchJSON'
+import { ConnectBtn } from '@/Galleryst'
 
 // const tagList = [
 //   'All','New Arrival','Pixel Art','2D','3D','Vector','Generative','Raster Painting','Photography','Collage','Algorithmic Art'
@@ -19,9 +20,44 @@ const Page = () => {
     <div className="md:w-4/5 w-full m-auto z-10">
       <Navbar current={0} />
       <div
-        className="bg-transparent m-auto md:px-24 p-4 pt-8 pb-12 md:text-5xl text-3xl text-white text-center font-serif"
+        className="bg-transparent m-auto md:px-24 p-4 pt-8 pb-8 md:text-5xl text-3xl text-white text-center font-serif"
         style={{ letterSpacing: '0.04rem', textShadow: '0 0 40px #884d4d52', opacity: '90%' }}>
         We curate, You discover. Explore NFTs from all platforms in one place.
+      </div>
+      <div className=" m-auto centered-connectbtn p-2 rounded-full">
+        <ConnectBtn />
+      </div>
+      {/* Steps Container */}
+      <div className="md:grid-cols-3 grid-cols-1 md:gap-4 md:p-0 p-4 mt-8 gap-2 grid mb-5">
+        <div className="bg-white rounded-16 flex md:flex-col flex-row justify-center active-shadow">
+          <img src="/image/Connect.png" className="md:w-3/4 w-1/3 md:mx-auto mx-0 my-0 object-contain md:p-0 p-4 md:rounded-none rounded-16" />
+          <div className="m-auto">
+
+            <div className="text-center sm:text-lg text-sm w-2/3 m-auto p-4">
+              Connect your wallet to claim your NFT portfolio
+            </div>
+          </div>
+
+        </div>
+        <div className="bg-white rounded-16 flex md:flex-col flex-row justify-center active-shadow">
+
+          <div className="m-auto">
+            <div className="text-center sm:text-lg text-sm w-2/3 m-auto p-4">
+              Monitor Your NFTs
+            </div>
+
+          </div>
+          <img src="/image/Monitor.png" className="md:w-3/4 w-1/3 md:mx-auto mx-0 my-0 object-contain md:p-0 p-4 md:rounded-none rounded-16" />
+        </div>
+        <div className="bg-white rounded-16 flex  md:flex-col flex-row justify-center active-shadow">
+          <img src="/image/Share.png" className="md:w-3/4 w-1/3 md:mx-auto mx-0 my-0 object-contain md:p-0 p-4 md:rounded-none rounded-16" />
+          <div className="m-auto">
+
+            <div className="text-center sm:text-lg text-sm w-2/3 m-auto p-4">
+              Galleryst.co URL to Instagram and Twitter bio!
+            </div>
+          </div>
+        </div>
       </div>
       {/* container */}
       <div className="rounded-24 mb-20 md:px-5 px-2 py-4 border border-white shadow-nft" style={{ background: 'rgba(185, 184, 184, 0.32)' }}>
@@ -34,10 +70,10 @@ const Page = () => {
             )}
           </div> */}
           <div className="flex p-1 rounded-full" >
-            <button onClick={() => setCurrent('all')} className={`h-10 w-auto py-2 md:px-6 mr-2 font-sm text-sm focus:outline-none appearance-none rounded-full px-4  ${current == 'all' ? 'bg-black text-white' : 'bg-white text-black'}`}>All</button>
+            <button onClick={() => setCurrent('all')} className={`h-10 w-auto py-2 md:px-6 mr-2 font-sm text-sm active-shadow focus:outline-none appearance-none rounded-full px-4  ${current == 'all' ? 'bg-black text-white' : 'bg-white text-black'}`}>All</button>
             <div className="overflow-x-auto overflow-y-hidden rounded-r-full w-5/6 " style={{ whiteSpace: 'nowrap' }}>
               {creators.map(creat => {
-                return <button onClick={() => setCurrent(creat.creator_url)} className={`inline p-2 mr-2 font-sm text-sm rounded-full items-center ${current == creat.creator_url ? 'bg-black text-white' : 'bg-white'}`}>
+                return <button onClick={() => setCurrent(creat.creator_url)} className={`inline p-2 mr-2 font-sm active-shadow text-sm rounded-full items-center ${current == creat.creator_url ? 'bg-black text-white' : 'bg-white'}`}>
                   <img className=" h-6 rounded-full border-1 border-white shadow-nft inline" src={creat.creator_image} alt="" />
                   <span className="ml-2">{creat.creator_name?.substr(0, 4)}...</span>
                 </button>
@@ -60,7 +96,7 @@ const Page = () => {
             <div className="text-center opacity-50 col-span-4"> Not found NFTS in marketplace.</div>
           }
         </div>
-      </div>
+      </div >
     </div>
   </div>
 }
