@@ -30,6 +30,11 @@ class WalletService {
   }
 
   connect = async (addressToConnect: string) => {
+    // TODO: read sessionStorage before connect ???
+    // if (typeof window !== 'undefined') {
+    //   window.sessionStorage.set('item', 'itemValue')
+    //   console.log('this is store service >>')
+    // }
     if (!addressToConnect || walletStore.accounts.length === 0) {
       await this.getAccounts()
     }
