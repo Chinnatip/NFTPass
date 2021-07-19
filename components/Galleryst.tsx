@@ -249,11 +249,11 @@ export const ConnectBtn = observer(() => {
   }
   const getBtnText = () => {
     if (!walletStore.isMetaMaskInstalled) {
-      return 'Connect Wallet'
+      return 'Cannot find Metamask!'
     } else if (walletStore.verified) {
       return `${mask(walletStore.address)} | ${walletStore.readableBalance}`
     } else {
-      return 'Connected'
+      return 'Connect to Wallet'
     }
   }
   return (
@@ -267,12 +267,16 @@ export const ConnectBtn = observer(() => {
       >
         {getBtnText()}
       </button>
-      <div ref={popperRef} className={`${show ? '' : 'hidden'} p-4 rounded-2xl bg-white absolute mt-4 right-0 z-50 shadow-nft`}>
+      <div ref={popperRef} className={`${show ? '' : 'hidden'} p-4 rounded-2xl bg-white absolute mt-6 right-0 z-50 shadow-nft`}>
+        { !walletStore.isConnected && walletStore.accounts.length > 0 && <div className="text-sm mb-3 text-center">
+          we found {walletStore.accounts.length} account in your wallets <br />
+          please select account to verify
+        </div>}
         {(!walletStore.isConnected && walletStore.accounts.length > 0) && walletStore.accounts.map((account, index) => {
           return (
             <React.Fragment key={account} >
               <button
-                className='text-xs'
+                className='text-xs bg-gray-300 p-3 rounded-full'
                 onClick={() => {
                   setShow(false)
                   walletService.connect(account)
@@ -285,22 +289,18 @@ export const ConnectBtn = observer(() => {
           )
         })}
         {walletStore.isConnected && (
-          <button
-            className='text-md'
-            onClick={() => {
+          <>
+            { walletStore.address != '' && <a href={`/profile?address=${walletStore.address}`} className=" w-full inline-block mt-4 bg-white focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft">
+              View My Page
+            </a>}
+            <button className=" w-full inline-block mt-4 bg-white focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft" onClick={() => {
               setShow(false)
               walletService.disconnect()
-            }}
-          >
-            Disconnect
-          </button>
+            }}>
+              Disconnect Wallet
+            </button>
+          </>
         )}
-        <button className=" w-full inline-block mt-4 bg-white focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft">
-          View My Page
-        </button>
-        <button className=" w-full inline-block mt-4 bg-white focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft">
-          Disconnect Wallet
-        </button>
       </div>
     </div>
   )
