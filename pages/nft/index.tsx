@@ -334,8 +334,8 @@ export async function getServerSideProps(context: any) {
     const response: any = document.data()
     const {
       platform: getPlatform,
-      opensea: { data: getOpensea },
-      rarible: { data: getRarible },
+      opensea: { data: getOpensea } = { data: {}},
+      rarible: { data: getRarible } = { data: {}},
       current_update, galleryst_id } = response
     const getNFT = response[getPlatform.current].data
     const constructImage = `https://api.placid.app/u/sxpwrxogf?&thumbnail[image]=${prepareURI(getNFT.image)}&title[text]=${prepareURI(getNFT.title)}&creator_name[text]=${prepareURI(getNFT.creator?.name)}`

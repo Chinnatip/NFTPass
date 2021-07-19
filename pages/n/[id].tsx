@@ -12,6 +12,163 @@ import { contractQuerierService } from 'services/contract-querier.service';
 import { ConnectBtn , profilePic, profileAddress } from '@/Galleryst'
 import { prepareURI, checkDiff, nftSanitizer, makeid, selectActivity } from '../../method/integrate'
 
+const Picon = ({platform} : {platform: 'rarible' | 'opensea' | 'nifty' | 'foundation'}) => {
+  let style = ''
+  switch (platform) {
+    case 'rarible':
+      style = 'text-black bg-yellow-500 rarible-logo logo-48'
+      break
+    case 'opensea':
+      style = 'text-white bg-blue-500 opensea-logo logo-48'
+      break
+    case 'foundation':
+      style = 'text-white bg-black foundation-logo logo-48'
+      break
+    case 'nifty':
+      style = 'text-white bg-blue-700 nifty-logo logo-48'
+  }
+
+  return <div
+  className={`
+     mr-3 h-12 w-12 inline-flex items-center justify-center rounded-full shadow-nft
+    ${style}
+  `}
+  />
+}
+
+export const Filter = ({ current, platform, action, targetAction, target }: {
+  target?: NFTDetail,
+  targetAction?: any,
+  platform: any,
+  action: any,
+  current: 'rarible' | 'opensea' | 'foundation' | 'nifty',
+}) => {
+  const market: {
+    rarible?: { status: boolean }
+    opensea?: { status: boolean }
+    foundation?: { status: boolean }
+    nifty?: { status: boolean }
+  } = platform.check != undefined ? platform.check : {}
+  const check = (platform: 'rarible' | 'opensea' | 'foundation' | 'nifty') => {
+    switch (platform) {
+      case 'rarible':
+        return { style: 'text-black bg-yellow-500 rarible-logo logo-48', text: '' }
+      case 'opensea':
+        return { style: 'text-white bg-blue-500 opensea-logo logo-48', text: '' }
+      case 'foundation':
+        return { style: 'text-white bg-black foundation-logo logo-48', text: 'F' }
+      case 'nifty':
+        return { style: 'text-white bg-blue-700 nifty-logo logo-48', text: 'N' }
+    }
+  }
+  const default_style = 'border text-gray-400 bg-gray-200'
+  const { text, style } = check(current)
+  return <div
+    className={`
+      cursor-pointer h-12 w-12 mx-2 flex items-center
+      shadow-xl justify-center rounded-full shadow-nft text-lg logo-48
+      ${platform.current == current && 'border-1 border-green-400 shadow-greenery'}
+      ${market[current]?.status ? style : default_style}
+    `}
+    onClick={() => {
+      action({ ...platform , current: current})
+      if(targetAction != undefined) targetAction(target)
+    }}>
+    {text}
+  </div>
+}
+
+const makeid = (length: number) => {
+  var result           = '';
+  var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var charactersLength = characters.length;
+  for ( var i = 0; i < length; i++ ) {
+    result += characters.charAt(Math.floor(Math.random() *
+charactersLength));
+ }
+ return result;
+}
+
+const profilePic = (user: User | undefined) => {
+  if (user != undefined) {
+    return <a href={`/profile?address=${user.address}`} className="bg-gray-500 mx-2 w-8 h-8 rounded-full overflow-hidden inline-flex items-center justify-center">
+      <img src={user.image} className="h-8 inline " />
+    </a>
+  } else {
+    return <div className="w-8 h-8 inline bg-gray-600 rounded-full" />
+  }
+}
+
+const profileAddress = (user: User | undefined, index: number) => {
+  return user != undefined && user?.image != '' ?
+    <a key={index} href={`/profile?address=${user.address}`} target="_blank" className="ml-2 bg-gray-500 w-10 h-10 rounded-full overflow-hidden inline-flex items-center justify-center">
+      <img src={user?.image} className="h-10 inline" />
+    </a> :
+    <span className="inline-block w-10 h-10 rounded-full bg-purple-500 ml-2 flex items-center justify-center">{user?.name?.substr(0, 1)}</span>
+}
+
+const selectActivity = (nft: NFTDetail, openseas: NFTDetail) => {
+  if(openseas.activity != undefined){
+    return openseas.activity
+  } else{
+    return nft.activity
+  }
+}
+
+interface PlatformItem {
+  link?: string
+  status: boolean
+}
+
+interface NFTPlatform {
+  current: string
+  check: {
+    opensea?: PlatformItem
+    rarible?: PlatformItem
+    nifty?: PlatformItem
+    foundation?: PlatformItem
+  }
+}
+
+export const nftSanitizer = (objs: ResponseDetail) => {
+  const clean = (obj: any) => {
+    for (var propName in obj) {
+      if (obj[propName] === null || obj[propName] === undefined) {
+        delete obj[propName]
+      }
+    }
+    return obj
+  }
+  const cleaning = clean({...objs,
+    data: clean({...objs.data,
+      creator: clean(objs.data?.creator),
+      owner: objs.data?.owner?.map(ow => clean(ow)),
+      offer: clean(objs.data?.offer),
+      pricing: clean(objs.data?.pricing),
+      activity: objs.data?.activity?.map( ac => {
+        return clean({
+          ...ac,
+          current_owner: clean({...ac.current_owner, user: clean(ac.current_owner.user) }),
+          previous_owner: clean({...ac.previous_owner, user: clean(ac.previous_owner?.user) })
+        })
+      } )
+    })
+  })
+  return cleaning
+}
+
+const checkDiff = (current_update: number, diffAmount: number = 2) => {
+  const today = dayjs()
+  const updatedAt = dayjs.unix(current_update)
+  const diff = diffAmount >= today.diff(updatedAt, 'days')
+  return diff
+}
+
+const prepareURI = (text: string) => {
+  const rep = (text ?? '').split("#").join("@").split("&").join("-").split("?").join("-")
+  return encodeURI(rep)
+}
+
 const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, current_update, galleryst_id }: {
   address: string,
   seo: {
@@ -335,8 +492,8 @@ export async function getServerSideProps(context: any) {
     const response : any = doc.data()
     const {
       platform: getPlatform,
-      opensea: { data: getOpensea},
-      rarible: { data: getRarible },
+      opensea: { data: getOpensea } = { data: {}},
+      rarible: { data: getRarible } = { data: {}},
       address , current_update, galleryst_id } = response
     const getNFT = response[getPlatform.current].data
     const constructImage = `https://api.placid.app/u/sxpwrxogf?&thumbnail[image]=${prepareURI(getNFT.image)}&title[text]=${prepareURI(getNFT.title)}&creator_name[text]=${prepareURI(getNFT.creator?.name)}`
