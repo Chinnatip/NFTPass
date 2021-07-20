@@ -181,7 +181,10 @@ export async function getServerSideProps(context: any) {
       rarible: { data: getRarible } = { data: {}},
       address , current_update, galleryst_id } = response
     const getNFT = response[getPlatform.current].data
+    //console.log(getNFT)
+    //console.log(getNFT.image)
     const constructImage = `https://api.placid.app/u/sxpwrxogf?&thumbnail[image]=${prepareURI(getNFT.image)}&title[text]=${prepareURI(getNFT.title)}&creator_name[text]=${prepareURI(getNFT.creator?.name)}`
+    console.log(constructImage)
     seo = {
       image: constructImage,
       title: getNFT.title != undefined ? getNFT.title : '-',
@@ -197,4 +200,7 @@ export async function getServerSideProps(context: any) {
 
 export default Page
 
+
+
+// https://api.placid.app/u/sxpwrxogf?&thumbnail[image]=https://storage.googleapis.com/galleryst-f7fe1.appspot.com/ipfs-media/QmTLDobqtqSwWLyB8hkv5rYwWS7HsykFKv5kTw4HcjcGoL-GoogleAccessId=firebase-adminsdk-bne07%2540galleryst-f7fe1.iam.gserviceaccount.com-Expires=1658309662-Signature=CXiSVi7AVFMDpEMibcBiaqTGNw0W7qtaZMoEGUqnB%252FyUKFQfyNmyunfhTptCOUl9IEcqqHp7F5119BkebTUCdhynvhM66GbADj5ijCZc2OZ5HBkrKZLtMTWhxB2ixPPHsn2tGNg%252Fv1w8ZVpHpkwroWfMJTI%252BMA54wD00gCicb03%252BbO3SxavKh%252BUl%252BqOYgpfgaZjGD9L0zSKbWePvg57IzUap0vfgs6NqMaNZBznAFilWE%252F0yqwfNgR7KHIQue7xh58hrRNz3QIFFN%252BmutsW%252FkMGc%252BfZP2FFGnng%252BvGs6i7bqyObHWt48oOdqm%252FrgRje0HTtuHMF1mz6tis6zEgNQ9w%253D%253D&title[text]=REDeFiNE%20TOMORROW%202021%20-%20Speaker%20NFT%20@1&creator_name[text]=
 
