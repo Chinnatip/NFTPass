@@ -44,7 +44,7 @@ const ProfilePage = ({ profile, action, lists, seo }: {
       twitter={{
         handle: '@handle',
         site: '@site',
-        cardType: 'summary' //'summary_large_image',
+        cardType: 'summary_large_image',
       }}
     />
     <UpdateAction profile={profile} action={action} />
