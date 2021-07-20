@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react'
+import ProfilePage from '@/ProfilePage'
 import * as firebase from "../method/firebase"
 import { Profile } from '../method/rarible/interface'
 import { Drop } from '../method/nifty/interface'
 import { Galleryst } from '../interfaces/index'
 import { ConnectBtn } from '@/Galleryst'
-import ProfilePage from '@/ProfilePage'
+import { prepareURI } from '../method/integrate'
 
-const Page = ({ shortUrl }: { shortUrl: string }) => {
+const Page = ({ seo, response }: {
+  response?: any
+  seo: {
+    image: string,
+    title: string,
+    description: string
+  }
+}) => {
   const [profile, setProfile] = useState<Profile>({})
   const [NFTLists, setNFTLists] = useState<Galleryst[]>([])
   const [ownLists, setOwnLists] = useState<string[]>([])
@@ -17,10 +25,7 @@ const Page = ({ shortUrl }: { shortUrl: string }) => {
   const stateAction = { setProfile, setOwnLists, setOnsaleLists, setDropLists, setCreatedLists, setNFTLists }
   useEffect(() => {
     (async () => {
-      const document = await firebase.findDocument("creatorParcel", shortUrl, "profile.shortUrl")
-      if (document.docs.length > 0) {
-        const doc = document.docs[0]
-        const response: any = doc.data()
+      if (response != undefined) {
         const { profile, ownLists, onsaleLists, dropLists, createdLists, NFTLists } = response
         setProfile(profile)
         setOwnLists(ownLists)
@@ -41,16 +46,38 @@ const Page = ({ shortUrl }: { shortUrl: string }) => {
         </a>
         <ConnectBtn />
       </div>
-      <ProfilePage profile={profile} action={stateAction} lists={stateLists} />
+      <ProfilePage seo={seo} profile={profile} action={stateAction} lists={stateLists} />
     </div>
   </div>
 }
 
 export async function getServerSideProps(context: any) {
-
   const { shortUrl } = context.params
-  return {
-    props: { shortUrl },
+  let seo = {
+    image: '',
+    title: '',
+    description: ''
+  }
+  const document = await firebase.findDocument("creatorParcel", shortUrl, "profile.shortUrl")
+  if (document.docs.length > 0) {
+    const doc = document.docs[0]
+    const response: any = doc.data()
+    const { profile: { pic , name , description} } = response
+    const constructImage = `https://api.placid.app/u/9h6ycuatn?&profile_image[image]=${prepareURI(pic)}&title-copy[text]=${prepareURI(`Explore ${name}'s`)}`
+    return {
+      props: {
+        response,
+        seo: {
+          image: constructImage,
+          title: name,
+          description: description
+        }
+      }
+    }
+  }else{
+    return {
+      props: { seo },
+    }
   }
 }
 

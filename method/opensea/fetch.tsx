@@ -47,7 +47,8 @@ const getBestOffer = async(contact_address: string, token_id: string) => {
 }
 
 export const ownByAddress = async(address: string) => {
-  const parse_url = `${OPENSEA_URL}?owner=${address}&order_direction=desc&offset=0&limit=100`
+  const limitSize = 50
+  const parse_url = `${OPENSEA_URL}?owner=${address}&order_direction=desc&offset=0&limit=${limitSize}`
   const resp = await axios.get(parse_url)
   const items : OpenseaItem[] = resp.data.assets
   const created = items

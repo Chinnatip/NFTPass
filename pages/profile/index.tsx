@@ -2,13 +2,22 @@ import React, { useState, useEffect } from 'react'
 import * as firebase from "../../method/firebase"
 import { Profile } from '../../method/rarible/interface'
 import { Drop } from '../../method/nifty/interface'
-import { creatorFetch } from '../../method/integrate'
+import { creatorFetch , prepareURI } from '../../method/integrate'
 import { Galleryst } from '../../interfaces/index'
 import { observer } from 'mobx-react-lite'
 import { ConnectBtn } from '@/Galleryst'
 import ProfilePage from '@/ProfilePage'
 
-const Page = observer(({ address, nifty_slug }: { address: string, nifty_slug: string | false }) => {
+const Page = observer(({ address, nifty_slug, seo, response }: {
+  address: string,
+  nifty_slug: string | false
+  seo: {
+    image: string,
+    title: string,
+    description: string
+  }
+  response?: any
+}) => {
   const [profile, setProfile] = useState<Profile>({})
   const [NFTLists, setNFTLists] = useState<Galleryst[]>([])
   const [ownLists, setOwnLists] = useState<string[]>([])
@@ -19,9 +28,7 @@ const Page = observer(({ address, nifty_slug }: { address: string, nifty_slug: s
   const stateAction = { setProfile, setOwnLists, setOnsaleLists, setDropLists, setCreatedLists, setNFTLists }
   useEffect(() => {
     (async () => {
-      const document = await firebase.findbyAddress("creatorParcel", `${address}`)
-      if (document.exists) {
-        const response: any = document.data()
+      if (response != undefined) {
         const { profile, ownLists, onsaleLists, dropLists, createdLists, NFTLists } = response
         setProfile(profile)
         setOwnLists(ownLists)
@@ -41,18 +48,43 @@ const Page = observer(({ address, nifty_slug }: { address: string, nifty_slug: s
       </a>
       <ConnectBtn />
     </div>
-    <ProfilePage profile={profile} action={stateAction} lists={stateLists} />
+    <ProfilePage seo={seo} profile={profile} action={stateAction} lists={stateLists} />
   </div>
 })
 
 
 export async function getServerSideProps(context: any) {
   const { address, nifty_slug } = context.query
-  return {
-    props: {
-      address: address != undefined ? address : false,
-      nifty_slug: nifty_slug != undefined ? nifty_slug : false
-    },
+  let seo = {
+    image: '',
+    title: '',
+    description: ''
+  }
+  const document = await firebase.findbyAddress("creatorParcel", `${address.toLowerCase()}`)
+  if (document.exists) {
+    const response: any = document.data()
+    const { profile: { pic , name , description} } = response
+    const constructImage = `https://api.placid.app/u/9h6ycuatn?&profile_image[image]=${prepareURI(pic)}&title-copy[text]=${prepareURI(`Explore ${name}'s`)}`
+    return {
+      props: {
+        address: address != undefined ? address : false,
+        nifty_slug: nifty_slug != undefined ? nifty_slug : false,
+        seo: {
+          image: constructImage,
+          title: name,
+          description: description
+        },
+        response
+      },
+    }
+  }else{
+    return {
+      props: {
+        address: address != undefined ? address : false,
+        nifty_slug: nifty_slug != undefined ? nifty_slug : false,
+        seo
+      },
+    }
   }
 }
 
