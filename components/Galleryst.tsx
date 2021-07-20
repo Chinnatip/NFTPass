@@ -240,14 +240,14 @@ export const ConnectBtn = observer(() => {
   const popperRef = useRef(null)
   createPopper(btnRef.current!, popperRef.current!, { placement: 'bottom-start' })
   const handleClick = async () => {
-    if (!show) {
+    if (!show && walletStore.isMetaMaskInstalled) {
       await walletService.getAccounts()
     }
     setShow(!show)
   }
   const getBtnText = () => {
     if (!walletStore.isMetaMaskInstalled) {
-      return 'To connect galleryst please install Metamask in your browser.'
+      return 'Connect to Wallet'
     } else if (walletStore.verified) {
       return `${mask(walletStore.address)} | ${walletStore.readableBalance}`
     } else {
@@ -259,18 +259,21 @@ export const ConnectBtn = observer(() => {
       <button
         ref={btnRef}
         onClick={handleClick}
-        disabled={!walletStore.isMetaMaskInstalled}
+        //disabled={!}
         style={{ color: '#9a6b6b', backgroundColor: '#9a6b6b29' }}
         className={`py-3 px-4 mx-5 font-semibold text-s focus:outline-none appearance-none my-4 rounded-full ${walletStore.isMetaMaskInstalled ? 'cursor-pointer' : 'cursor-default'}`}
       >
         {getBtnText()}
       </button>
-      <div ref={popperRef} className={`${show ? '' : 'hidden'} p-4 rounded-2xl bg-white absolute mt-6 right-0 z-50 shadow-nft`}>
-        {!walletStore.isConnected && walletStore.accounts.length > 0 && <div className="text-sm mb-3 text-center">
+      <div ref={popperRef} className={`${show ? '' : 'hidden'} p-4 rounded-2xl bg-white absolute mt-20 right-0 z-50 shadow-nft`}>
+        {!walletStore.isMetaMaskInstalled && <div>
+          To connect galleryst please install Metamask in your browser.
+        </div> }
+        {walletStore.isMetaMaskInstalled && !walletStore.isConnected && walletStore.accounts.length > 0 && <div className="text-sm mb-3 text-center">
           we found {walletStore.accounts.length} account in your wallets <br />
           please select account to verify
         </div>}
-        {(!walletStore.isConnected && walletStore.accounts.length > 0) && walletStore.accounts.map((account, index) => {
+        {walletStore.isMetaMaskInstalled && (!walletStore.isConnected && walletStore.accounts.length > 0) && walletStore.accounts.map((account, index) => {
           return (
             <React.Fragment key={account} >
               <button

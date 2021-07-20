@@ -28,7 +28,7 @@ const Page = () => {
         <ConnectBtn />
       </div>
       {/* Steps Container */}
-      <div className="md:grid-cols-3 grid-cols-1 md:gap-4 md:p-0 p-4 mt-8 gap-2 grid mb-5">
+      <div className="md:grid-cols-3 grid-cols-1 md:gap-4 md:p-0 p-4 mt-8 gap-2 grid mb-8">
         <div className="bg-white rounded-16 flex md:flex-col flex-row justify-center active-shadow">
           <img src="/image/Connect.png" className="md:w-3/4 w-1/3 md:mx-auto mx-0 my-0 object-contain md:p-0 p-4 md:rounded-none rounded-16" />
           <div className="m-auto">
@@ -60,7 +60,7 @@ const Page = () => {
         </div>
       </div>
       {/* container */}
-      <div className="rounded-24 mb-20 md:px-5 px-2 py-4 border border-white shadow-nft" style={{ background: 'rgba(185, 184, 184, 0.32)' }}>
+      <div className="hidden rounded-24 mb-20 md:px-5 px-2 py-4 border border-white shadow-nft" style={{ background: 'rgba(185, 184, 184, 0.32)' }}>
         {/* search box */}
         <input className="hidden placeholder-gray block w-3/5 bg-white m-auto rounded-full h-10 px-5 font-thin appearance-none outline-none" placeholder="Press creator ID and see the magic!" />
         <div className="text-center p-4">
