@@ -5,7 +5,7 @@ import { Profile } from '../method/rarible/interface'
 import { Drop } from '../method/nifty/interface'
 import { Galleryst } from '../interfaces/index'
 import { ConnectBtn } from '@/Galleryst'
-import { prepareURI } from '../method/integrate'
+// import { prepareURI } from '../method/integrate'
 
 const Page = ({ seo, response }: {
   response?: any
@@ -44,7 +44,6 @@ const Page = ({ seo, response }: {
           <img className="md:h-8 h-6 ml-2" src="/image/ic_galleryst_logo.png" alt="" />
         </a>
         <ConnectBtn />
-        {JSON.stringify(seo)}
       </div>
       <ProfilePage seo={seo} profile={profile} action={stateAction} lists={stateLists} />
     </div>
@@ -63,7 +62,7 @@ export async function getServerSideProps(context: any) {
     const doc = document.docs[0]
     const response: any = doc.data()
     const { profile: { pic , name , description} } = response
-    const constructImage = `https://api.placid.app/u/9h6ycuatn?&profile_image[image]=${prepareURI(pic)}&title-copy[text]=${prepareURI(`Explore ${name}'s`)}`
+    // const constructImage = `https://api.placid.app/u/9h6ycuatn?&profile_image[image]=${prepareURI(pic)}&title-copy[text]=${prepareURI(`Explore ${name}'s`)}`
     return {
       props: {
         response,

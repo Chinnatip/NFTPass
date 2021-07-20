@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import * as firebase from "../../method/firebase"
 import { Profile } from '../../method/rarible/interface'
 import { Drop } from '../../method/nifty/interface'
-import { creatorFetch , prepareURI } from '../../method/integrate'
+import { creatorFetch } from '../../method/integrate'
 import { Galleryst } from '../../interfaces/index'
 import { observer } from 'mobx-react-lite'
 import { ConnectBtn } from '@/Galleryst'
@@ -64,7 +64,7 @@ export async function getServerSideProps(context: any) {
   if (document.exists) {
     const response: any = document.data()
     const { profile: { pic , name , description} } = response
-    const constructImage = `https://api.placid.app/u/9h6ycuatn?&profile_image[image]=${prepareURI(pic)}&title-copy[text]=${prepareURI(`Explore ${name}'s`)}`
+    // const constructImage = `https://api.placid.app/u/9h6ycuatn?&profile_image[image]=${prepareURI(pic)}&title-copy[text]=${prepareURI(`Explore ${name}'s`)}`
     return {
       props: {
         address: address != undefined ? address : false,
