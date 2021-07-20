@@ -62,13 +62,14 @@ class WalletService {
     // use separate provider instance
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const { data: params } = await axios.get('/api/verifySignature')
-    params.domain.chainId = networkStore.chainId
+    const chainId = walletStore.defaultProvider.network.chainId
+    params.domain.chainId = chainId
     const typedSignature = await provider.send('eth_signTypedData_v4', [
       addressToConnect,
       JSON.stringify(params),
     ])
     const { data } = await axios.post('/api/verifySignature', {
-      chainId: networkStore.chainId,
+      chainId,
       addressToVerify: addressToConnect,
       typedSignature,
     })
