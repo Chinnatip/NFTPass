@@ -8,7 +8,8 @@ import { NFTDetail, Media, NFTPlatform } from '../interfaces/index'
 import { ConnectBtn , profilePic, profileAddress } from '@/Galleryst'
 import { selectActivity } from '../method/integrate'
 
-const NFTPage = ({ stateData, getNFT, address, seo, stateAction }:{
+const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix=false }:{
+  prefix?: boolean
   stateData: {
     nft: NFTDetail
     mediaList: Media[]
@@ -63,7 +64,7 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction }:{
   />
   <Head><title>{seo.title}</title></Head>
   {loading && <div className="fixed bottom-0 right-0 m-6 bg-black text-white text-lg rounded-full px-4 py-2">Loading ...</div>}
-  <div className="flex flex-col pt-8" style={{ background: 'url("image/bg_blur.jpg")' }}>
+  <div className="flex flex-col pt-8" style={{ background: `url("${prefix ? ".." : ""}/image/bg_blur.jpg")` }}>
     <div className="md:w-4/5 w-full m-auto flex justify-between">
       <a className="focus:outline-none" href={`/`}>
         <img className="md:h-8 h-6 ml-2" src="/image/ic_galleryst_logo.png" alt="" />

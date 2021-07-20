@@ -160,7 +160,7 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
       }
     })()
   }, []);
-  return <NFTPage getNFT={getNFT} stateData={stateData} stateAction={stateAction} address={address} seo={seo} />
+  return <NFTPage prefix={true} getNFT={getNFT} stateData={stateData} stateAction={stateAction} address={address} seo={seo} />
 }
 
 export async function getServerSideProps(context: any) {
