@@ -70,7 +70,7 @@ export async function getServerSideProps(context: any) {
         address: address != undefined ? address : false,
         nifty_slug: nifty_slug != undefined ? nifty_slug : false,
         seo: {
-          image: constructImage,
+          image: pic, //constructImage,
           title: name,
           description: description
         },

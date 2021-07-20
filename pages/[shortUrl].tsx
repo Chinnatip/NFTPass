@@ -38,13 +38,13 @@ const Page = ({ seo, response }: {
   }, []);
 
   return <div className="w-screen h-screen pt-8 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")' }}>
-
     <div className="w-full">
       <div className="md:w-4/5 w-full m-auto flex justify-between">
         <a className="focus:outline-none" href="/">
           <img className="md:h-8 h-6 ml-2" src="/image/ic_galleryst_logo.png" alt="" />
         </a>
         <ConnectBtn />
+        {JSON.stringify(seo)}
       </div>
       <ProfilePage seo={seo} profile={profile} action={stateAction} lists={stateLists} />
     </div>
@@ -68,7 +68,7 @@ export async function getServerSideProps(context: any) {
       props: {
         response,
         seo: {
-          image: constructImage,
+          image: pic, //constructImage,
           title: name,
           description: description
         }

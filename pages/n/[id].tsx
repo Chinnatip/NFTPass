@@ -181,17 +181,13 @@ export async function getServerSideProps(context: any) {
       rarible: { data: getRarible } = { data: {}},
       address , current_update, galleryst_id } = response
     const getNFT = response[getPlatform.current].data
-    //console.log(getNFT)
-    //console.log(getNFT.image)
     const constructImage = `https://api.placid.app/u/sxpwrxogf?&thumbnail[image]=${prepareURI(getNFT.image)}&title[text]=${prepareURI(getNFT.title)}&creator_name[text]=${prepareURI(getNFT.creator?.name)}`
-    console.log(constructImage)
     seo = {
       image: constructImage,
       title: getNFT.title != undefined ? getNFT.title : '-',
       description: getNFT.description != undefined ? getNFT.description : '-',
       creator: getNFT.creator?.name != undefined ? getNFT.creator.name : '-',
     }
-    // console.log({ address, seo, getPlatform, getNFT, current_update, getOpensea, getRarible, galleryst_id })
     return { props: { address, seo, getPlatform, getNFT, current_update, getOpensea, getRarible, galleryst_id }}
   }else{
     return { props: { seo } }
