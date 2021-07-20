@@ -65,13 +65,13 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
     <Head><title>{seo.title}</title></Head>
     {loading && <div className="fixed bottom-0 right-0 m-6 bg-black text-white text-lg rounded-full px-4 py-2">Loading ...</div>}
     <div className="flex flex-col pt-8" style={{ background: `url("${prefix ? ".." : ""}/image/bg_blur.jpg")` }}>
-      <div className="md:w-4/5 w-full m-auto flex justify-between">
+      <div className="md:w-4/5 w-full m-auto flex justify-between items-center">
         <a className="focus:outline-none" href={`/`}>
           <img className="md:h-8 h-6 ml-2" src="/image/ic_galleryst_logo.png" alt="" />
         </a>
         <ConnectBtn />
       </div>
-      <div className="w-full relative flex-col flex items-center justify-center max-w-full m-auto" style={{ height: '75vh' }}>
+      <div className="w-full relative flex-col flex items-center justify-center max-w-full m-auto pb-2" style={{ height: '75vh' }}>
         <a href={`/`} className="hidden absolute top-2 left-2 bg-white rounded-full h-8 md:w-auto w-8 md:px-2 flex items-center justify-center text-black active-shadow">
           <Icon fill={faArrowLeft} noMargin /> <span className="md:block hidden ml-1">Back</span>
         </a>
@@ -79,24 +79,24 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
           {displayMedia.type === 'image' && <img src={displayMedia.src} className="shadow-nft-img rounded-lg fit-wh-img" />}
           {displayMedia.type === 'video' && <video src={displayMedia.src} poster="" className="shadow-nft-img rounded-lg fit-wh-img" style={{ height: '100%' }} autoPlay loop muted /*controls*/ />}
         </div>
-        <div className="pt-3 overflow-y-hidden overflow-x-auto w-5/6	whitespace-nowrap	flex justify-center">
+        <div className="p-4 overflow-y-hidden overflow-x-auto w-5/6 whitespace-nowrap flex justify-center h-40 items-center">
           {mediaList.length > 1 && mediaList.map((media, idx) => {
             const isDisplaying = displayIdx === idx
             return (
               <div
                 className={`
                 cursor-pointer
-                mx-2 shadow-xl
+                mx-2
                 rounded-sm
                 transition-width duration-300
-                w-16 h-16
-                ${isDisplaying ? 'inline-block' : 'inline-block'}
+                w-16 h-12
+                ${isDisplaying ? 'inline-block ' : 'inline-block'}
               `}
                 onClick={() => { setDisplayMedia(media); setDisplayIdx(idx); }}
               >
-                <div className='inline-block m-auto  bg-black rounded-lg w-16 h-16'>
-                  {media.type === 'image' && <img src={media.src} style={{ maxHeight: '64px' }} className="rounded-lg w-full h-full m-auto object-contain" />}
-                  {media.type === 'video' && <video src={media.src} muted autoPlay loop className="rounded-lg m-auto w-full h-full object-contain" />}
+                <div className='inline-block m-auto  bg-black rounded-lg w-16 h-12'>
+                  {media.type === 'image' && <img src={media.src} style={{ maxHeight: '64px' }} className="rounded-lg w-full h-12 m-auto object-contain" />}
+                  {media.type === 'video' && <video src={media.src} muted autoPlay loop className="rounded-lg m-auto w-full h-12 object-contain" />}
                 </div>
               </div>
             )
