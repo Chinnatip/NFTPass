@@ -76,7 +76,7 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction }:{
       </a>
       <div className="p-4 flex items-center" style={{ height: mediaList.length > 1 ? '80%' : '100%' }}>
         {displayMedia.type === 'image' && <img src={displayMedia.src} className="shadow-nft-img rounded-lg fit-wh-img" />}
-        {displayMedia.type === 'video' && <video src={displayMedia.src} poster="" className="" autoPlay loop muted /*controls*/ />}
+        {displayMedia.type === 'video' && <video src={displayMedia.src} poster="" className="" style={{height: '100%'}} autoPlay loop muted /*controls*/ />}
       </div>
       <div className="pt-3 text-center flex justify-center items-center">
         {mediaList.length > 1 && mediaList.map((media, idx) => {
@@ -93,7 +93,7 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction }:{
               onClick={() => { setDisplayMedia(media); setDisplayIdx(idx); }}
             >
               <div className='flex items-center h-full my-auto'>
-                {media.type === 'image' && <img src={media.src} />}
+                {media.type === 'image' && <img src={media.src} style={{maxHeight: '64px'}} />}
                 {media.type === 'video' && <video src={media.src} muted autoPlay loop />}
               </div>
             </div>
