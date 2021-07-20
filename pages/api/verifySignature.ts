@@ -2,9 +2,10 @@ import { recoverTypedSignature_v4 } from 'eth-sig-util'
 import { VercelRequest, VercelResponse } from '@vercel/node'
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
   // variables
+  const { chainId } = req.body;
   const params: any = {
     domain: {
-      chainId: 4,
+      chainId,
       name: 'Galleryst',
       version: '0.1',
     },
