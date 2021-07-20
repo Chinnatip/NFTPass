@@ -126,15 +126,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
             current_update: dayjs().unix(),
           }
         } else {
-          const platform = {
-            current: 'galleryst',
-            check: {
-              opensea: { status: false, data: {} },
-              rarible: { status: false, data: {} }
-            }
-          }
           parcel = {
-            platform,
+            platform: {
+              current: 'galleryst',
+              check: {
+                opensea: { status: false, data: {} },
+                rarible: { status: false, data: {} }
+              }
+            },
             galleryst: gallerystCheck,
             current_update: dayjs().unix(),
             galleryst_id: nanoid(),

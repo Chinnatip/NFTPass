@@ -8,9 +8,9 @@ import * as firebase from "../../method/firebase"
 import { faArrowLeft, faShareAlt } from '@fortawesome/free-solid-svg-icons'
 import Icon , { Picon } from '@/Icon'
 import { NFTDetail, ResponseDetail, Media, NFTPlatform } from '../../interfaces/index'
-import { contractQuerierService } from 'services/contract-querier.service';
 import { ConnectBtn , profilePic, profileAddress } from '@/Galleryst'
 import { prepareURI, checkDiff, nftSanitizer, makeid, selectActivity } from '../../method/integrate'
+import axios from 'axios';
 
 const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, current_update, galleryst_id }: {
   address: string,
@@ -47,8 +47,8 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
         // parse display media
         setNFT(getNFT!)
         if (getPlatform?.current === 'galleryst') {
-          setMediaList((getNFT as any).mediaList)
-          setDisplayMedia((getNFT as any).mediaList[0])
+          setMediaList((getNFT as any)?.mediaList)
+          setDisplayMedia((getNFT as any)?.mediaList[0])
         } else {
           const media: Media = { type: 'image', src: getNFT?.image! }
           setMediaList([media])
@@ -56,12 +56,9 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
         }
       } else {
         // Rarible
-        const [contractAddress, tokenId] = address.split(':')
-        const gallerystTokenMetadata = await contractQuerierService.getMetadataUri(contractAddress, +tokenId)
         const raribleCheck: ResponseDetail = await rarible.nftDetail(address, setNFT, setRarible)
         const openseaCheck: ResponseDetail = await opensea.nftDetail(address, setNFT, setOpensea)
         const checkCurrent =
-          gallerystTokenMetadata !== null ? 'galleryst' :
           raribleCheck.status ? 'rarible' :
           openseaCheck.status ? 'opensea' :
           ''
@@ -78,38 +75,8 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
             }
           }
         }
-
-        let gallerystCheck;
-        if (gallerystTokenMetadata !== null) {
-          const tmpMediaList: Media[] = [
-            { type: 'image', src: gallerystTokenMetadata.image }, // main image
-            ...(gallerystTokenMetadata.media_list ?? []) // other media
-          ]
-          if (!!gallerystTokenMetadata.animation_url) {
-            tmpMediaList.unshift({ type: 'video', src: gallerystTokenMetadata.animation_url }) // main video
-          }
-          setMediaList(tmpMediaList)
-          gallerystCheck = {
-            status: true,
-            data: {
-              title: gallerystTokenMetadata.name,
-              description: gallerystTokenMetadata.description,
-              image: gallerystTokenMetadata.image,
-              metadata: gallerystTokenMetadata,
-              mediaList: tmpMediaList,
-              creator: {
-                address: gallerystTokenMetadata.creator ?? ''
-              }
-            }
-          }
-        }
-
         setPlatform(platform)
         switch (checkCurrent) {
-          case 'galleryst' : {
-            setDisplayMedia(mediaList[0]);
-            break;
-          }
           case 'opensea': {
             setNFT(openseaCheck.data!);
             setDisplayMedia({ type: 'image', src: openseaCheck.data!.image!})
@@ -125,11 +92,25 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
           platform,
           rarible: nftSanitizer(raribleCheck),
           opensea: nftSanitizer(openseaCheck),
-          galleryst: gallerystCheck,
           current_update: dayjs().unix(),
           galleryst_id: gallerystID,
           address
         })
+        // refresh metadata directly from contract
+        //   use .then to prevent blocking
+        const [contractAddress, tokenId] = address.split(':')
+        axios.patch('/api/nft/metadata', { contractAddress, tokenId: +tokenId })
+          .then((response) => {
+            const galleryst = response?.data?.galleryst?.data
+            const mediaList = galleryst?.mediaList
+            setMediaList(mediaList)
+            setDisplayMedia(mediaList[0])
+            setDisplayIdx(0)
+          })
+          .catch((_e) => {
+            // update failed, void handler
+            //   every promises is expected to be handled (node:33041)
+          })
         setLoad(false)
       }
     })()
@@ -235,8 +216,8 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
             <span className="flex-grow ">Link to Opensea</span>
             <div className="text-white bg-blue-500 opensea-logo logo-48 h-12 w-12 rounded-full" ></div>
           </a>}
-          {!!(getNFT as any).metadata && <div className='flex flex-wrap order-6 mt-3'>
-            {(getNFT as any).metadata?.attributes?.map((attr: any) => {
+          {!!(getNFT as any)?.metadata && <div className='flex flex-wrap order-6 mt-3'>
+            {(getNFT as any)?.metadata?.attributes?.map((attr: any) => {
               return <div className='bg-white rounded-lg flex flex-col p-3 mr-2 flex-grow shadow-nft'>
                 <p className="text-xs text-gray-600">#{attr.trait_type}</p>
                 <p className="truncate">{attr.value}</p>
@@ -334,8 +315,8 @@ export async function getServerSideProps(context: any) {
     const response: any = document.data()
     const {
       platform: getPlatform,
-      opensea: { data: getOpensea } = { data: {}},
-      rarible: { data: getRarible } = { data: {}},
+      opensea: { data: getOpensea } = { data: {} },
+      rarible: { data: getRarible } = { data: {} },
       current_update, galleryst_id } = response
     const getNFT = response[getPlatform.current].data
     const constructImage = `https://api.placid.app/u/sxpwrxogf?&thumbnail[image]=${prepareURI(getNFT.image)}&title[text]=${prepareURI(getNFT.title)}&creator_name[text]=${prepareURI(getNFT.creator?.name)}`
