@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { ethers } from 'ethers'
-import { URI_ABI } from 'static/Abi'
 import { GallerystTokenMetadata } from 'interfaces/contract'
+import { REQUIRED_ABIs } from 'static/Abi'
 
 class ContractQuerierService {
   getMetadataUri = async (
@@ -10,7 +10,7 @@ class ContractQuerierService {
   ): Promise<GallerystTokenMetadata | null> => {
     try {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
-      const contract = new ethers.Contract(contractAddress, URI_ABI, provider)
+      const contract = new ethers.Contract(contractAddress, REQUIRED_ABIs, provider)
       // get uri
       const genericMetaUri: string = await contract.uri(tokenId)
       // replace {id} with tokenId
