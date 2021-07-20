@@ -1,4 +1,5 @@
 import axios from 'axios'
+import dayjs from 'dayjs'
 import { ethers, utils } from 'ethers'
 import { walletStore } from 'stores/wallet.store'
 
@@ -9,6 +10,15 @@ class WalletService {
 
   init = () => {
     this.provider = walletStore.defaultProvider
+    const address = sessionStorage.getItem('address')
+    const expires = sessionStorage.getItem('expires')
+    if (expires === null || address === null) return
+    const expireDate = dayjs(expires)
+    const now = dayjs()
+    if (expireDate.isBefore(now)) return
+    walletStore.setAddress(address)
+    walletStore.setVerified(true)
+    walletStore.updateSigner()
   }
 
   checkGallerystVerified = async (address: string): Promise<boolean> => {
@@ -52,11 +62,13 @@ class WalletService {
     // use separate provider instance
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const { data: params } = await axios.get('/api/verifySignature')
+    params.domain.chainId = networkStore.chainId
     const typedSignature = await provider.send('eth_signTypedData_v4', [
       addressToConnect,
       JSON.stringify(params),
     ])
     const { data } = await axios.post('/api/verifySignature', {
+      chainId: networkStore.chainId,
       addressToVerify: addressToConnect,
       typedSignature,
     })
@@ -64,6 +76,8 @@ class WalletService {
       walletStore.setAddress(addressToConnect)
       walletStore.setVerified(true)
       walletStore.updateSigner()
+      sessionStorage.setItem('address', addressToConnect)
+      sessionStorage.setItem('expires', dayjs().add(1, 'day').toISOString())
     }
   }
 

@@ -25,9 +25,16 @@ class WalletStore {
   }
 
   init = () => {
-    this.defaultProvider = new ethers.providers.Web3Provider(window.ethereum)
+    this.defaultProvider = new ethers.providers.Web3Provider(window.ethereum, 'any')
+    this.defaultProvider.on('network', this.onNetworkChanged)
     this.signer = this.defaultProvider.getSigner()
     this.isMetaMaskInstalled = true
+  }
+
+  private onNetworkChanged = (_newNetwork: any, oldNetwork: any) => {
+    if (!!oldNetwork && typeof window !== 'undefined') {
+      window.location.reload()
+    }
   }
 
   setAccounts = (accounts: string[]) => {

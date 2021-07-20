@@ -129,8 +129,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           const platform = {
             current: 'galleryst',
             check: {
-              opensea: { status: false },
-              rarible: { status: false }
+              opensea: { status: false, data: {} },
+              rarible: { status: false, data: {} }
             }
           }
           parcel = {
