@@ -43,7 +43,24 @@ const Page = observer(({ address, nifty_slug, seo, response }: {
     })()
   }, []);
   return <div className="w-screen h-screen pt-8 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")' }}>
-    <div className="md:w-4/5 w-full m-auto flex justify-between items-center">
+    <NextSeo
+      title={seo.title}
+      description={seo.description}
+      canonical="https://www.canonical.ie/"
+      openGraph={{
+        site_name: 'Galleryst',
+        url: `https://www.galleryst.co/profile?address=${profile.address}`,
+        title: seo.title,
+        description: seo.description,
+        images: [{ url: seo.image, alt: seo.title, width: 1200, height: 600 }]
+      }}
+      twitter={{
+        handle: '@handle',
+        site: '@site',
+        cardType: 'summary_large_image',
+      }}
+    />
+    <div className="md:w-4/5 w-full m-auto flex justify-between">
       <a className="focus:outline-none" href="/">
         <img className="md:h-8 h-6 ml-2" src="/image/ic_galleryst_logo.png" alt="" />
       </a>
