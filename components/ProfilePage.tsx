@@ -7,7 +7,7 @@ import { CreatorHeader, UpdateAction, Filter, Toggle, NFTDrop, NFTGroup } from '
 const ProfilePage = ({ profile, action, lists }: {
   profile: Profile,
   action: any,
-  lists: any
+  lists: any,
 }) => {
   const [toggle, setToggle] = useState('collection')
   const { onsaleLists, ownLists, createdLists, dropLists, NFTLists } = lists

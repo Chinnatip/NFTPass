@@ -261,7 +261,7 @@ export const ConnectBtn = observer(() => {
         onClick={handleClick}
         //disabled={!}
         style={{ color: '#9a6b6b', backgroundColor: '#9a6b6b29' }}
-        className={`py-3 px-4 mx-5 font-semibold md:text-s text-xs focus:outline-none appearance-none my-4 rounded-full ${walletStore.isMetaMaskInstalled ? 'cursor-pointer' : 'cursor-default'}`}
+        className={`py-3 px-4 mx-2 font-semibold md:text-sm text-xs focus:outline-none appearance-none my-4 rounded-full ${walletStore.isMetaMaskInstalled ? 'cursor-pointer' : 'cursor-default'}`}
       >
         {getBtnText()}
       </button>
@@ -277,7 +277,7 @@ export const ConnectBtn = observer(() => {
           return (
             <React.Fragment key={account} >
               <button
-                className='text-xs bg-gray-300 p-3 rounded-full'
+                className='text-xs bg-white p-3 rounded-full text-black flex items-center shadow-nft'
                 onClick={() => {
                   setShow(false)
                   walletService.connect(account)
@@ -291,10 +291,10 @@ export const ConnectBtn = observer(() => {
         })}
         {walletStore.isConnected && (
           <>
-            {walletStore.address != '' && <a href={`/profile?address=${walletStore.address}`} className=" w-full inline-block mt-4 bg-white focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft">
+            {walletStore.address != '' && <a href={`/profile?address=${walletStore.address}`} className=" w-full inline-block bg-white text-black focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft">
               View My Page
             </a>}
-            <button className=" w-full inline-block mt-4 bg-white focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft" onClick={() => {
+            <button className=" w-full inline-block mt-4 bg-white focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft text-black" onClick={() => {
               setShow(false)
               walletService.disconnect()
             }}>

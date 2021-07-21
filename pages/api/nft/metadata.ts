@@ -1,14 +1,15 @@
 import axios from 'axios'
 import { ethers } from 'ethers'
 import { VercelRequest, VercelResponse } from '@vercel/node'
-import { URI_ABI } from 'static/Abi'
-import admin from 'firebase-admin';
-import { Media } from 'interfaces';
-import { GallerystTokenMetadata } from 'interfaces/contract';
-import { isValidHttpUrl } from 'utils/url.util';
+import { REQUIRED_ABIs } from 'static/Abi'
+import admin from 'firebase-admin'
+import { Media } from 'interfaces'
+import { GallerystTokenMetadata } from 'interfaces/contract'
+import { isValidHttpUrl } from 'utils/url.util'
 import dayjs from 'dayjs'
 import { customAlphabet } from 'nanoid'
-import { removeNullish } from 'utils/json.util';
+import { removeNullish } from 'utils/json.util'
+import { ERC1155_INTERFACE_ID, ERC721_INTERFACE_ID } from 'static/InterfaceId'
 
 const alphabets = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
 const nanoid = customAlphabet(alphabets, 5)
@@ -25,29 +26,31 @@ if (admin.apps.length === 0) {
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
       privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
     }),
-    storageBucket: 'galleryst-f7fe1.appspot.com'
+    storageBucket: 'galleryst-f7fe1.appspot.com',
   })
 }
 const firestore = admin.firestore()
 const bucket = admin.storage().bucket()
 
-const uploadMedia = async (mediaList: Media[]): Promise<Array<Media & { ipfsHash: string}>> => {
+const uploadMedia = async (mediaList: Media[]): Promise<Array<Media & { ipfsHash: string }>> => {
   return Promise.all(
-    mediaList.map(async (media) => {
+    mediaList.map(async media => {
       const ipfsHash = media.src.split('/').pop()!
       const filepath = `ipfs-media/${ipfsHash}`
       const documentRef = firestore.collection('ipfsToContent').doc(ipfsHash)
       const document = await documentRef.get()
-      let newUrl: string;
+      let newUrl: string
       if (!document.exists) {
         const response = await axios.get<Buffer>(media.src, { responseType: 'arraybuffer' })
         console.log('saving', ipfsHash)
         await bucket.file(filepath).save(response.data)
       }
-      newUrl = (await bucket.file(filepath).getSignedUrl({
-        action: 'read',
-        expires: dayjs().add(1, 'year').toDate()
-      }))[0]
+      newUrl = (
+        await bucket.file(filepath).getSignedUrl({
+          action: 'read',
+          expires: dayjs().add(1, 'year').toDate(),
+        })
+      )[0]
       await documentRef.set({ type: media.type, src: newUrl })
       return { type: media.type, src: newUrl, ipfsHash }
     })
@@ -64,15 +67,38 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         const { contractAddress, tokenId }: Body = req.body
         const address = `${contractAddress}:${tokenId}`
         const provider = new ethers.providers.JsonRpcProvider(process.env.ALCHEMY_RPC_URL)
-        const contract = new ethers.Contract(contractAddress, URI_ABI, provider)
-        const genericUri = await contract.uri(tokenId)
-        const filename = tokenId.toString(16).padStart(64, '0')
-        const metadataUri = genericUri.replace('{id}', filename).replace('ipfs.io', 'gateway.pinata.cloud')
-        const response = await axios.get(metadataUri)
-        const metadata: GallerystTokenMetadata = response.data
-        
+        const contract = new ethers.Contract(contractAddress, REQUIRED_ABIs, provider)
+
+        // detect erc-721 or erc-1155 first
+        const isErc721: boolean = await contract.supportsInterface(ERC721_INTERFACE_ID)
+        const isErc1155: boolean = await contract.supportsInterface(ERC1155_INTERFACE_ID)
+        // let metadataUri: string;
+        let metadata: GallerystTokenMetadata
+        if (isErc721) {
+          // beta
+          const tokenUri = await contract.tokenUri(tokenId)
+          const response = await axios.get(tokenUri)
+          const isMetadata = response.headers['content-type']?.includes('application/json')
+          if (isMetadata) {
+            metadata = response.data
+          } else {
+            metadata = {
+              name: 'untitled',
+              image: response.data,
+            }
+          }
+        } else if (isErc1155) {
+          const genericUri = await contract.uri(tokenId)
+          const filename = tokenId.toString(16).padStart(64, '0')
+          const metadataUri = genericUri.replace('{id}', filename)
+          const response = await axios.get(metadataUri)
+          metadata = response.data
+        } else {
+          throw new Error(`${contractAddress} is not an nft contract.`)
+        }
+
         console.log('parsing media list')
-        let gallerystCheck;
+        let gallerystCheck
         let mediaList: Media[] = [{ type: 'image', src: metadata.image }] // main image
         if (Array.isArray(metadata.media_list)) {
           mediaList.push(...metadata.media_list) // other media
@@ -80,7 +106,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         if (!!metadata.animation_url) {
           mediaList.unshift({ type: 'video', src: metadata.animation_url }) // main video
         }
-        mediaList = mediaList.filter((m) => isValidHttpUrl(m.src)) // filter invalid src
+        mediaList = mediaList.filter(m => isValidHttpUrl(m.src)) // filter invalid src
 
         // upload ipfs media to firebase storage
         // * if exists, will update download url
@@ -88,39 +114,39 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         const cachedMediaList = await uploadMedia(mediaList)
 
         console.log('media cached')
-        const mainCachedMedia = cachedMediaList.find((media) => {
+        const mainCachedMedia = cachedMediaList.find(media => {
           const ipfsHash = metadata.image.split('/').pop()!
           return media.ipfsHash === ipfsHash
         })
 
-        gallerystCheck = { 
-          status: true, 
-          data: { 
+        gallerystCheck = {
+          status: true,
+          data: {
             title: metadata.name,
             description: metadata.description,
-            image: mainCachedMedia?.src, 
+            image: mainCachedMedia?.src,
             rawMetadata: metadata,
             mediaList: cachedMediaList,
             creator: {
-              address: metadata.creator ?? ''
-            }
-          }
+              address: metadata.creator ?? '',
+            },
+          },
         }
 
         console.log('updating data')
         // lookup existing data in firebase
         const documentRef = firestore.collection('nft').doc(address)
         const document = await documentRef.get()
-        
-        let parcel;
+
+        let parcel
 
         if (document.exists) {
           const existingParcel = document.data()
-          parcel = { 
+          parcel = {
             ...existingParcel,
             platform: {
               ...existingParcel!.platform,
-              current: 'galleryst'
+              current: 'galleryst',
             },
             galleryst: gallerystCheck,
             current_update: dayjs().unix(),
@@ -131,13 +157,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
               current: 'galleryst',
               check: {
                 opensea: { status: false, data: {} },
-                rarible: { status: false, data: {} }
-              }
+                rarible: { status: false, data: {} },
+              },
             },
             galleryst: gallerystCheck,
             current_update: dayjs().unix(),
             galleryst_id: nanoid(),
-            address
+            address,
           }
         }
 
