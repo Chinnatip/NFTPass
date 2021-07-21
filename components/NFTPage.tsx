@@ -120,11 +120,11 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
           {gallerystID}
         </div>
         <a target="_blank" href={`https://twitter.com/intent/tweet?text=${encodeURI(`https://www.galleryst.co/n/${gallerystID}`)}`} data-size="large" className="shadow-nft mr-4 bg-white text-black w-auto rounded-full py-3 md:w-auto px-4  text-black active-shadow flex items-center justify-center">
-          <img src="/image/twitter_logo.svg" style={{ height: '20px' }} className="mr-1" /> <span className="md:block hidden">Tweet</span></a>
+          <img src="/image/twitter_logo.svg" style={{ height: '20px' }} className="" /> <span className="ml-1 md:block hidden">Tweet</span></a>
         <button
           className="shadow-nft  bg-white w-auto rounded-full py-3 md:w-auto px-4  text-black active-shadow flex items-center justify-center"
           onClick={() => useCopyToClipboard(`https://www.galleryst.co/n/${gallerystID}`)}>
-          {copied && <div className="absolute bg-black text-white top-0 right-0 p-1 px-2 -mt-10 -mr-2 text-sm rounded-full">Copied !</div>}
+          {copied && <div className="absolute bg-black text-white top-0 right-0 p-1 px-2 -mt-10 -mr-2 text-sm rounded-full">Copied Link!</div>}
           <Icon fill={faShareAlt} noMargin /> <span className="ml-2">Share </span>
         </button>
       </div>}

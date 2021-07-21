@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react'
 import * as firebase from "../method/firebase"
-import { faCopy,faShareAlt, faSync, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faCopy, faShareAlt, faSync, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { mask } from 'utils/address.util'
 import { walletStore } from 'stores/wallet.store'
 import { observer } from 'mobx-react-lite'
@@ -22,7 +22,7 @@ export const CreatorHeader = ({ profile, parcel, claimable = false }: { profile:
   return <>
     {/* Creator profile image */}
     <span className="relative">
-      <img src={profile?.pic} className="inline-block h-20 w-20 border-4 border-white shadow-nft rounded-full -mt-12 object-cover" />
+      <img src={profile?.pic} className="inline-block h-20 w-20 border-4 border-white shadow-nft rounded-full -mt-8 object-cover" />
       {profile?.verified && <span className="absolute -mr-2 -mb-2 bottom-0 right-0 h-6 w-6 inline-flex justify-center items-center bg-green-400 rounded-full text-white shadow-nft">
         <Icon fill={faCheck} noMargin></Icon>
       </span>}
@@ -309,21 +309,21 @@ export const ConnectBtn = observer(() => {
 
 
 // SHARE ACTION
-export const ShareAction = ({ gallerystID }:{gallerystID: string}) => {
-  const [ copied, setCopied ] = useState(false)
+export const ShareAction = ({ gallerystID }: { gallerystID: string }) => {
+  const [copied, setCopied] = useState(false)
   const useCopyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
     setCopied(true)
     setTimeout(() => { setCopied(false) }, 1300);
   }
-  return <div className="absolute top-0 right-0 mr-3 mt-2 flex items-center py-2 px-3 rounded-full cursor-pointer text-sm font-semibold">
+  return <div className="absolute top-0 right-0 mr-0 mt-0 flex items-center py-2 px-2 rounded-full cursor-pointer text-sm font-semibold">
     <a target="_blank" href={`https://twitter.com/intent/tweet?text=${encodeURI(`https://www.galleryst.co/${gallerystID}`)}`} data-size="large" className="shadow-nft mr-4 bg-white text-black w-auto rounded-full py-3 md:w-auto px-4  text-black active-shadow flex items-center justify-center">
-      <img src="/image/twitter_logo.svg" style={{ height: '20px' }} className="mr-1" /> <span className="md:block hidden">Tweet</span></a>
+      <img src="/image/twitter_logo.svg" style={{ height: '16px' }} className="" /> <span className="hidden">Tweet</span></a>
     <button
       className="shadow-nft  bg-white w-auto rounded-full py-3 md:w-auto px-4  text-black active-shadow flex items-center justify-center"
       onClick={() => useCopyToClipboard(`https://www.galleryst.co/${gallerystID}`)}>
-      {copied && <div className="absolute bg-black text-white top-0 right-0 p-1 px-2 -mt-10 -mr-2 text-sm rounded-full">Copied !</div>}
-      <Icon fill={faShareAlt} noMargin /> <span className="ml-2">Share </span>
+      {copied && <div className="absolute bg-black text-white top-0 right-0 p-1 px-2 -mt-10 mr-0 text-sm rounded-full w-max">Copied Link!</div>}
+      <Icon fill={faShareAlt} noMargin /> <span className="ml-2 md:block hidden">Share </span>
     </button>
   </div>
 }
@@ -341,7 +341,7 @@ export const UpdateAction = ({ action, profile }: { action: any, profile: Profil
       }
       setShow(false)
     }}
-    className="absolute top-0 left-0 mt-5 ml-5 flex items-center button-red py-2 px-3 rounded-full cursor-pointer text-sm font-semibold">
+    className="absolute top-0 left-0 mt-2 ml-2 flex items-center button-red py-2 px-2 rounded-full cursor-pointer text-sm font-semibold">
     {show && <div className="absolute bg-black text-white top-0 right-0 p-1 px-2 -mt-10 text-sm rounded-full w-300">Updating...</div>}
     <Icon fill={faSync} noMargin /><span className="md:block hidden ml-3"> Refresh Address Info</span>
   </div>
