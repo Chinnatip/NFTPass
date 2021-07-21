@@ -73,6 +73,7 @@
     "@graphql-codegen/typescript-apollo-client-helpers": "^1.1.6",
     "@graphql-codegen/typescript-operations": "^1.18.0",
     "@graphql-codegen/typescript-react-apollo": "^2.2.5",
+    "@types/cors": "^2.8.12",
     "@types/node": "^12.12.21",
     "@types/react": "^16.9.16",
     "@types/react-dom": "^16.9.4",
