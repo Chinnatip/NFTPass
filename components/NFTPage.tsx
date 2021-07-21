@@ -45,48 +45,51 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
 
   const { title, description, creator, owner } = nft
   return <div className="w-screen h-screen z-20 bg-white fixed top-0 left-0 overflow-y-scroll overflow-x-hidden">
-  <NextSeo
-    title={seo.title}
-    description={seo.description}
-    canonical="https://www.canonical.ie/"
-    openGraph={{
-      site_name: 'Galleryst',
-      url: `https://www.galleryst.co/nft?address=${address}`,
-      title: seo.title,
-      description: seo.description,
-      images: [{ url: seo.image, alt: seo.title, width: 1200, height: 600 }]
-    }}
-    twitter={{
-      handle: '@handle',
-      site: '@site',
-      cardType: 'summary_large_image',
-    }}
-  />
-  <Head><title>{seo.title}</title></Head>
-  {loading && <div className="fixed bottom-0 right-0 m-6 bg-black text-white text-lg rounded-full px-4 py-2">Loading ...</div>}
-  <div className="flex flex-col pt-8" style={{ background: `url("${prefix ? ".." : ""}/image/bg_blur.jpg")` }}>
-    <div className="md:w-4/5 w-full m-auto flex justify-between">
-      <a className="focus:outline-none" href={`/`}>
-        <img className="md:h-8 h-6 ml-2" src="/image/ic_galleryst_logo.png" alt="" />
-      </a>
-      <ConnectBtn />
-    </div>
-    <div className="w-full relative flex-col flex items-center justify-center max-w-full m-auto" style={{ height: '75vh' }}>
-      <a href={`/`} className="hidden absolute top-2 left-2 bg-white rounded-full h-8 md:w-auto w-8 md:px-2 flex items-center justify-center text-black active-shadow">
-        <Icon fill={faArrowLeft} noMargin /> <span className="md:block hidden ml-1">Back</span>
-      </a>
-      {/* Main image */}
-      <div className="p-4 flex items-center" style={{ height: mediaList.length > 1 ? '80%' : '100%' }}>
-        {displayMedia.type === 'image' && <img src={displayMedia.src} className="shadow-nft-img rounded-lg fit-wh-img" />}
-        {displayMedia.type === 'video' && <video src={displayMedia.src} poster="" className="" style={{height: '100%'}} autoPlay muted loop controls />}
+    <NextSeo
+      title={seo.title}
+      description={seo.description}
+      canonical="https://www.canonical.ie/"
+      openGraph={{
+        site_name: 'Galleryst',
+        url: `https://www.galleryst.co/nft?address=${address}`,
+        title: seo.title,
+        description: seo.description,
+        images: [{ url: seo.image, alt: seo.title, width: 1200, height: 600 }]
+      }}
+      twitter={{
+        handle: '@handle',
+        site: '@site',
+        cardType: 'summary_large_image',
+      }}
+    />
+    <Head><title>{seo.title}</title></Head>
+    {loading && <div className="fixed bottom-0 right-0 m-6 bg-black text-white text-lg rounded-full px-4 py-2">Loading ...</div>}
+    <div className="flex flex-col pt-8" style={{ background: `url("${prefix ? ".." : ""}/image/bg_blur.jpg")` }}>
+      <div className="md:w-4/5 w-full m-auto flex justify-between">
+        <a className="focus:outline-none" href={`/`}>
+          <img className="md:h-8 h-6 ml-2" src="/image/ic_galleryst_logo.png" alt="" />
+        </a>
+        <ConnectBtn />
       </div>
-      {/* Carousel image */}
-      <div className="pt-3 text-center flex justify-center items-center">
-        {mediaList.length > 1 && mediaList.map((media, idx) => {
-          const isDisplaying = displayIdx === idx
-          return (
-            <div
-              className={`
+      <div className="w-full relative flex-col flex items-center justify-center max-w-full m-auto" style={{ height: '75vh' }}>
+        <a href={`/`} className="hidden absolute top-2 left-2 bg-white rounded-full h-8 md:w-auto w-8 md:px-2 flex items-center justify-center text-black active-shadow">
+          <Icon fill={faArrowLeft} noMargin /> <span className="md:block hidden ml-1">Back</span>
+        </a>
+
+        {/* {JSON.stringify(displayMedia)} */}
+
+        {/* Main image */}
+        <div className="p-4 flex items-center" style={{ height: mediaList.length > 1 ? '80%' : '100%' }}>
+          {displayMedia.type === 'image' && <img src={displayMedia.src} className="shadow-nft-img rounded-lg fit-wh-img" />}
+          {displayMedia.type === 'video' && <video src={displayMedia.src} poster="" className="" style={{ height: '100%' }} autoPlay muted loop controls />}
+        </div>
+        {/* Carousel image */}
+        <div className="pt-3 text-center flex justify-center items-center">
+          {mediaList.length > 1 && mediaList.map((media, idx) => {
+            const isDisplaying = displayIdx === idx
+            return (
+              <div
+                className={`
                 cursor-pointer
                 mx-2
                 rounded-sm
@@ -205,7 +208,7 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
         </div>
       </div>
 
-      <div className="px-3 m-auto">
+      {selectActivity(nft, openseas) != undefined && <div className="px-3 m-auto">
         <h2 className="mt-8 text-xl font-semibold">NFT History</h2>
         {selectActivity(nft, openseas)?.map(({ type, current_owner, previous_owner, date, value, price }, index) => {
           switch (type) {
@@ -220,7 +223,9 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
             </div>
           }
         })}
-      </div>
+      </div>}
+
+      <div className="h-24" />
     </div>
   </div>
 }
