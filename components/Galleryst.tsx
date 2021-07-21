@@ -343,7 +343,7 @@ export const UpdateAction = ({ action, profile }: { action: any, profile: Profil
     }}
     className="absolute top-0 left-0 mt-2 ml-2 flex items-center button-red py-2 px-2 rounded-full cursor-pointer text-sm font-semibold">
     {show && <div className="absolute bg-black text-white top-0 right-0 p-1 px-2 -mt-10 text-sm rounded-full w-300">Updating...</div>}
-    <Icon fill={faSync} noMargin /><span className="md:block hidden ml-3"> Refresh Address Info</span>
+    <Icon fill={faSync} noMargin /><span className="md:block hidden ml-3"> Refresh Info</span>
   </div>
 }
 

@@ -38,7 +38,7 @@ const Page = ({ seo, response }: {
     })()
   }, []);
 
-  return <div className="w-screen h-screen pt-8 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")' }}>
+  return <div className="w-screen h-screen pt-0 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")' }}>
     <NextSeo
       title={seo.title}
       description={seo.description}
@@ -79,7 +79,7 @@ export async function getServerSideProps(context: any) {
   if (document.docs.length > 0) {
     const doc = document.docs[0]
     const response: any = doc.data()
-    const { profile: { pic, name , description} } = response
+    const { profile: { pic, name, description } } = response
     const constructImage = `https://api.placid.app/u/9h6ycuatn?&profile_image[image]=${encodeURIComponent(pic)}&title-copy[text]=View+${prepareURI(name)}%27s`
     return {
       props: {
@@ -91,7 +91,7 @@ export async function getServerSideProps(context: any) {
         }
       }
     }
-  }else{
+  } else {
     return {
       props: { seo },
     }
