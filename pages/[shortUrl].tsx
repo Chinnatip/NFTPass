@@ -87,7 +87,7 @@ export async function getServerSideProps(context: any) {
         response,
         seo: {
           image: constructImage,
-          title: name,
+          title: `${name} - Galleryst`,
           description: description
         }
       }
