@@ -43,9 +43,6 @@ const Page = observer(({ address, nifty_slug, seo, response }: {
     })()
   }, []);
   return <div className="w-screen h-screen pt-8 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")' }}>
-<<<<<<< HEAD
-    <div className="md:w-4/5 w-full m-auto flex justify-between items-center">
-=======
     <NextSeo
       title={seo.title}
       description={seo.description}
@@ -64,7 +61,6 @@ const Page = observer(({ address, nifty_slug, seo, response }: {
       }}
     />
     <div className="md:w-4/5 w-full m-auto flex justify-between">
->>>>>>> master
       <a className="focus:outline-none" href="/">
         <img className="md:h-8 h-6 ml-2" src="/image/ic_galleryst_logo.png" alt="" />
       </a>
