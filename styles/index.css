@@ -1630,3 +1630,6 @@ div.address-text-wrapper > span {
 .centered-connectbtn > .flex.justify-end > button {
   font-size: 18px !important;
 }
+.whitespace-nowrap	{
+white-space: nowrap; 
+}
