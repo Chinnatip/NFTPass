@@ -1,5 +1,4 @@
 import axios from 'axios'
-import dayjs from 'dayjs'
 import { ethers, utils } from 'ethers'
 import { walletStore } from 'stores/wallet.store'
 
@@ -10,15 +9,6 @@ class WalletService {
 
   init = () => {
     this.provider = walletStore.defaultProvider
-    const address = sessionStorage.getItem('address')
-    const expires = sessionStorage.getItem('expires')
-    if (expires === null || address === null) return
-    const expireDate = dayjs(expires)
-    const now = dayjs()
-    if (expireDate.isBefore(now)) return
-    walletStore.setAddress(address)
-    walletStore.setVerified(true)
-    walletStore.updateSigner()
   }
 
   checkGallerystVerified = async (address: string): Promise<boolean> => {
@@ -40,11 +30,6 @@ class WalletService {
   }
 
   connect = async (addressToConnect: string) => {
-    // TODO: read sessionStorage before connect ???
-    // if (typeof window !== 'undefined') {
-    //   window.sessionStorage.set('item', 'itemValue')
-    //   console.log('this is store service >>')
-    // }
     if (!addressToConnect || walletStore.accounts.length === 0) {
       await this.getAccounts()
     }
@@ -77,8 +62,6 @@ class WalletService {
       walletStore.setAddress(addressToConnect)
       walletStore.setVerified(true)
       walletStore.updateSigner()
-      sessionStorage.setItem('address', addressToConnect)
-      sessionStorage.setItem('expires', dayjs().add(1, 'day').toISOString())
     }
   }
 

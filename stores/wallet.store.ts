@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import { ethers } from 'ethers'
 import { makeAutoObservable } from 'mobx'
 
@@ -29,6 +30,7 @@ class WalletStore {
     this.defaultProvider.on('network', this.onNetworkChanged)
     this.signer = this.defaultProvider.getSigner()
     this.isMetaMaskInstalled = true
+    this.readStorage()
   }
 
   private onNetworkChanged = (_newNetwork: any, oldNetwork: any) => {
@@ -43,6 +45,7 @@ class WalletStore {
 
   setAddress = (address: string) => {
     this.address = address
+    this.writeStorage()
   }
 
   setVerified = (verified: boolean) => {
@@ -61,6 +64,26 @@ class WalletStore {
 
   updateSigner = () => {
     this.signer = this.defaultProvider.getSigner()
+  }
+
+  // use 'read/write' instead of 'get/set' to prevent ambiguity
+  //    between properties getters/setters and localStorage interaction
+  private writeStorage = () => {
+    localStorage.setItem('address', this.address)
+    localStorage.setItem('expires', dayjs().add(1, 'day').toISOString())
+  }
+
+  private readStorage = () => {
+    const address = localStorage.getItem('address')
+    const expires = localStorage.getItem('expires')
+    if (expires === null || address === null || dayjs().isAfter(dayjs(expires))) {
+      localStorage.removeItem('address')
+      localStorage.removeItem('expires')
+    } else {
+      this.address = address
+      this.verified = true
+      this.updateSigner()
+    }
   }
 }
 
