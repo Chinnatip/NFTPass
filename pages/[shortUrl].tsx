@@ -5,6 +5,7 @@ import { Profile } from '../method/rarible/interface'
 import { Drop } from '../method/nifty/interface'
 import { Galleryst } from '../interfaces/index'
 import { ConnectBtn } from '@/Galleryst'
+import { NextSeo } from 'next-seo';
 // import { prepareURI } from '../method/integrate'
 
 const Page = ({ seo, response }: {
@@ -15,7 +16,7 @@ const Page = ({ seo, response }: {
     description: string
   }
 }) => {
-  const [profile, setProfile] = useState<Profile>({})
+  const [profile, setProfile] = useState<Profile>(response != undefined ? response.profile : {})
   const [NFTLists, setNFTLists] = useState<Galleryst[]>([])
   const [ownLists, setOwnLists] = useState<string[]>([])
   const [onsaleLists, setOnsaleLists] = useState<string[]>([])
@@ -38,6 +39,23 @@ const Page = ({ seo, response }: {
   }, []);
 
   return <div className="w-screen h-screen pt-8 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")' }}>
+    <NextSeo
+      title={seo.title}
+      description={seo.description}
+      canonical="https://www.canonical.ie/"
+      openGraph={{
+        site_name: 'Galleryst',
+        url: `https://www.galleryst.co/profile?address=${profile.address}`,
+        title: seo.title,
+        description: seo.description,
+        images: [{ url: seo.image, alt: seo.title, width: 1200, height: 600 }]
+      }}
+      twitter={{
+        handle: '@handle',
+        site: '@site',
+        cardType: 'summary_large_image',
+      }}
+    />
     <div className="w-full">
       <div className="md:w-4/5 w-full m-auto flex justify-between">
         <a className="focus:outline-none" href="/">
@@ -45,7 +63,7 @@ const Page = ({ seo, response }: {
         </a>
         <ConnectBtn />
       </div>
-      <ProfilePage seo={seo} profile={profile} action={stateAction} lists={stateLists} />
+      <ProfilePage profile={profile} action={stateAction} lists={stateLists} />
     </div>
   </div>
 }
@@ -62,7 +80,7 @@ export async function getServerSideProps(context: any) {
     const doc = document.docs[0]
     const response: any = doc.data()
     const { profile: {  name , description} } = response
-    const constructImage =  'https://api.placid.app/u/9h6ycuatn?&profile_image[image]=https%3A%2F%2Fimages.rarible.com%2F%3Ffit%3Doutsize%26n%3D-1%26url%3Dhttps%3A%2F%2Fipfs.rarible.com%2Fipfs%2FQmQs6Ana1AtCyDHwCtmsbUQ2CtA8LsgdL1JUTyRSvPpneC%26w%3D240&title-copy[text]=Explore+PSSYPL%27s'
+    const constructImage = 'https://api.placid.app/u/9h6ycuatn?&profile_image[image]=https%3A%2F%2Fimages.rarible.com%2F%3Ffit%3Doutsize%26n%3D-1%26url%3Dhttps%3A%2F%2Fipfs.rarible.com%2Fipfs%2FQmQs6Ana1AtCyDHwCtmsbUQ2CtA8LsgdL1JUTyRSvPpneC%26w%3D240&title-copy[text]=Explore+PSSYPL%27s'
     //'https://api.placid.app/u/9h6ycuatn?&profile_image[image]=https://images.rarible.com/-fit=outsize-n=-1-url=https://ipfs.rarible.com/ipfs/QmQs6Ana1AtCyDHwCtmsbUQ2CtA8LsgdL1JUTyRSvPpneC-w=240&title-copy[text]=Explore%20Thanonvon%27s' ///`https://api.placid.app/u/9h6ycuatn?&profile_image[image]=${prepareURI(pic)}&title-copy[text]=${prepareURI(`Explore ${name}'s`)}`
     return {
       props: {
