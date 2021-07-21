@@ -75,9 +75,6 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
       <a href={`/`} className="hidden absolute top-2 left-2 bg-white rounded-full h-8 md:w-auto w-8 md:px-2 flex items-center justify-center text-black active-shadow">
         <Icon fill={faArrowLeft} noMargin /> <span className="md:block hidden ml-1">Back</span>
       </a>
-
-      {/* {JSON.stringify(displayMedia)} */}
-
       {/* Main image */}
       <div className="p-4 flex items-center" style={{ height: mediaList.length > 1 ? '80%' : '100%' }}>
         {displayMedia.type === 'image' && <img src={displayMedia.src} className="shadow-nft-img rounded-lg fit-wh-img" />}

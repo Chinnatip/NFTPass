@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Profile } from '../method/rarible/interface'
 import { sanitizeArray } from '../method/integrate'
 import { walletStore } from 'stores/wallet.store'
-import { CreatorHeader, UpdateAction, Filter, Toggle, NFTDrop, NFTGroup } from '@/Galleryst'
+import { CreatorHeader, ShareAction, UpdateAction, Filter, Toggle, NFTDrop, NFTGroup } from '@/Galleryst'
 
 const ProfilePage = ({ profile, action, lists }: {
   profile: Profile,
@@ -24,6 +24,7 @@ const ProfilePage = ({ profile, action, lists }: {
   const claimCheck = address == wallet?.address && profile?.verified != true //true
   return <div className="md:w-4/5 w-full m-auto z-10 relative">
     <UpdateAction profile={profile} action={action} />
+    <ShareAction gallerystID={profile.shortUrl != undefined ? `${profile.shortUrl}` : `profile?address=${profile.address}`} />
     <div className="rounded-24 border border-white shadow-nft mt-20 mb-20 pb-10" style={{ background: 'rgba(185, 184, 184, 0.32)', borderRadius: '24px' }}>
       <div className="bg-white" style={{ borderRadius: '24px 24px 0px 0px' }}>
         <div className="text-center">

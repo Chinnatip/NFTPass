@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react'
 import * as firebase from "../method/firebase"
-import { faCopy, faSync, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faCopy,faShareAlt, faSync, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { mask } from 'utils/address.util'
 import { walletStore } from 'stores/wallet.store'
 import { observer } from 'mobx-react-lite'
@@ -307,6 +307,27 @@ export const ConnectBtn = observer(() => {
   )
 })
 
+
+// SHARE ACTION
+export const ShareAction = ({ gallerystID }:{gallerystID: string}) => {
+  const [ copied, setCopied ] = useState(false)
+  const useCopyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text)
+    setCopied(true)
+    setTimeout(() => { setCopied(false) }, 1300);
+  }
+  return <div className="absolute top-0 right-0 mr-3 mt-2 flex items-center py-2 px-3 rounded-full cursor-pointer text-sm font-semibold">
+    <a target="_blank" href={`https://twitter.com/intent/tweet?text=${encodeURI(`https://www.galleryst.co/${gallerystID}`)}`} data-size="large" className="shadow-nft mr-4 bg-white text-black w-auto rounded-full py-3 md:w-auto px-4  text-black active-shadow flex items-center justify-center">
+      <img src="/image/twitter_logo.svg" style={{ height: '20px' }} className="mr-1" /> <span className="md:block hidden">Tweet</span></a>
+    <button
+      className="shadow-nft  bg-white w-auto rounded-full py-3 md:w-auto px-4  text-black active-shadow flex items-center justify-center"
+      onClick={() => useCopyToClipboard(`https://www.galleryst.co/${gallerystID}`)}>
+      {copied && <div className="absolute bg-black text-white top-0 right-0 p-1 px-2 -mt-10 -mr-2 text-sm rounded-full">Copied !</div>}
+      <Icon fill={faShareAlt} noMargin /> <span className="ml-2">Share </span>
+    </button>
+  </div>
+}
+
 // UPDATE ACTION
 export const UpdateAction = ({ action, profile }: { action: any, profile: Profile }) => {
   const [show, setShow] = useState(false)
@@ -320,7 +341,7 @@ export const UpdateAction = ({ action, profile }: { action: any, profile: Profil
       }
       setShow(false)
     }}
-    className="absolute top-0 right-0 mt-5 mr-5 flex items-center button-red py-2 px-3 rounded-full cursor-pointer text-sm font-semibold">
+    className="absolute top-0 left-0 mt-5 ml-5 flex items-center button-red py-2 px-3 rounded-full cursor-pointer text-sm font-semibold">
     {show && <div className="absolute bg-black text-white top-0 right-0 p-1 px-2 -mt-10 text-sm rounded-full w-300">Updating...</div>}
     <Icon fill={faSync} noMargin /><span className="md:block hidden ml-3"> Refresh Address Info</span>
   </div>
