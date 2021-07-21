@@ -22,6 +22,16 @@ export const getOfferandActivity = async(address: string, setRarible: any, detai
   }
 }
 
+const removeNull = (lists: string[]) => {
+  let result : string[] = []
+  lists.map(list => {
+    if(list != null && list != undefined){
+      result.push(list)
+    }
+  })
+  return result
+}
+
 export const nftDetail = async (address: string, defaultAction?: (data: any) => void, action?: (data: any) => void): Promise<ResponseDetail> => {
   try {
     const nfts: RaribleNFTFull  = await collectNFTS([address])
@@ -38,7 +48,7 @@ export const nftDetail = async (address: string, defaultAction?: (data: any) => 
         if (from != undefined) { lists.push(from) }
       })
 
-      lists = [...new Set([...lists, nfts.item.creator, ...nfts.item.owners])]
+      lists = removeNull([...new Set([...lists, nfts.item.creator, ...nfts.item.owners])])
       const profileResp = await collectPROFILE(lists)
       const userLists = profileResp.data.map((user: any) => {
         const { id: address, name, description, shortUrl, image  } = user
