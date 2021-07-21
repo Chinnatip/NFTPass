@@ -75,10 +75,15 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix=false }:
       <a href={`/`} className="hidden absolute top-2 left-2 bg-white rounded-full h-8 md:w-auto w-8 md:px-2 flex items-center justify-center text-black active-shadow">
         <Icon fill={faArrowLeft} noMargin /> <span className="md:block hidden ml-1">Back</span>
       </a>
+
+      {JSON.stringify(displayMedia)}
+
+      {/* Main image */}
       <div className="p-4 flex items-center" style={{ height: mediaList.length > 1 ? '80%' : '100%' }}>
         {displayMedia.type === 'image' && <img src={displayMedia.src} className="shadow-nft-img rounded-lg fit-wh-img" />}
         {displayMedia.type === 'video' && <video src={displayMedia.src} poster="" className="" style={{height: '100%'}} autoPlay muted loop controls />}
       </div>
+      {/* Carousel image */}
       <div className="pt-3 text-center flex justify-center items-center">
         {mediaList.length > 1 && mediaList.map((media, idx) => {
           const isDisplaying = displayIdx === idx
@@ -136,8 +141,8 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix=false }:
           <span className="flex-grow ">Link to Opensea</span>
           <div className="text-white bg-blue-500 opensea-logo logo-48 h-12 w-12 rounded-full" ></div>
         </a>}
-        {!!(getNFT as any).metadata && <div className='flex flex-wrap order-6 mt-3'>
-          {(getNFT as any).metadata?.attributes?.map((attr: any) => {
+        {!!(getNFT as any)?.metadata && <div className='flex flex-wrap order-6 mt-3'>
+          {(getNFT as any)?.metadata?.attributes?.map((attr: any) => {
             return <div className='bg-white rounded-lg flex flex-col p-3 mr-2 flex-grow shadow-nft'>
               <p className="text-xs text-gray-600">#{attr.trait_type}</p>
               <p className="truncate">{attr.value}</p>
