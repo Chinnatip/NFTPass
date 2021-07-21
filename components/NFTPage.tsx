@@ -191,7 +191,6 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
                 <a href={`/profile?address=${creator?.address}`} className="flex justify-start w-full mb-4 items-center	">
                   {profileAddress(creator, 0)}
                   <div className="ml-2">
-
                     {creator?.name}
                     <div className="text-gray-500 underline">View Profile</div>
                   </div>
@@ -207,7 +206,6 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
           </div>
         </div>
       </div>
-
       {selectActivity(nft, openseas) != undefined && <div className="px-3 m-auto">
         <h2 className="mt-8 text-xl font-semibold">NFT History</h2>
         {selectActivity(nft, openseas)?.map(({ type, current_owner, previous_owner, date, value, price }, index) => {

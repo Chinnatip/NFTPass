@@ -109,7 +109,7 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
   const [website, setWebsite] = useState(profile.website)
   const [description, setDescription] = useState(profile.description)
   const claimPage = async () => {
-    console.log(username, shortUrl, email, website, description)
+    // console.log(username, shortUrl, email, website, description)
     // console.log(parcel)
     if (address) {
       await firebase.writeDocument("creatorParcel", address, {

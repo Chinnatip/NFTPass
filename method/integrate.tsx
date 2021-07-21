@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-
+import * as firebase from "../method/firebase"
 import { Profile, RaribleGetResponse } from './rarible/interface'
 import { OpenseaGetResponse } from './opensea/interface'
 import { NiftyGetResponse } from './nifty/interface'
@@ -39,7 +39,7 @@ const getUserProfile = async (address: string): Promise<Profile> => {
   const [resp, errResp] = await withError(rarible.userInfo(address))
   const [metaResp, errMetaResp] = await withError(rarible.userMeta(address))
   if (!errResp && !errMetaResp) {
-    console.log(resp.data)
+    // console.log(resp.data)
     let restructureResp = { ...resp.data,
       username: resp.data?.name,
       address: resp.data?.id,
@@ -134,6 +134,21 @@ export const creatorFetch = async (address: string, action: any , nifty_slug: st
   })
   action.setNFTLists(constructNFTlists)
   const NFTLists = sanitizeArray(constructNFTlists)
+
+  //Attach parcel to firebase
+  await firebase.writeDocument("creatorParcel", address, {
+    profile: {
+      ...updateProfile,
+      verified: false,
+      name: updateProfile.username,
+      shortUrl: updateProfile.shortUrl !== undefined ? updateProfile.shortUrl : makeid(5),
+    },
+    NFTLists: sanitizeArray(NFTLists),
+    onsaleLists,
+    ownLists,
+    createdLists,
+    dropLists
+  })
   return {
     profile: updateProfile,
     NFTLists,
