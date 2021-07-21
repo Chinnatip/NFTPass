@@ -80,7 +80,6 @@ export async function getServerSideProps(context: any) {
     const doc = document.docs[0]
     const response: any = doc.data()
     const { profile: { pic, name , description} } = response
-    // const imageURL = encodeURI(pic)  //'https%3A%2F%2Fimages.rarible.com%2F%3Ffit%3Doutsize%26n%3D-1%26url%3Dhttps%3A%2F%2Fipfs.rarible.com%2Fipfs%2FQmQs6Ana1AtCyDHwCtmsbUQ2CtA8LsgdL1JUTyRSvPpneC%26w%3D240'
     const constructImage = `https://api.placid.app/u/9h6ycuatn?&profile_image[image]=${encodeURIComponent(pic)}&title-copy[text]=View+${prepareURI(name)}%27s`
     return {
       props: {
