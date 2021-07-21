@@ -142,8 +142,8 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
             <span className="flex-grow ">Link to Opensea</span>
             <div className="text-white bg-blue-500 opensea-logo logo-48 h-12 w-12 rounded-full" ></div>
           </a>}
-          {!!(getNFT as any).metadata && <div className='flex flex-wrap order-6 mt-3'>
-            {(getNFT as any).metadata?.attributes?.map((attr: any) => {
+          {!!(getNFT as any)?.metadata && <div className='flex flex-wrap order-6 mt-3'>
+            {(getNFT as any)?.metadata?.attributes?.map((attr: any) => {
               return <div className='bg-white rounded-lg flex flex-col p-3 mr-2 flex-grow shadow-nft'>
                 <p className="text-xs text-gray-600">#{attr.trait_type}</p>
                 <p className="truncate">{attr.value}</p>
