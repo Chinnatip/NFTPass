@@ -247,11 +247,11 @@ export const ConnectBtn = observer(() => {
   }
   const getBtnText = () => {
     if (!walletStore.isMetaMaskInstalled) {
-      return 'Connect to Wallet'
+      return 'Connect Wallet'
     } else if (walletStore.verified) {
       return `${mask(walletStore.address)} | ${walletStore.readableBalance}`
     } else {
-      return 'Connect to Wallet'
+      return 'Connect Wallet'
     }
   }
   return (
