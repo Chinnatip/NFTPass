@@ -236,7 +236,7 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
         </div>
       </div>
 
-      <div className="px-3 m-auto">
+      { selectActivity(nft, openseas) != undefined && <div className="px-3 m-auto">
         <h2 className="mt-8 text-xl font-semibold">NFT History</h2>
         {selectActivity(nft, openseas)?.map(({ type, current_owner, previous_owner, date, value, price }, index) => {
           switch (type) {
@@ -251,7 +251,9 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
             </div>
           }
         })}
-      </div>
+      </div>}
+
+      <div className="h-24" />
     </div>
   </div>
 }
