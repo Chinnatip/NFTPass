@@ -150,6 +150,7 @@ export interface ProfileList {
 export interface Profile {
   address?: string
   username?: string
+  name?: string
   shortUrl?: string
   pic?: string
   cover?: string

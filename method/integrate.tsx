@@ -77,7 +77,13 @@ export const creatorFetch = async (address: string, action: any , nifty_slug: st
 
   // Fetch and collect data
   let userProfile = await getUserProfile(address)
-  let updateProfile =  profile !== undefined ? { ...profile, ...userProfile} : userProfile
+  let updateProfile = profile !== undefined ? { ...profile, ...userProfile} : userProfile
+
+  // Prepare auto generated ID
+  updateProfile['shortUrl'] = updateProfile['shortUrl'] != undefined ? updateProfile['shortUrl'] : makeid(5)
+  updateProfile['verified'] = false
+  updateProfile['name'] = updateProfile['username'] != undefined ? updateProfile['username'] : `Creator`
+
   action.setProfile(updateProfile)
   checkMarket(action.setProfile, updateProfile, nf, 'nifty')
 
@@ -95,15 +101,6 @@ export const creatorFetch = async (address: string, action: any , nifty_slug: st
   // Foundation NFTs
   fnd = await foundation.ownByAddress(address)
   checkMarket(action.setProfile, updateProfile, fnd, 'foundation')
-
-  console.log(updateProfile)
-  // Prepare auto generated ID if profile doesn't found short-handle path
-  // if(updateProfile.shortUrl == undefined){
-  //   action.setProfile({
-  //     ...updateProfile,
-  //     shortUrl: makeid(5)
-  //   })
-  // }
 
   // Collect 3 type of NFTs-ID own by owner
   // address format is ${address:token_id}
@@ -146,11 +143,7 @@ export const creatorFetch = async (address: string, action: any , nifty_slug: st
 
   //Attach parcel to firebase
   await firebase.writeDocument("creatorParcel", address, {
-    profile: {
-      ...updateProfile,
-      verified: false,
-      name: updateProfile.username,
-    },
+    profile: updateProfile,
     NFTLists: sanitizeArray(NFTLists),
     onsaleLists,
     ownLists,
