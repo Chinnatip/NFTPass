@@ -11,6 +11,7 @@ import * as foundation from './foundation/fetch'
 import { withError } from 'utils/promise.util'
 import { raribleImg } from './rarible/method'
 import { NFTDetail, ResponseDetail, Galleryst } from '../interfaces/index'
+// import { faCommentsDollar } from '@fortawesome/free-solid-svg-icons'
 
 const checkMarket = (action: any, profile: Profile, lists: any, market: string) => {
   if(lists.allID.length > 0) {
@@ -37,15 +38,14 @@ export const sanitizeArray = (objs: Galleryst[]) => {
 
 const getUserProfile = async (address: string): Promise<Profile> => {
   const [resp, errResp] = await withError(rarible.userInfo(address))
-  const [metaResp, errMetaResp] = await withError(rarible.userMeta(address))
-  if (!errResp && !errMetaResp) {
-    // console.log(resp.data)
+  if (errResp == null ) {
+    console.log(resp.data)
     let restructureResp = { ...resp.data,
       username: resp.data?.name,
       address: resp.data?.id,
       pic: raribleImg(resp.data?.image),
-      meta: metaResp.data,
-      marketCheck: {}
+      marketCheck: {},
+      // meta: metaResp.data,
     }
     delete restructureResp.name;
     delete restructureResp.id;
@@ -56,6 +56,7 @@ const getUserProfile = async (address: string): Promise<Profile> => {
     return restructureResp
   }
   const [fndUser, errFnd] = await withError(foundation.userInfo(address))
+  console.log(fndUser, errFnd)
   if (!errFnd) {
     return {...fndUser, marketCheck: {}}
   }
@@ -78,7 +79,6 @@ export const creatorFetch = async (address: string, action: any , nifty_slug: st
   let userProfile = await getUserProfile(address)
   let updateProfile =  profile !== undefined ? { ...profile, ...userProfile} : userProfile
   action.setProfile(updateProfile)
-
   checkMarket(action.setProfile, updateProfile, nf, 'nifty')
 
   // Rarible NFTs
@@ -95,6 +95,15 @@ export const creatorFetch = async (address: string, action: any , nifty_slug: st
   // Foundation NFTs
   fnd = await foundation.ownByAddress(address)
   checkMarket(action.setProfile, updateProfile, fnd, 'foundation')
+
+  console.log(updateProfile)
+  // Prepare auto generated ID if profile doesn't found short-handle path
+  // if(updateProfile.shortUrl == undefined){
+  //   action.setProfile({
+  //     ...updateProfile,
+  //     shortUrl: makeid(5)
+  //   })
+  // }
 
   // Collect 3 type of NFTs-ID own by owner
   // address format is ${address:token_id}
@@ -141,7 +150,6 @@ export const creatorFetch = async (address: string, action: any , nifty_slug: st
       ...updateProfile,
       verified: false,
       name: updateProfile.username,
-      shortUrl: updateProfile.shortUrl !== undefined ? updateProfile.shortUrl : makeid(5),
     },
     NFTLists: sanitizeArray(NFTLists),
     onsaleLists,
