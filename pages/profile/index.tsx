@@ -81,7 +81,7 @@ export async function getServerSideProps(context: any) {
   const document = await firebase.findbyAddress("creatorParcel", `${address.toLowerCase()}`)
   if (document.exists) {
     const response: any = document.data()
-    const { profile: { pic, name, description } } = response
+    const { profile: { pic, name } } = response
     const constructImage = `https://api.placid.app/u/9h6ycuatn?&profile_image[image]=${encodeURIComponent(pic)}&title-copy[text]=View+${prepareURI(name)}%27s+NFT`
     return {
       props: {
@@ -89,8 +89,8 @@ export async function getServerSideProps(context: any) {
         nifty_slug: nifty_slug != undefined ? nifty_slug : false,
         seo: {
           image: constructImage,
-          title: name,
-          description: description
+          title: `${name} - Galleryst`,
+          description: response.profile?.description != undefined ? response.profile?.description : ''
         },
         response
       },

@@ -10,6 +10,7 @@ import { Profile } from '../method/rarible/interface'
 import { creatorFetch } from '../method/integrate'
 import { Galleryst, User } from '../interfaces/index'
 import { Drop } from '../method/nifty/interface'
+import { useRouter } from 'next/router'
 import Icon from '@/Icon'
 
 const lockDigit = (price: number) => {
@@ -90,14 +91,15 @@ export const AddressBox = ({ address }: { address: string | undefined }) => {
   </div>
 }
 
-const ClaimBox = ({ address, profile, action }: { address: string | undefined, profile: Profile, action: any }) => {
+const ClaimBox = ({ address, action }: { address: string | undefined, profile: Profile, action: any }) => {
   return <button
     onClick={() => address != undefined && action(true)}
     className="bg-black text-sm text-white rounded-full inline-block px-3 py-2 ml-3 active-shadow">
 
     {/* TODO: set roles of viewer and profile owner */}
     <div>
-      {profile.verified ? 'Edit profile' : 'Claim this address'}
+      Edit profile
+      {/* {profile.verified ? 'Edit profile' : 'Claim this address'} */}
     </div>
   </button>
 }
@@ -108,10 +110,10 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
   const [email, setEmail] = useState(profile.email)
   const [website, setWebsite] = useState(profile.website)
   const [description, setDescription] = useState(profile.description)
+  const router = useRouter()
   const claimPage = async () => {
-    // console.log(username, shortUrl, email, website, description)
-    // console.log(parcel)
     if (address) {
+      // Edit profile
       await firebase.writeDocument("creatorParcel", address, {
         ...parcel,
         profile: {
@@ -123,6 +125,8 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
           description
         }
       })
+      // Reload page
+      router.reload()
     }
     setTimeout(() => { modalAction(false) }, 1300)
   }
