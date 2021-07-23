@@ -362,9 +362,9 @@ export const Filter = ({ platform, profile }: { platform: 'rarible' | 'opensea' 
   const check = (platform: 'rarible' | 'opensea' | 'foundation' | 'nifty') => {
     switch (platform) {
       case 'rarible':
-        return { style: 'text-black bg-yellow-500 rarible-logo ', text: '' }
+        return { style: 'text-black bg-yellow-500 rarible-logo ', text: 'R' }
       case 'opensea':
-        return { style: 'text-white bg-blue-500 opensea-logo ', text: '' }
+        return { style: 'text-white bg-blue-500 opensea-logo ', text: 'O' }
       case 'foundation':
         return { style: 'text-white bg-black foundation-logo ', text: 'F' }
       case 'nifty':
@@ -374,10 +374,9 @@ export const Filter = ({ platform, profile }: { platform: 'rarible' | 'opensea' 
   const default_style = 'border text-gray-400 bg-gray-200'
   const { text, style } = check(platform)
   return <div className={`h-8 w-8 mx-2 flex items-center justify-center rounded-full shadow-nft text-lg ${market[platform] ? style : default_style}`}>
-    {text}
+    { !market[platform] && text }
   </div>
 }
-
 
 // export const FilterOnNFT = ({ current, platform, action, targetAction, target }: {
 //   target?: NFTDetail,

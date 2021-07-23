@@ -1,5 +1,6 @@
 import { ApolloClient, gql, InMemoryCache } from '@apollo/client'
 import { Galleryst, Profile } from 'interfaces'
+// import { ResponseDetail } from '../../interfaces/index'
 import {
   Artwork,
   ArtworkHistory,
@@ -752,6 +753,82 @@ export const trendingArtworks = async (limit = 48): Promise<any[]> => {
   })
   return data.auctions
 }
+
+// export const nftDetail = async(address: string, defaultAction?: (data: any) => void, action?: (data: any) => void): Promise<ResponseDetail> => {
+// }
+
+// export const nftDetail = async (addressPlusTokenId: string, defaultAction?: (data: any) => void, action?: (data: any) => void): Promise<ArtworkHistory> => {
+//   const ARTWORK_HISTORY_QUERY = gql`
+//     query getArtworkHistory($addressPlusTokenId: String!) {
+//       nft(id: $addressPlusTokenId) {
+//         id
+//         tokenId
+//         dateMinted
+//         ownedOrListedBy {
+//           id
+//         }
+//         creator {
+//           id
+//         }
+//         mostRecentActiveAuction {
+//           id
+//           auctionId
+//           duration
+//           status
+//           reservePriceInETH
+//           seller {
+//             id
+//           }
+//           dateEnding
+//           dateStarted
+//           dateCreated
+//           transactionHashCreated
+//           bids(orderBy: amountInETH, orderDirection: desc) {
+//             amountInETH
+//             status
+//             datePlaced
+//             bidder {
+//               id
+//             }
+//           }
+//           highestBid {
+//             amountInETH
+//             status
+//             datePlaced
+//             bidder {
+//               id
+//             }
+//           }
+//         }
+//         nftHistory(orderBy: date, orderDirection: desc) {
+//           id
+//           event
+//           date
+//           marketplace
+//           transactionHash
+//           amountInETH
+//           actorAccount {
+//             id
+//           }
+//           nftRecipient {
+//             id
+//           }
+//         }
+//       }
+//     }
+//   `
+//   const variables = {
+//     addressPlusTokenId: addressPlusTokenId.toLowerCase(),
+//   }
+//   console.log(variables)
+//   const { data } = await theGraphApolloClient.query({
+//     query: ARTWORK_HISTORY_QUERY,
+//     variables,
+//   })
+//   console.log('nft loaded >>>>>',data.nft)
+//   return data.nft
+// }
+
 
 export const getArtworkHistory = async (addressPlusTokenId: string): Promise<ArtworkHistory> => {
   const ARTWORK_HISTORY_QUERY = gql`

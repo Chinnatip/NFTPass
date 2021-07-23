@@ -2,6 +2,7 @@ import dayjs from 'dayjs'
 import { useState, useEffect } from 'react'
 import * as rarible from '../../method/rarible/fetch'
 import * as opensea from '../../method/opensea/fetch'
+// import * as foundation from '../../method/foundation/fetch'
 import * as firebase from "../../method/firebase"
 import { NFTDetail, ResponseDetail, Media, NFTPlatform } from '../../interfaces/index'
 import { prepareURI, checkDiff, nftSanitizer, makeid } from '../../method/integrate'
@@ -44,6 +45,10 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
         await opensea.getOfferandActivity(address, setOpensea, openseas)
         await rarible.getOfferandActivity(address, setRarible, raribles)
         setLoad(false)
+
+        // TODO:test foundation detail
+        // await foundation.nftDetail(address, setNFT, setOpensea)
+
         // parse display media
         setNFT(getNFT!)
         if (getPlatform?.current === 'galleryst') {
@@ -60,6 +65,10 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
         // const gallerystTokenMetadata = await contractQuerierService.getMetadataUri(contractAddress, +tokenId)
         const raribleCheck: ResponseDetail = await rarible.nftDetail(address, setNFT, setRarible)
         const openseaCheck: ResponseDetail = await opensea.nftDetail(address, setNFT, setOpensea)
+
+        // TODO:test foundation detail
+        // await foundation.nftDetail(address, setNFT, setOpensea)
+
         const checkCurrent =
         // gallerystTokenMetadata !== null ? 'galleryst' :
           raribleCheck.status ? 'rarible' :
