@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import { ethers } from 'ethers'
+import { ethers, VoidSigner } from 'ethers'
 import { makeAutoObservable } from 'mobx'
 
 type JsonRpcSigner = ethers.providers.JsonRpcSigner
@@ -14,7 +14,7 @@ class WalletStore {
   balance: number = 0
   verified: boolean = false
   defaultProvider!: ethers.providers.Web3Provider
-  signer!: JsonRpcSigner
+  signer!: JsonRpcSigner | VoidSigner
   isMetaMaskInstalled: boolean = false
 
   get isConnected() {
@@ -62,6 +62,15 @@ class WalletStore {
     this.balance = balance
   }
 
+  reset = () => {
+    this.address = ''
+    this.accounts = []
+    this.balance = 0
+    this.verified = false
+    this.signer = new VoidSigner('')
+    this.clearStorage()
+  }
+
   updateSigner = () => {
     this.signer = this.defaultProvider.getSigner()
   }
@@ -77,13 +86,17 @@ class WalletStore {
     const address = localStorage.getItem('address')
     const expires = localStorage.getItem('expires')
     if (expires === null || address === null || dayjs().isAfter(dayjs(expires))) {
-      localStorage.removeItem('address')
-      localStorage.removeItem('expires')
+      this.clearStorage()
     } else {
       this.address = address
       this.verified = true
       this.updateSigner()
     }
+  }
+
+  private clearStorage = () => {
+    localStorage.removeItem('address')
+    localStorage.removeItem('expires')
   }
 }
 
