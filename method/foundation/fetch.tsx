@@ -11,7 +11,7 @@ import {
   UserFollower,
 } from './interface'
 import { FOUNDATION_GQL_URI, THE_GRAPH_GQL_URI } from './static'
-import { getFoundationAssetUrl } from './utils'
+import { getFoundationAlternateUrl, getFoundationAssetUrl } from './utils'
 
 const foundationApolloClient = new ApolloClient({
   uri: FOUNDATION_GQL_URI,
@@ -623,6 +623,7 @@ export const ownByAddress = async (
       id: tokenIdToAddress.get(nft.tokenId.toString())!,
       priceETH: tokenIdToPrice.get(nft.tokenId.toString()),
       imagePreview: getFoundationAssetUrl(nft.assetIPFSPath),
+      alternateUrl: getFoundationAlternateUrl(nft.assetIPFSPath) 
     }
   })
   return {

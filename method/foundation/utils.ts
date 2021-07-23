@@ -10,3 +10,7 @@ export const getFoundationAssetUrl = (
   const filename = preview ? path.replace('nft', 'nft_preview') : path
   return `${baseUrl}/${prefix1}/${prefix2}/${IPFS}/${filename}`
 }
+
+export const getFoundationAlternateUrl = (assetIPFSPath: string) => {
+  return `https://f8n-ipfs-production.imgix.net/${assetIPFSPath}`
+}
