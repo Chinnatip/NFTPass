@@ -177,12 +177,14 @@ export const makeid = (length: number) => {
   return result;
 }
 
-export const selectActivity = (nft: NFTDetail, openseas: NFTDetail) => {
-  if (openseas.activity != undefined) {
-    return openseas.activity
-  } else {
-    return nft.activity
-  }
+// export const selectActivity = (nft: NFTDetail, openseas: NFTDetail) => {
+export const selectActivity = (nft: NFTDetail) => {
+  return nft.activity
+  // if (openseas.activity != undefined) {
+  //   return openseas.activity
+  // } else {
+  //   return nft.activity
+  // }
 }
 
 export const nftSanitizer = (objs: ResponseDetail) => {

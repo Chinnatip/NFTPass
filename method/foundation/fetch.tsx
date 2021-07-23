@@ -1,5 +1,8 @@
+import { getAddress } from '@ethersproject/address'
+import { map } from 'ramda'
+import axios from 'axios'
 import { ApolloClient, gql, InMemoryCache } from '@apollo/client'
-import { Galleryst, Profile } from 'interfaces'
+import { Galleryst, Profile, ResponseDetail, ActivityLog, NFTDetail } from 'interfaces'
 // import { ResponseDetail } from '../../interfaces/index'
 import {
   Artwork,
@@ -12,6 +15,10 @@ import {
 } from './interface'
 import { FOUNDATION_GQL_URI, THE_GRAPH_GQL_URI } from './static'
 import { getFoundationAlternateUrl, getFoundationAssetUrl } from './utils'
+
+export const mapStrToCheckSum = map<string, string>(getAddress);
+
+
 
 const foundationApolloClient = new ApolloClient({
   uri: FOUNDATION_GQL_URI,
@@ -52,7 +59,7 @@ export const hasuraUsersByAddresses = async (publicKeys: string[]): Promise<User
   `
   const variables = {
     publicKeys,
-    moderationStatuses: ['ACTIVE'],
+    moderationStatuses: ["ACTIVE", "SUSPENDED", "UNDER_REVIEW"],
   }
   const { data } = await foundationApolloClient.query({
     query: USER_QUERY,
@@ -623,7 +630,7 @@ export const ownByAddress = async (
       id: tokenIdToAddress.get(nft.tokenId.toString())!,
       priceETH: tokenIdToPrice.get(nft.tokenId.toString()),
       imagePreview: getFoundationAssetUrl(nft.assetIPFSPath),
-      alternateUrl: getFoundationAlternateUrl(nft.assetIPFSPath) 
+      alternateUrl: getFoundationAlternateUrl(nft.assetIPFSPath)
     }
   })
   return {
@@ -755,82 +762,6 @@ export const trendingArtworks = async (limit = 48): Promise<any[]> => {
   return data.auctions
 }
 
-// export const nftDetail = async(address: string, defaultAction?: (data: any) => void, action?: (data: any) => void): Promise<ResponseDetail> => {
-// }
-
-// export const nftDetail = async (addressPlusTokenId: string, defaultAction?: (data: any) => void, action?: (data: any) => void): Promise<ArtworkHistory> => {
-//   const ARTWORK_HISTORY_QUERY = gql`
-//     query getArtworkHistory($addressPlusTokenId: String!) {
-//       nft(id: $addressPlusTokenId) {
-//         id
-//         tokenId
-//         dateMinted
-//         ownedOrListedBy {
-//           id
-//         }
-//         creator {
-//           id
-//         }
-//         mostRecentActiveAuction {
-//           id
-//           auctionId
-//           duration
-//           status
-//           reservePriceInETH
-//           seller {
-//             id
-//           }
-//           dateEnding
-//           dateStarted
-//           dateCreated
-//           transactionHashCreated
-//           bids(orderBy: amountInETH, orderDirection: desc) {
-//             amountInETH
-//             status
-//             datePlaced
-//             bidder {
-//               id
-//             }
-//           }
-//           highestBid {
-//             amountInETH
-//             status
-//             datePlaced
-//             bidder {
-//               id
-//             }
-//           }
-//         }
-//         nftHistory(orderBy: date, orderDirection: desc) {
-//           id
-//           event
-//           date
-//           marketplace
-//           transactionHash
-//           amountInETH
-//           actorAccount {
-//             id
-//           }
-//           nftRecipient {
-//             id
-//           }
-//         }
-//       }
-//     }
-//   `
-//   const variables = {
-//     addressPlusTokenId: addressPlusTokenId.toLowerCase(),
-//   }
-//   console.log(variables)
-//   const { data } = await theGraphApolloClient.query({
-//     query: ARTWORK_HISTORY_QUERY,
-//     variables,
-//   })
-//   console.log('nft loaded >>>>>',data.nft)
-//   return data.nft
-// }
-
-
 export const getArtworkHistory = async (addressPlusTokenId: string): Promise<ArtworkHistory> => {
   const ARTWORK_HISTORY_QUERY = gql`
     query getArtworkHistory($addressPlusTokenId: String!) {
@@ -899,4 +830,103 @@ export const getArtworkHistory = async (addressPlusTokenId: string): Promise<Art
     variables,
   })
   return data.nft
+}
+
+export const getNftDetail = async(address: string): Promise<ResponseDetail> => {
+  const splitAddress = address.split(':')
+  const tokenId = splitAddress[1]
+  const addressPlusTokenId = address.split(':').join('-')
+  const artworsks = await hasuraArtworksByTokenIds([tokenId])
+  if(artworsks.length > 0){
+    const {
+      name,
+      description,
+      assetIPFSPath,
+      creator: {
+        name: creator_name,
+        username,
+        publicKey,
+        profileImageUrl
+      }
+    } = artworsks[0]
+
+    const {
+      mostRecentActiveAuction: { reservePriceInETH, highestBid },
+      nftHistory
+    }: ArtworkHistory = await getArtworkHistory(addressPlusTokenId)
+    let currentOwner
+    const bidderGroup : string[] = nftHistory?.map(history => history.actorAccount.id)
+    const uniqueBuyer = [...new Set([ publicKey.toLowerCase(), ...bidderGroup ])]
+    const usersInfo = await hasuraUsersByAddresses(mapStrToCheckSum(uniqueBuyer))
+    const creator = {
+      address: publicKey,
+      name: creator_name,
+      image: profileImageUrl
+    }
+    const offer = highestBid != undefined ?
+      { status: true , best_offer: parseFloat(highestBid.amountInETH)  } :
+      { status: false }
+    const activity : ActivityLog[] = nftHistory?.map((nft) => {
+      const bidder = usersInfo.find(user => user.publicKey.toLowerCase() == nft.actorAccount.id.toLowerCase())
+      if(nft.event == 'Settled'){
+        currentOwner = {
+          address: bidder?.publicKey != undefined ? bidder.publicKey : '',
+          name: bidder?.name ,
+          image: bidder?.profileImageUrl
+        }
+      }
+      return {
+        type: nft.event,
+        current_owner: {
+          address: bidder?.publicKey != undefined ? bidder.publicKey : '',
+          name: bidder?.name ,
+          desription: bidder?.bio ,
+          image: bidder?.profileImageUrl
+        },
+        date: nft.date,
+        value: 1,
+        price: parseFloat(nft.amountInETH)
+      }
+    })
+    const data : NFTDetail = {
+      address: address.split(':').join('-'),
+      image: `https://f8n-ipfs-production.imgix.net/${assetIPFSPath}`,
+      title: name,
+      description: description,
+      owner: currentOwner != undefined ? [currentOwner] : [creator],
+      pricing: {
+        status: true,
+        eth: parseFloat(reservePriceInETH)
+      },
+      creator,
+      offer,
+      activity
+    }
+    return {
+      status: true,
+      link: `https://foundation.app/@${username}/${name.toLowerCase().split(' ').join('-')}-${tokenId}`,
+      data
+    }
+  }else{
+    return { status: false}
+  }
+}
+
+export const nftDetail = async(address: string, defaultAction?: (data: any) => void, action?: (data: any) => void): Promise<ResponseDetail> => {
+  const splitAddress = address.split(':')
+  const collectionAddress = splitAddress[0]
+  const FNDCollection = '0x3b3ee1931dc30c1957379fac9aba94d1c48a5405'
+  if( collectionAddress == FNDCollection ){
+    const response = await axios.get(`/api/foundation/nftDetail?address=${address}`)
+    if(response.status == 200){
+      const { data } = response.data
+      defaultAction?.(data)
+      action?.(data)
+      return response.data
+    }else{
+      return {status: false}
+    }
+  }else{
+    return { status: false }
+  }
 }
