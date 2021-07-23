@@ -17,6 +17,19 @@ const lockDigit = (price: number) => {
   return (Math.floor(price * 10000)) / 10000
 }
 
+const fixPath = (path: string| undefined) => {
+  if(path !== undefined){
+    const splitColon = path.split('://')
+    if( splitColon.length > 1){
+      return `http://${splitColon[1]}`
+    }else{
+      return `http://${splitColon[0]}`
+    }
+  }else{
+    return undefined
+  }
+}
+
 // HEADER
 export const CreatorHeader = ({ profile, parcel, claimable = false }: { profile: Profile, parcel?: any, claimable?: boolean }) => {
   const [claimStage, setClaimStage] = useState(false)
@@ -45,7 +58,7 @@ export const CreatorHeader = ({ profile, parcel, claimable = false }: { profile:
     {/* Contact url */}
     <div className="p-4 pt-0">
       <div className="md:px-8 px-1">{profile?.description}</div>
-      <a target="_blank" className="my-2 inline-block text-blue-700" href={profile?.website}>{profile?.website}</a>
+      <a target="_blank" className="my-2 inline-block text-blue-700" href={fixPath(profile?.website)}>{profile?.website}</a>
     </div>
 
     {/* Follower */}
@@ -91,15 +104,12 @@ export const AddressBox = ({ address }: { address: string | undefined }) => {
   </div>
 }
 
-const ClaimBox = ({ address, action }: { address: string | undefined, profile: Profile, action: any }) => {
+const ClaimBox = ({ address, action, profile }: { address: string | undefined, profile: Profile, action: any }) => {
   return <button
     onClick={() => address != undefined && action(true)}
     className="bg-black text-sm text-white rounded-full inline-block px-3 py-2 ml-3 active-shadow">
-
-    {/* TODO: set roles of viewer and profile owner */}
     <div>
-      Edit profile
-      {/* {profile.verified ? 'Edit profile' : 'Claim this address'} */}
+      { profile.verified ? 'Edit profile' : 'Claim profile' }
     </div>
   </button>
 }
