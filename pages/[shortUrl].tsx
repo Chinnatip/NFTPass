@@ -38,7 +38,7 @@ const Page = ({ seo, response }: {
     })()
   }, []);
 
-  return <div className="w-screen h-screen pt-8 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")' }}>
+  return <div className="w-screen h-screen pt-0 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")' }}>
     <NextSeo
       title={seo.title}
       description={seo.description}
@@ -91,7 +91,7 @@ export async function getServerSideProps(context: any) {
         }
       }
     }
-  }else{
+  } else {
     return {
       props: { seo },
     }

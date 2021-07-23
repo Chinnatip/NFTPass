@@ -1633,3 +1633,8 @@ div.address-text-wrapper > span {
 .whitespace-nowrap	{
 white-space: nowrap; 
 }
+
+.bg-black-blur-2 {
+  backdrop-filter: blur(10px);
+  background-color: rgba(0, 0, 0, 0.5);
+}

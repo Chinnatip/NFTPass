@@ -29,7 +29,7 @@ const Page = () => {
       })
     }
   }
-  return <div className="w-screen h-screen pt-8 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")' }}>
+  return <div className="w-screen h-screen pt-0 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")' }}>
     {modal && <div className="w-screen h-screen top-0 left-0 fixed flex items-center justify-center z-10" style={{ background: '#000000a6' }}>
       {loaded ? <div className="bg-white rounded-xl shadow-nft text-center text-md relative flex flex-col items-center justify-center" style={{ height: '240px', width: '320px' }}>
         <div className="w-full text-center">
