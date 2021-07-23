@@ -112,13 +112,23 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
   const [description, setDescription] = useState(profile.description)
   const router = useRouter()
   const claimPage = async () => {
-    if (address) {
-      // Edit profile
+    let checkShortURL = true
+    let checkAddress = address !=  undefined ? true : false
+    // Check duplicate shortURL
+    if(shortUrl != undefined && shortUrl != profile.shortUrl){
+      const document = await firebase.findDocument("creatorParcel",shortUrl, "profile.shortUrl")
+      if (document.docs.length > 0) {
+        checkShortURL = false
+      }
+    }
+    // Check cirrect address
+    if (checkAddress && address && checkShortURL) {
       await firebase.writeDocument("creatorParcel", address, {
         ...parcel,
         profile: {
           ...parcel.profile,
           username,
+          name: username,
           shortUrl,
           email,
           website,
@@ -126,9 +136,17 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
         }
       })
       // Reload page
-      router.reload()
+      if(profile.shortUrl == shortUrl){
+        router.reload()
+      }else{
+        if(window != undefined){
+          window.location.href = `/${shortUrl}`
+        }
+      }
+    }else{
+      alert('please check URL or other input.')
     }
-    setTimeout(() => { modalAction(false) }, 1300)
+    // setTimeout(() => { modalAction(false) }, 1300)
   }
   return <>
     <div className="top-0 left-0 fixed w-screen h-screen bg-black opacity-50" />

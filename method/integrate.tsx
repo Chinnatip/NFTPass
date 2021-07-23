@@ -59,13 +59,13 @@ const getUserProfile = async (address: string): Promise<Profile> => {
   }
   const [opsUser, errOps] = await withError(opensea.userInfo(address))
   if (!errOps && opsUser != undefined) {
-    return {...opsUser, marketCheck: {}}
+    return { ...opsUser, marketCheck: {}}
   }
   const [fndUser, errFnd] = await withError(foundation.userInfo(address))
   if (!errFnd) {
     return {...fndUser, marketCheck: {}}
   }
-  return { marketCheck: {} }
+  return { marketCheck: {}, pic: 'https://www.galleryst.co/favicon/ms-icon-310x310.png', address }
 }
 
 export const creatorFetch = async (address: string, action: any , nifty_slug: string | false, profile?: Profile) => {

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import * as firebase from "../../method/firebase"
+import ProfilePage from '@/ProfilePage'
 import { Profile } from '../../method/rarible/interface'
 import { Drop } from '../../method/nifty/interface'
 import { creatorFetch, prepareURI } from '../../method/integrate'
 import { Galleryst } from '../../interfaces/index'
 import { observer } from 'mobx-react-lite'
 import { ConnectBtn } from '@/Galleryst'
-import ProfilePage from '@/ProfilePage'
 import { NextSeo } from 'next-seo'
 
 const Page = observer(({ address, nifty_slug, seo, response }: {
@@ -19,7 +19,10 @@ const Page = observer(({ address, nifty_slug, seo, response }: {
   }
   response?: any
 }) => {
-  const [profile, setProfile] = useState<Profile>(response != undefined ? response.profile : {})
+  const [profile, setProfile] = useState<Profile>(response != undefined ? response.profile : {
+    pic: 'https://www.galleryst.co/favicon/ms-icon-310x310.png',
+    address
+  })
   const [NFTLists, setNFTLists] = useState<Galleryst[]>([])
   const [ownLists, setOwnLists] = useState<string[]>([])
   const [onsaleLists, setOnsaleLists] = useState<string[]>([])
