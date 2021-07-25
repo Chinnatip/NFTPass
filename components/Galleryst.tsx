@@ -358,18 +358,18 @@ export const Filter = ({ platform, profile }: { platform: 'rarible' | 'opensea' 
   const check = (platform: 'rarible' | 'opensea' | 'foundation' | 'nifty') => {
     switch (platform) {
       case 'rarible':
-        return { style: 'text-black bg-yellow-500 rarible-logo ', text: '' }
+        return { style: 'text-black bg-yellow-500 rarible-logo ', text: '', ref: 'Rarible' }
       case 'opensea':
-        return { style: 'text-white bg-blue-500 opensea-logo ', text: '' }
+        return { style: 'text-white bg-blue-500 opensea-logo ', text: '', ref: 'Opensea' }
       case 'foundation':
-        return { style: 'text-white bg-black foundation-logo ', text: 'F' }
+        return { style: 'text-white bg-black foundation-logo ', text: '', ref: 'Foundation' }
       case 'nifty':
-        return { style: 'text-white bg-blue-700 nifty-logo ', text: 'N' }
+        return { style: 'text-white bg-blue-700 nifty-logo ', text: '', ref: 'Nifty Gateway' }
     }
   }
-  const default_style = 'border text-gray-400 bg-gray-200'
+  const default_style = 'border text-gray-400 bg-gray-200 hidden'
   const { text, style } = check(platform)
-  return <div className={`h-8 w-8 mx-2 flex items-center justify-center rounded-full shadow-nft text-lg ${market[platform] ? style : default_style}`}>
+  return <div className={`h-8 w-8 mx-2 flex items-center justify-center rounded-full shadow-nft text-lg ${market[platform] ? style : default_style}`} >
     {text}
   </div>
 }
