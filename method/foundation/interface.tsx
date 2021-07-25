@@ -153,7 +153,7 @@ export type ArtworkHistory = {
     bids: BidFragment
     highestBid: BidFragment
   }
-  nftHistory: NftHistoryFragment
+  nftHistory: NftHistoryFragment[]
 }
 
 export type UserProfileCollector = {

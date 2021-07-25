@@ -6,7 +6,7 @@ import { faArrowLeft, faShareAlt } from '@fortawesome/free-solid-svg-icons'
 import Icon, { Picon } from '@/Icon'
 import { NFTDetail, Media, NFTPlatform } from '../interfaces/index'
 import { ConnectBtn, profilePic, profileAddress } from '@/Galleryst'
-import { selectActivity } from '../method/integrate'
+// import { selectActivity } from '../method/integrate'
 
 const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false }: {
   prefix?: boolean
@@ -17,6 +17,7 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
     gallerystID: string
     raribles: NFTDetail
     openseas: NFTDetail
+    foundations: NFTDetail
     platform: NFTPlatform
     copied: boolean
     displayMedia: Media
@@ -33,16 +34,16 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
   }
 }) => {
   const {
-    nft, loading, gallerystID, raribles, openseas, platform, copied, mediaList, displayMedia, displayIdx
+    nft, loading, gallerystID, raribles, openseas,foundations, platform, copied, mediaList, displayMedia, displayIdx
   } = stateData
   const { setDisplayMedia, setDisplayIdx, setCopied } = stateAction
   const getDate = (dayFormat: string) => dayjs(dayFormat).format('DD MMM YYYY')
+  const getDateUnix = (day: string) => dayjs.unix( parseInt(day)).format('DD MMM YYYY')
   const useCopyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
     setCopied(true)
     setTimeout(() => { setCopied(false) }, 1300);
   }
-
   const { title, description, creator, owner } = nft
   return <div className="w-screen h-screen z-20 bg-white fixed top-0 left-0 overflow-y-scroll overflow-x-hidden">
     <NextSeo
@@ -142,6 +143,10 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
             <span className="flex-grow ">View on Opensea</span>
             <div className="text-white bg-blue-500 opensea-logo logo-48 h-12 w-12 rounded-full" ></div>
           </a>}
+          {platform.check['foundation']?.status && <a href={platform.check['foundation']?.link} target="_blank" className="order-6 flex mt-4 p-4 items-center rounded-24 bg-white shadow-nft active-shadow">
+            <span className="flex-grow ">Link to Foundation</span>
+            <div className="text-white bg-blue-500 foundation-logo logo-48 h-12 w-12 rounded-full" ></div>
+          </a>}
           {!!(getNFT as any)?.metadata && <div className='flex flex-wrap order-6 mt-3'>
             {(getNFT as any)?.metadata?.attributes?.map((attr: any) => {
               return <div className='bg-white rounded-lg flex flex-col p-3 mr-2 flex-grow shadow-nft'>
@@ -165,6 +170,12 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
               </span>
               <span className="text-right">{raribles.pricing?.eth} ETH</span>
             </div>}
+            {foundations.pricing?.eth != undefined && <div className="flex text-xl items-center py-2">
+              <span className="flex-grow text-gray-500 text-left flex items-center">
+                <Picon platform="foundation"></Picon> <span className="text-sm">Lowest listing price</span>
+              </span>
+              <span className="text-right">{foundations.pricing?.eth} ETH</span>
+            </div>}
             {openseas.offer?.status && <div className="flex text-xl items-center py-2">
               <span className="flex-grow text-gray-500 text-left flex items-center">
                 <Picon platform="opensea"></Picon> <span className="text-base">Current best offer</span>
@@ -176,6 +187,12 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
                 <Picon platform="rarible"></Picon> <span className="text-sm">Current best offer</span>
               </span>
               <span className="text-right"> {raribles.offer?.best_offer?.toFixed(2)} ETH</span>
+            </div>}
+            {foundations.offer?.status && <div className="flex text-xl items-center py-2">
+              <span className="flex-grow text-gray-500 text-left flex items-center">
+                <Picon platform="foundation"></Picon> <span className="text-sm">Current best offer</span>
+              </span>
+              <span className="text-right"> {foundations.offer?.best_offer?.toFixed(2)} ETH</span>
             </div>}
 
             <br />
@@ -206,9 +223,10 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
           </div>
         </div>
       </div>
-      {selectActivity(nft, openseas) != undefined && <div className="px-3 m-auto">
+      {nft.activity != undefined && <div className="px-3 m-auto">
         <h2 className="mt-8 text-xl font-semibold">NFT History</h2>
-        {selectActivity(nft, openseas)?.map(({ type, current_owner, previous_owner, date, value, price }, index) => {
+        {nft.activity?.map((parcel, index) => {
+          const { type, current_owner, previous_owner, date, value, price } = parcel
           switch (type) {
             case 'order': return <div className="flex items-center my-4 text-sm text-gray-500" key={index}>
               {profilePic(current_owner)} - {type} ({value}items | price {price}ETH) @ {getDate(date)}
@@ -218,6 +236,21 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
             </div>
             case 'mint': return <div className="flex items-center my-5 text-sm text-gray-500" key={index}>
               {profilePic(current_owner)} - {type} @ {getDate(date)}
+            </div>
+            case 'Minted': return <div className="flex items-center my-5 text-sm text-gray-500" key={index}>
+            {profilePic(current_owner)} - {type} @ {getDateUnix(date)}
+            </div>
+            case 'Bid': return <div className="flex items-center my-5 text-sm text-gray-500" key={index}>
+            {profilePic(current_owner)} - {type} @ {getDateUnix(date)}
+            </div>
+            // case 'Sold': return <div className="flex items-center my-5 text-sm text-gray-500" key={index}>
+            // {profilePic(current_owner)} - {type} @ {getDateUnix(date)}
+            // </div>
+            // case 'Settled': return <div className="flex items-center my-5 text-sm text-gray-500" key={index}>
+            // {profilePic(current_owner)} - {type} @ {getDateUnix(date)}
+            // </div>
+            case 'Listed': return <div className="flex items-center my-5 text-sm text-gray-500" key={index}>
+            {profilePic(current_owner)} - {type} @ {getDateUnix(date)}
             </div>
           }
         })}

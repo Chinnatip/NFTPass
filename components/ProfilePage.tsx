@@ -21,7 +21,7 @@ const ProfilePage = ({ profile, action, lists }: {
   }
   const wallet = walletStore
   const address = profile.address
-  const claimCheck = address == wallet?.address && profile?.verified != true //true
+  const claimCheck = address == wallet?.address //&& profile?.verified != true //true
   return <div className="md:w-4/5 w-full m-auto z-10 relative">
     <UpdateAction profile={profile} action={action} />
     {profile.shortUrl && <ShareAction gallerystID={profile.shortUrl != undefined ? `${profile.shortUrl}` : `profile?address=${profile.address}`} />}

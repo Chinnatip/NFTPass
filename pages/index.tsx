@@ -4,10 +4,6 @@ import Navbar from "../components/Navbar"
 import { getCreator, getNFTS, Creator, shuffle, randomNFT, profileNFT, NFT } from '../method/fetchJSON'
 import { ConnectBtn } from '@/Galleryst'
 
-// const tagList = [
-//   'All','New Arrival','Pixel Art','2D','3D','Vector','Generative','Raster Painting','Photography','Collage','Algorithmic Art'
-// ]
-
 const Page = () => {
   const [current, setCurrent] = useState('all')
   const [creators, setCreators] = useState<Creator[]>([])
@@ -24,6 +20,14 @@ const Page = () => {
         style={{ letterSpacing: '0.04rem', textShadow: '0 0 40px #884d4d52', opacity: '90%' }}>
         We curate, You discover. Explore NFTs from all platforms in one place.
       </div>
+      {/* search-box */}
+      {/* <div className="text-center">
+        <div className="bg-white h-12 rounded-full inline-flex items-center">
+          <input type="text" style={{width: '24rem'}} className="px-2 bg-white ml-4 rounded-full" placeholder="paste address or nft to see info..." />
+          <button style={{ background: '#9a6b6b' }} className=" flex items-center justify-center rounded-full p-4 ml-4 text-white h-12 " onClick={() => alert('searching >>>> ')}>Search</button>
+        </div>
+      </div> */}
+
       <div className=" m-auto centered-connectbtn p-2 rounded-full">
         <ConnectBtn />
       </div>

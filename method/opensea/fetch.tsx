@@ -26,6 +26,15 @@ const constructOpensea = (nftLists: OpenseaItem[]) : Galleryst[] => {
   })
 }
 
+export const userInfo = async(contact_address: string) => {
+  const resp = await axios.get(`/api/opensea/searchQuery?address=${contact_address}`)
+  if(resp.status ==200 && resp.data.status == true){
+    return resp.data
+  }else{
+    return undefined
+  }
+}
+
 const getPriceHistory = async(contact_address: string, token_id: string) => {
   const resp = await axios.get(`/api/opensea/tradeHistory?address=${contact_address}:${token_id}`)
   console.log(resp.data)

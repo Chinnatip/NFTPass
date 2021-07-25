@@ -6,14 +6,29 @@ import { walletStore } from 'stores/wallet.store'
 import { observer } from 'mobx-react-lite'
 import { walletService } from 'services/wallet.service'
 import { createPopper } from '@popperjs/core'
+import UploadButton from '@/UploadButton'
 import { Profile } from '../method/rarible/interface'
 import { creatorFetch } from '../method/integrate'
 import { Galleryst, User } from '../interfaces/index'
 import { Drop } from '../method/nifty/interface'
+import { useRouter } from 'next/router'
 import Icon from '@/Icon'
 
 const lockDigit = (price: number) => {
   return (Math.floor(price * 10000)) / 10000
+}
+
+const fixPath = (path: string | undefined) => {
+  if (path !== undefined) {
+    const splitColon = path.split('://')
+    if (splitColon.length > 1) {
+      return `http://${splitColon[1]}`
+    } else {
+      return `http://${splitColon[0]}`
+    }
+  } else {
+    return undefined
+  }
 }
 
 // HEADER
@@ -44,7 +59,7 @@ export const CreatorHeader = ({ profile, parcel, claimable = false }: { profile:
     {/* Contact url */}
     <div className="p-4 pt-0">
       <div className="md:px-8 px-1">{profile?.description}</div>
-      <a target="_blank" className="my-2 inline-block text-blue-700" href={profile?.website}>{profile?.website}</a>
+      <a target="_blank" className="my-2 inline-block text-blue-700" href={fixPath(profile?.website)}>{profile?.website}</a>
     </div>
 
     {/* Follower */}
@@ -90,14 +105,12 @@ export const AddressBox = ({ address }: { address: string | undefined }) => {
   </div>
 }
 
-const ClaimBox = ({ address, profile, action }: { address: string | undefined, profile: Profile, action: any }) => {
+const ClaimBox = ({ address, action, profile }: { address: string | undefined, profile: Profile, action: any }) => {
   return <button
     onClick={() => address != undefined && action(true)}
     className="bg-black text-sm text-white rounded-full inline-block px-3 py-2 ml-3 active-shadow">
-
-    {/* TODO: set roles of viewer and profile owner */}
     <div>
-      {profile.verified ? 'Edit profile' : 'Claim this address'}
+      {profile.verified ? 'Edit profile' : 'Claim profile'}
     </div>
   </button>
 }
@@ -106,25 +119,47 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
   const [username, setUsername] = useState(profile.username)
   const [shortUrl, setShorthand] = useState(profile.shortUrl)
   const [email, setEmail] = useState(profile.email)
+  const [pic, setProfileImg] = useState(profile?.pic)
   const [website, setWebsite] = useState(profile.website)
   const [description, setDescription] = useState(profile.description)
+  const router = useRouter()
   const claimPage = async () => {
-    // console.log(username, shortUrl, email, website, description)
-    // console.log(parcel)
-    if (address) {
+    let checkShortURL = true
+    let checkAddress = address != undefined ? true : false
+    // Check duplicate shortURL
+    if (shortUrl != undefined && shortUrl != profile.shortUrl) {
+      const document = await firebase.findDocument("creatorParcel", shortUrl, "profile.shortUrl")
+      if (document.docs.length > 0) {
+        checkShortURL = false
+      }
+    }
+    // Check cirrect address
+    if (checkAddress && address && checkShortURL) {
       await firebase.writeDocument("creatorParcel", address, {
         ...parcel,
         profile: {
           ...parcel.profile,
           username,
+          pic,
+          name: username,
           shortUrl,
           email,
           website,
           description
         }
       })
+      // Reload page
+      if (profile.shortUrl == shortUrl) {
+        router.reload()
+      } else {
+        if (window != undefined) {
+          window.location.href = `/${shortUrl}`
+        }
+      }
+    } else {
+      alert('please check URL or other input.')
     }
-    setTimeout(() => { modalAction(false) }, 1300)
+    // setTimeout(() => { modalAction(false) }, 1300)
   }
   return <>
     <div className="top-0 left-0 fixed w-screen h-screen bg-black opacity-50" />
@@ -136,7 +171,8 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
       </div>
       <div className="text-center text-gray-600 text-sm hidden">Edit Profile</div>
       <div className="text-center">
-        <img src={profile.pic} className="h-20 rounded-full m-auto border" />
+        <img src={pic} className="h-20 rounded-full m-auto border border-white border-4 shadow-lg" />
+        <UploadButton action={setProfileImg} />
       </div>
       <div className="mt-5 mb-4">
         <div className="text-black">Name</div>
@@ -200,12 +236,20 @@ export const NFTGroup = ({ lists, nfts, text = '', type = '' }: { type?: string,
       <h2 className="text-sm bg-gray-200 rounded-full inline-block mb-2 px-3 py-1 shadow-nft text-gray-600 md:mx-4">{text}</h2>
       <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 md:p-4 p-0 gap-2 w-full">
         {nfts.filter(item => lists.includes(item.id)).map(item => {
-          const { imagePreview, check } = item
+          const { imagePreview, check, alternateUrl } = item
+          // @ts-ignore
+          const onImgError = (event) => {
+            event.target.onerror = null;
+            event.target.src = alternateUrl;
+          }
           return imagePreview != undefined && <a target="_blank" href={`/nft?address=${item.id}`} className="relative cursor-pointer bg-white rounded-16 mb-2 active-shadow" key={`${item.id}`}>
             <div className="thumbnail-wrapper w-full relative">
               {imagePreview.slice(imagePreview.length - 3, imagePreview.length) == 'mp4' ?
-                <video className="rounded-16 border-8 border-white thumbnail-height" src={imagePreview} autoPlay loop muted /> :
-                <img className="rounded-16 border-8 border-white thumbnail-height" src={imagePreview} />
+                <video className="rounded-16 border-8 border-white thumbnail-height" autoPlay loop muted>
+                  <source src={imagePreview} />
+                  <source src={alternateUrl} />
+                </video> :
+                <img className="rounded-16 border-8 border-white thumbnail-height" src={imagePreview} onError={onImgError} />
               }
               <div className="absolute flex justify-end	z-10 bottom-0  w-full mb-2 px-2 pt-6 ">
                 <div className="flex px-2 rounded-b-16 pt-10 justify-end w-full" style={{ background: 'linear-gradient(360deg, rgba(0, 0, 0, 0.52) 10%, rgba(196, 196, 196, 0) 50%)' }}>
@@ -369,11 +413,10 @@ export const Filter = ({ platform, profile }: { platform: 'rarible' | 'opensea' 
   }
   const default_style = 'border text-gray-400 bg-gray-200 hidden'
   const { text, style } = check(platform)
-  return <div className={`h-8 w-8 mx-2 flex items-center justify-center rounded-full shadow-nft text-lg ${market[platform] ? style : default_style}`} >
-    {text}
+  return <div className={`h-8 w-8 mx-2 flex items-center justify-center rounded-full shadow-nft text-lg ${market[platform] ? style : default_style}`}>
+    {!market[platform] && text}
   </div>
 }
-
 
 // export const FilterOnNFT = ({ current, platform, action, targetAction, target }: {
 //   target?: NFTDetail,

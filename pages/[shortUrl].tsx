@@ -79,7 +79,7 @@ export async function getServerSideProps(context: any) {
   if (document.docs.length > 0) {
     const doc = document.docs[0]
     const response: any = doc.data()
-    const { profile: { pic, name, description } } = response
+    const { profile: { pic, name } } = response
     const constructImage = `https://api.placid.app/u/9h6ycuatn?&profile_image[image]=${encodeURIComponent(pic)}&title-copy[text]=View+${prepareURI(name)}%27s`
     return {
       props: {
@@ -87,7 +87,7 @@ export async function getServerSideProps(context: any) {
         seo: {
           image: constructImage,
           title: `${name} - Galleryst`,
-          description: description
+          description: response.profile?.description != undefined ? response.profile?.description : ''
         }
       }
     }

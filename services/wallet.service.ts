@@ -66,7 +66,7 @@ class WalletService {
   }
 
   disconnect = () => {
-    walletStore.setProperties('', false, 0)
+    walletStore.reset()
   }
 }
 

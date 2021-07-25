@@ -1,15 +1,19 @@
 // import firebase from 'firebase';
 import firebase from 'firebase/app';
 import 'firebase/firestore';
+import 'firebase/storage';
+
+
+const projectId = 'galleryst-f7fe1'
 
 const firebaseConfig =  {
   apiKey: "AIzaSyDJZIsW9h3qHeyQFaRyvycH3NFpED-YtFU",
-  authDomain: "galleryst-f7fe1.firebaseapp.com",
-  projectId: "galleryst-f7fe1",
-  storageBucket: "galleryst-f7fe1.appspot.com",
+  authDomain: `${projectId}.firebaseapp.com`,
+  projectId: projectId,
+  storageBucket: `${projectId}.appspot.com`,
   messagingSenderId: "238070777772",
   appId: "1:238070777772:web:f2b589dd01a9c3960e9c09",
-  measurementId: "G-18KXBB9L16"
+  measurementId: "G-18KXBB9L16",
 };
 
 try {
@@ -35,4 +39,22 @@ export const writeDocument = async (doc: string, address: string, parcel: any) =
   await db.set(JSON.parse(JSON.stringify(parcel)))
 }
 
+export const uploadFile = async (file: any) => {
+  const storage = fire.storage();
+  const storageRef = storage.ref("create-profile");
+  try{
+    const response : any = await storageRef.child(file.name).put(file);
+    // alert("Successfully uploaded picture!");
+    const fullPath : string = response['_delegate']['metadata']['fullPath']
+    const imagePath = `https://firebasestorage.googleapis.com/v0/b/${projectId}.appspot.com/o/${encodeURIComponent(fullPath)}?alt=media`
+    return { status: true , imagePath }
+  }catch(e){
+    console.log("error", e);
+    return { status: false }
+  }
+}
+
 export default fire;
+
+
+

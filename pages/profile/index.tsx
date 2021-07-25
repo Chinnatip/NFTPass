@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import * as firebase from "../../method/firebase"
+import ProfilePage from '@/ProfilePage'
 import { Profile } from '../../method/rarible/interface'
 import { Drop } from '../../method/nifty/interface'
 import { creatorFetch, prepareURI } from '../../method/integrate'
 import { Galleryst } from '../../interfaces/index'
 import { observer } from 'mobx-react-lite'
 import { ConnectBtn } from '@/Galleryst'
-import ProfilePage from '@/ProfilePage'
 import { NextSeo } from 'next-seo'
 
 const Page = observer(({ address, nifty_slug, seo, response }: {
@@ -19,7 +19,10 @@ const Page = observer(({ address, nifty_slug, seo, response }: {
   }
   response?: any
 }) => {
-  const [profile, setProfile] = useState<Profile>(response != undefined ? response.profile : {})
+  const [profile, setProfile] = useState<Profile>(response != undefined ? response.profile : {
+    pic: 'https://www.galleryst.co/favicon/ms-icon-310x310.png',
+    address
+  })
   const [NFTLists, setNFTLists] = useState<Galleryst[]>([])
   const [ownLists, setOwnLists] = useState<string[]>([])
   const [onsaleLists, setOnsaleLists] = useState<string[]>([])
@@ -81,7 +84,7 @@ export async function getServerSideProps(context: any) {
   const document = await firebase.findbyAddress("creatorParcel", `${address.toLowerCase()}`)
   if (document.exists) {
     const response: any = document.data()
-    const { profile: { pic, name, description } } = response
+    const { profile: { pic, name } } = response
     const constructImage = `https://api.placid.app/u/9h6ycuatn?&profile_image[image]=${encodeURIComponent(pic)}&title-copy[text]=View+${prepareURI(name)}%27s+NFT`
     return {
       props: {
@@ -89,8 +92,8 @@ export async function getServerSideProps(context: any) {
         nifty_slug: nifty_slug != undefined ? nifty_slug : false,
         seo: {
           image: constructImage,
-          title: name,
-          description: description
+          title: `${name} - Galleryst`,
+          description: response.profile?.description != undefined ? response.profile?.description : ''
         },
         response
       },

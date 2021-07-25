@@ -2,13 +2,14 @@ import dayjs from 'dayjs'
 import { useState, useEffect } from 'react'
 import * as rarible from '../../method/rarible/fetch'
 import * as opensea from '../../method/opensea/fetch'
+import * as foundation from '../../method/foundation/fetch'
 import * as firebase from "../../method/firebase"
 import { NFTDetail, ResponseDetail, Media, NFTPlatform } from '../../interfaces/index'
 import { prepareURI, checkDiff, nftSanitizer, makeid } from '../../method/integrate'
 import NFTPage from '@/NFTPage';
 import axios from 'axios';
 
-const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, current_update, galleryst_id }: {
+const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getFoundation, getRarible, current_update, galleryst_id }: {
   address: string,
   seo: {
     image: string,
@@ -20,6 +21,7 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
   getNFT?: NFTDetail,
   getOpensea?: NFTDetail,
   getRarible?: NFTDetail,
+  getFoundation?: NFTDetail,
   current_update?: number,
   galleryst_id?: string
 }) => {
@@ -28,13 +30,14 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
   const [gallerystID] = useState(galleryst_id != undefined ? galleryst_id : makeid(5))
   const [raribles, setRarible] = useState<NFTDetail>(getRarible != undefined ? getRarible : { address })
   const [openseas, setOpensea] = useState<NFTDetail>(getOpensea != undefined ? getOpensea : { address })
+  const [foundations, setFoundation] = useState<NFTDetail>(getFoundation != undefined ? getFoundation : { address })
   const [platform, setPlatform] = useState<NFTPlatform>(getPlatform != undefined ? getPlatform : { current: 'opensea', check: { rarible: { status: false }, opensea: { status: false } } })
   const [copied, setCopied] = useState(false)
   const [mediaList, setMediaList] = useState<Media[]>([])
   const [displayMedia, setDisplayMedia] = useState<Media>({ type: 'image', src: ''})
   const [displayIdx, setDisplayIdx] = useState<number>(0)
   const stateData = {
-    nft, loading, gallerystID, raribles, openseas, platform, copied, mediaList, displayMedia, displayIdx
+    nft, loading, gallerystID, raribles, openseas, foundations, platform, copied, mediaList, displayMedia, displayIdx
   }
   const stateAction = { setDisplayMedia, setDisplayIdx, setCopied }
   useEffect(() => {
@@ -44,6 +47,7 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
         await opensea.getOfferandActivity(address, setOpensea, openseas)
         await rarible.getOfferandActivity(address, setRarible, raribles)
         setLoad(false)
+
         // parse display media
         setNFT(getNFT!)
         if (getPlatform?.current === 'galleryst') {
@@ -60,8 +64,13 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
         // const gallerystTokenMetadata = await contractQuerierService.getMetadataUri(contractAddress, +tokenId)
         const raribleCheck: ResponseDetail = await rarible.nftDetail(address, setNFT, setRarible)
         const openseaCheck: ResponseDetail = await opensea.nftDetail(address, setNFT, setOpensea)
+        const foundationCheck: ResponseDetail = await foundation.nftDetail(address, setNFT, setFoundation)
+
+        const FNDCollection = '0x3b3ee1931dc30c1957379fac9aba94d1c48a5405'
+
         const checkCurrent =
-        // gallerystTokenMetadata !== null ? 'galleryst' :
+          // gallerystTokenMetadata !== null ? 'galleryst' :
+          (foundationCheck.status && address.split(':')[0] == FNDCollection) ? 'foundation' :
           raribleCheck.status ? 'rarible' :
           openseaCheck.status ? 'opensea' :
           ''
@@ -75,6 +84,10 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
             rarible: {
               link: raribleCheck.link,
               status: raribleCheck.status
+            },
+            foundation: {
+              link: foundationCheck.link,
+              status: foundationCheck.status
             }
           }
         }
@@ -90,11 +103,18 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getRarible, curre
             setDisplayMedia({ type: 'image', src: raribleCheck.data!.image!});
             break;
           }
+          case 'foundation': {
+            setNFT(foundationCheck.data!);
+            setDisplayMedia({ type: 'image', src: foundationCheck.data!.image!});
+            break;
+          }
         }
+        // Write to firebase
         await firebase.writeDocument('nft', address, {
           platform,
           rarible: nftSanitizer(raribleCheck),
           opensea: nftSanitizer(openseaCheck),
+          foundation: nftSanitizer(foundationCheck),
           current_update: dayjs().unix(),
           galleryst_id: gallerystID,
           address
@@ -136,6 +156,7 @@ export async function getServerSideProps(context: any) {
       platform: getPlatform,
       opensea: { data: getOpensea } = { data: {} },
       rarible: { data: getRarible } = { data: {} },
+      foundation: { data: getFoundation } = { data: {} },
       current_update, galleryst_id } = response
     const getNFT = response[getPlatform.current].data
     const constructImage = `https://api.placid.app/u/sxpwrxogf?&thumbnail[image]=${prepareURI(getNFT.image)}&title[text]=${prepareURI(getNFT.title)}&creator_name[text]=${prepareURI(getNFT.creator?.name)}`
@@ -146,7 +167,7 @@ export async function getServerSideProps(context: any) {
       creator: getNFT.creator?.name != undefined ? getNFT.creator.name : '-',
     }
     return {
-      props: { address, seo, getPlatform, getNFT, current_update, getOpensea, getRarible, galleryst_id },
+      props: { address, seo, getPlatform, getNFT, current_update, getOpensea, getFoundation, getRarible, galleryst_id },
     }
   } else {
     return {

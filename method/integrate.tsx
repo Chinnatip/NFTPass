@@ -40,27 +40,32 @@ const getUserProfile = async (address: string): Promise<Profile> => {
   const [resp, errResp] = await withError(rarible.userInfo(address))
   if (errResp == null ) {
     console.log(resp.data)
-    let restructureResp = { ...resp.data,
-      username: resp.data?.name,
-      address: resp.data?.id,
-      pic: raribleImg(resp.data?.image),
-      marketCheck: {},
-      // meta: metaResp.data,
+    if(resp.data?.name != undefined && resp.data?.image != undefined){
+      let restructureResp = { ...resp.data,
+        username: resp.data?.name,
+        address: resp.data?.id,
+        pic: raribleImg(resp.data?.image),
+        marketCheck: {},
+        // meta: metaResp.data,
+      }
+      delete restructureResp.name;
+      delete restructureResp.id;
+      delete restructureResp.image;
+      delete restructureResp.acceptedTerms;
+      delete restructureResp.blacklisted;
+      delete restructureResp.badges;
+      return restructureResp
     }
-    delete restructureResp.name;
-    delete restructureResp.id;
-    delete restructureResp.image;
-    delete restructureResp.acceptedTerms;
-    delete restructureResp.blacklisted;
-    delete restructureResp.badges;
-    return restructureResp
+  }
+  const [opsUser, errOps] = await withError(opensea.userInfo(address))
+  if (!errOps && opsUser != undefined) {
+    return { ...opsUser, marketCheck: {}}
   }
   const [fndUser, errFnd] = await withError(foundation.userInfo(address))
-  console.log(fndUser, errFnd)
   if (!errFnd) {
     return {...fndUser, marketCheck: {}}
   }
-  return { marketCheck: {} }
+  return { marketCheck: {}, pic: 'https://www.galleryst.co/favicon/ms-icon-310x310.png', address }
 }
 
 export const creatorFetch = async (address: string, action: any , nifty_slug: string | false, profile?: Profile) => {
@@ -172,12 +177,14 @@ export const makeid = (length: number) => {
   return result;
 }
 
-export const selectActivity = (nft: NFTDetail, openseas: NFTDetail) => {
-  if (openseas.activity != undefined) {
-    return openseas.activity
-  } else {
-    return nft.activity
-  }
+// export const selectActivity = (nft: NFTDetail, openseas: NFTDetail) => {
+export const selectActivity = (nft: NFTDetail) => {
+  return nft.activity
+  // if (openseas.activity != undefined) {
+  //   return openseas.activity
+  // } else {
+  //   return nft.activity
+  // }
 }
 
 export const nftSanitizer = (objs: ResponseDetail) => {
