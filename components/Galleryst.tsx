@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react'
 import * as firebase from "../method/firebase"
-import { faCopy, faShareAlt, faSync, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faCopy, faShareAlt, faSync, faCheck, faTimes, faEdit } from '@fortawesome/free-solid-svg-icons'
 import { mask } from 'utils/address.util'
 import { walletStore } from 'stores/wallet.store'
 import { observer } from 'mobx-react-lite'
@@ -108,9 +108,10 @@ export const AddressBox = ({ address }: { address: string | undefined }) => {
 const ClaimBox = ({ address, action, profile }: { address: string | undefined, profile: Profile, action: any }) => {
   return <button
     onClick={() => address != undefined && action(true)}
-    className="bg-black text-sm text-white rounded-full inline-block px-3 py-2 ml-3 active-shadow">
+    className="button-red text-sm  rounded-full inline-block px-3 py-2 ml-3 active-shadow font-semibold">
     <div>
-      {profile.verified ? 'Edit profile' : 'Claim profile'}
+      <Icon fill={faEdit} />
+      {profile.verified ? 'Edit Profile' : 'Claim Profile'}
     </div>
   </button>
 }
@@ -171,7 +172,7 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
       </div>
       <div className="text-center text-gray-600 text-sm hidden">Edit Profile</div>
       <div className="text-center">
-        <img src={pic} className="h-20 rounded-full m-auto border border-white border-4 shadow-lg" />
+        <img src={pic} className="rounded-full m-auto border border-white border-4 shadow-lg h-20 w-20 object-cover" />
         <UploadButton action={setProfileImg} />
       </div>
       <div className="mt-5 mb-4">
