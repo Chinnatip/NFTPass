@@ -38,5 +38,5 @@
     "components/chart/NivoBar.jsx",
     "pages/api/opensea/offer.js",
     "pages/api/opensea/priceHistory.js"
-, "pages/api/foundation/nftDetail.js"  ]
+, "pages/api/foundation/nftDetail.js", "components/UploadButton.js"  ]
 }

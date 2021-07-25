@@ -6,6 +6,7 @@ import { walletStore } from 'stores/wallet.store'
 import { observer } from 'mobx-react-lite'
 import { walletService } from 'services/wallet.service'
 import { createPopper } from '@popperjs/core'
+import UploadButton from '@/UploadButton'
 import { Profile } from '../method/rarible/interface'
 import { creatorFetch } from '../method/integrate'
 import { Galleryst, User } from '../interfaces/index'
@@ -32,7 +33,7 @@ const fixPath = (path: string| undefined) => {
 
 // HEADER
 export const CreatorHeader = ({ profile, parcel, claimable = false }: { profile: Profile, parcel?: any, claimable?: boolean }) => {
-  const [claimStage, setClaimStage] = useState(false)
+  const [ claimStage, setClaimStage ] = useState(false)
   return <>
     {/* Creator profile image */}
     <span className="relative">
@@ -118,6 +119,7 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
   const [username, setUsername] = useState(profile.username)
   const [shortUrl, setShorthand] = useState(profile.shortUrl)
   const [email, setEmail] = useState(profile.email)
+  const [pic, setProfileImg ] = useState(profile?.pic)
   const [website, setWebsite] = useState(profile.website)
   const [description, setDescription] = useState(profile.description)
   const router = useRouter()
@@ -138,6 +140,7 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
         profile: {
           ...parcel.profile,
           username,
+          pic,
           name: username,
           shortUrl,
           email,
@@ -168,7 +171,8 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
       </div>
       <div className="text-center text-gray-600 text-sm hidden">Edit Profile</div>
       <div className="text-center">
-        <img src={profile.pic} className="h-20 rounded-full m-auto border" />
+        <img src={pic} className="h-20 rounded-full m-auto border border-white border-4 shadow-lg" />
+        <UploadButton action={setProfileImg} />
       </div>
       <div className="mt-5 mb-4">
         <div className="text-black">Name</div>
