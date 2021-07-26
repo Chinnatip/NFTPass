@@ -47,14 +47,17 @@ export const nftDetail = async (address: string, defaultAction?: (data: any) => 
         lists.push(owner)
         if (from != undefined) { lists.push(from) }
       })
-
       lists = removeNull([...new Set([...lists, nfts.item.creator, ...nfts.item.owners])])
       const profileResp = await collectPROFILE(lists)
       const userLists = profileResp.data.map((user: any) => {
-        const { id: address, name, description, shortUrl, image  } = user
+        const { id: address, name, description, shortUrl, image ,imageMedia  } = user
+        let useImage = raribleImg(image)
+        if(imageMedia.length > 0 && imageMedia[imageMedia.length - 1].url != undefined){
+          useImage = imageMedia[imageMedia.length - 1].url
+        }
         return {
           address, name, description, shortUrl,
-          image: raribleImg(image)
+          image: useImage
         }
       })
       const data = {

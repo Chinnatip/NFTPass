@@ -102,6 +102,7 @@ export interface ActivityLog {
 
 export interface NFTDetail {
   image?: string
+  video?: string
   address: string
   owner?: User[]
   creator?: User
