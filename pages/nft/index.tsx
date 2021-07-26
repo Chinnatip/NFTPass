@@ -37,10 +37,9 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getFoundation, ge
   const [mediaList, setMediaList] = useState<Media[]>([])
   const [displayMedia, setDisplayMedia] = useState<Media>({ type: 'image', src: ''})
   const [displayIdx, setDisplayIdx] = useState<number>(0)
-  const stateData = {
-    nft, loading, gallerystID, raribles, openseas, foundations, platform, copied, mediaList, displayMedia, displayIdx
-  }
+  const stateData = { nft, loading, gallerystID, raribles, openseas, foundations, platform, copied, mediaList, displayMedia, displayIdx }
   const stateAction = { setDisplayMedia, setDisplayIdx, setCopied }
+
   useEffect(() => {
     (async () => {
       if (current_update != undefined && checkDiff(current_update)) {
@@ -64,7 +63,6 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getFoundation, ge
           setDisplayMedia(media)
         }
       } else {
-        // Rarible
         const [colAddress, tokenIdS] = address.split(':')
         const gallerystTokenMetadata = await contractQuerierService.getMetadataUri(colAddress, +tokenIdS)
         const raribleCheck: ResponseDetail = await rarible.nftDetail(address, setNFT, setRarible)
@@ -178,7 +176,7 @@ export async function getServerSideProps(context: any) {
       rarible: { data: getRarible } = { data: {} },
       foundation: { data: getFoundation } = { data: {} },
       current_update, galleryst_id } = response
-    const getNFT = response[getPlatform.current].data
+    const getNFT = response[getPlatform.current]?.data
     const constructImage = `https://api.placid.app/u/sxpwrxogf?&thumbnail[image]=${prepareURI(getNFT.image)}&title[text]=${prepareURI(getNFT.title)}&creator_name[text]=${prepareURI(getNFT.creator?.name)}`
     seo = {
       image: constructImage,

@@ -78,41 +78,46 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getFoundation, ge
   const [mediaList, setMediaList] = useState<Media[]>([])
   const [displayMedia, setDisplayMedia] = useState<Media>({ type: 'image', src: ''})
   const [displayIdx, setDisplayIdx] = useState<number>(0)
-  const stateData = {
-    nft, loading, gallerystID, raribles, openseas, foundations, platform, copied, mediaList, displayMedia, displayIdx
-  }
+  const stateData = { nft, loading, gallerystID, raribles, openseas, foundations, platform, copied, mediaList, displayMedia, displayIdx }
   const stateAction = { setDisplayMedia, setDisplayIdx, setCopied }
+
   useEffect(() => {
     (async () => {
       if (current_update != undefined && checkDiff(current_update)) {
         // Fetch lastest activity of NFT
-        await opensea.getOfferandActivity(address, setOpensea, openseas)
-        await rarible.getOfferandActivity(address, setRarible, raribles)
+        try{ await opensea.getOfferandActivity(address, setOpensea, openseas)}catch(e){ console.log('Opensea offer fetch error ~')}
+        try{ await rarible.getOfferandActivity(address, setRarible, raribles) }catch(e){ console.log('Rarible offer fetch error ~') }
         setLoad(false)
+
         // parse display media
         setNFT(getNFT!)
         if (getPlatform?.current === 'galleryst') {
           setMediaList((getNFT as any)?.mediaList)
           setDisplayMedia((getNFT as any)?.mediaList[0])
         } else {
-          const media: Media = { type: 'image', src: getNFT?.image! }
+          let media: Media
+          if(getNFT?.video!){
+            media = { type: 'video', src: getNFT?.video! }
+          }else{
+            media = { type: 'image', src: getNFT?.image! }
+          }
           setMediaList([media])
           setDisplayMedia(media)
         }
       } else {
-        // Rarible
-        // const [contractAddress, tokenId] = address.split(':')
-        // const gallerystTokenMetadata = await contractQuerierService.getMetadataUri(contractAddress, +tokenId)
+        const [colAddress] = address.split(':')
+        // const gallerystTokenMetadata = await contractQuerierService.getMetadataUri(colAddress, +tokenIdS)
         const raribleCheck: ResponseDetail = await rarible.nftDetail(address, setNFT, setRarible)
         const openseaCheck: ResponseDetail = await opensea.nftDetail(address, setNFT, setOpensea)
         const foundationCheck: ResponseDetail = await foundation.nftDetail(address, setNFT, setFoundation)
 
         const FNDCollection = '0x3b3ee1931dc30c1957379fac9aba94d1c48a5405'
-        const RARICollection = '0xd07dc4262bcdbf85190c01c996b4c06a461d2430'
+        const RARICollection = ['0xd07dc4262bcdbf85190c01c996b4c06a461d2430','0x60f80121c31a0d46b5279700f9df786054aa5ee5']
+        // const GallerystCollection = '0x526a1A4b301D38C63bb9f1b8f0EBDeCc0d60192c'
         const checkCurrent =
         // gallerystTokenMetadata !== null ? 'galleryst' :
-        (foundationCheck.status && address.split(':')[0] == FNDCollection) ? 'foundation' :
-        (raribleCheck.status && address.split(':')[0] == RARICollection) ? 'rarible' :
+        (foundationCheck.status && colAddress == FNDCollection) ? 'foundation' :
+        (raribleCheck.status && RARICollection.indexOf(colAddress) > -1) ? 'rarible' :
         openseaCheck.status ? 'opensea' :
         ''
         const platform = {
@@ -136,17 +141,29 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getFoundation, ge
         switch (checkCurrent) {
           case 'opensea': {
             setNFT(openseaCheck.data!);
-            setDisplayMedia({ type: 'image', src: openseaCheck.data!.image!})
+            if( openseaCheck.data!.video! ){
+              setDisplayMedia({ type: 'video', src: openseaCheck.data!.video!})
+            }else{
+              setDisplayMedia({ type: 'image', src: openseaCheck.data!.image!})
+            }
             break;
           }
           case 'rarible': {
             setNFT(raribleCheck.data!);
-            setDisplayMedia({ type: 'image', src: raribleCheck.data!.image!});
+            if( raribleCheck.data!.video! ){
+              setDisplayMedia({ type: 'video', src: raribleCheck.data!.video!})
+            }else{
+              setDisplayMedia({ type: 'image', src: raribleCheck.data!.image!})
+            }
             break;
           }
           case 'foundation': {
             setNFT(foundationCheck.data!);
-            setDisplayMedia({ type: 'image', src: foundationCheck.data!.image!});
+            if( foundationCheck.data!.video! ){
+              setDisplayMedia({ type: 'video', src: foundationCheck.data!.video!})
+            }else{
+              setDisplayMedia({ type: 'image', src: foundationCheck.data!.image!})
+            }
             break;
           }
         }
@@ -199,7 +216,7 @@ export async function getServerSideProps(context: any) {
       rarible: { data: getRarible } = { data: {}},
       foundation: { data: getFoundation } = { data: {} },
       address , current_update, galleryst_id } = response
-    const getNFT = response[getPlatform.current].data
+    const getNFT = response[getPlatform.current]?.data
     const constructImage = `https://api.placid.app/u/sxpwrxogf?&thumbnail[image]=${prepareURI(getNFT.image)}&title[text]=${prepareURI(getNFT.title)}&creator_name[text]=${prepareURI(getNFT.creator?.name)}`
     seo = {
       image: constructImage,
