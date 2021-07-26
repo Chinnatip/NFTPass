@@ -13,6 +13,7 @@ class WalletStore {
   accounts: string[] = []
   balance: number = 0
   verified: boolean = false
+  dbVerified: boolean = false
   defaultProvider!: ethers.providers.Web3Provider
   signer!: JsonRpcSigner | VoidSigner
   isMetaMaskInstalled: boolean = false
@@ -52,6 +53,11 @@ class WalletStore {
     this.verified = verified
   }
 
+  setDatabaseVerified = (dbVerified: boolean) => {
+    this.dbVerified = dbVerified
+    this.writeStorage()
+  }
+
   setBalance = (balance: number) => {
     this.balance = balance
   }
@@ -79,16 +85,19 @@ class WalletStore {
   //    between properties getters/setters and localStorage interaction
   private writeStorage = () => {
     localStorage.setItem('address', this.address)
+    localStorage.setItem('dbVerified', this.dbVerified ? 'true' : 'false')
     localStorage.setItem('expires', dayjs().add(1, 'day').toISOString())
   }
 
   private readStorage = () => {
     const address = localStorage.getItem('address')
     const expires = localStorage.getItem('expires')
+    const dbVerified = localStorage.getItem('dbVerified')
     if (expires === null || address === null || dayjs().isAfter(dayjs(expires))) {
       this.clearStorage()
     } else {
       this.address = address
+      this.dbVerified = dbVerified == 'true' ? true : false
       this.verified = true
       this.updateSigner()
     }

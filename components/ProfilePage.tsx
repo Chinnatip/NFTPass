@@ -4,10 +4,12 @@ import { sanitizeArray } from '../method/integrate'
 import { walletStore } from 'stores/wallet.store'
 import { CreatorHeader, ShareAction, UpdateAction, Filter, Toggle, NFTDrop, NFTGroup } from '@/Galleryst'
 
-const ProfilePage = ({ profile, action, lists }: {
+const ProfilePage = ({ profile, action, lists, claimStage=false, setClaimStage }: {
   profile: Profile,
   action: any,
   lists: any,
+  claimStage: boolean
+  setClaimStage: any
 }) => {
   const [toggle, setToggle] = useState('collection')
   const { onsaleLists, ownLists, createdLists, dropLists, NFTLists } = lists
@@ -29,7 +31,7 @@ const ProfilePage = ({ profile, action, lists }: {
       <div className="bg-white" style={{ borderRadius: '24px 24px 0px 0px' }}>
         <div className="text-center">
           {/* Creator header */}
-          <CreatorHeader profile={profile} parcel={parcel} claimable={claimCheck} />
+          <CreatorHeader claimStage={claimStage} setClaimStage={setClaimStage} profile={profile} parcel={parcel} claimable={claimCheck} />
 
           {/* Tabbar */}
           <div className="mb-8 inline-block" >

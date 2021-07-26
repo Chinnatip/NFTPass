@@ -17,6 +17,7 @@ const Page = ({ seo, response }: {
   }
 }) => {
   const [profile, setProfile] = useState<Profile>(response != undefined ? response.profile : {})
+  const [claimStage, setClaimStage] = useState(false)
   const [NFTLists, setNFTLists] = useState<Galleryst[]>([])
   const [ownLists, setOwnLists] = useState<string[]>([])
   const [onsaleLists, setOnsaleLists] = useState<string[]>([])
@@ -63,7 +64,7 @@ const Page = ({ seo, response }: {
         </a>
         <ConnectBtn />
       </div>
-      <ProfilePage profile={profile} action={stateAction} lists={stateLists} />
+      <ProfilePage claimStage={claimStage} setClaimStage={setClaimStage}  profile={profile} action={stateAction} lists={stateLists} />
     </div>
   </div>
 }

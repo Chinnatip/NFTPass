@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { ethers, utils } from 'ethers'
 import { walletStore } from 'stores/wallet.store'
+import * as firebase from "../method/firebase"
 
 class WalletService {
   private provider!: ethers.providers.Web3Provider
@@ -29,7 +30,7 @@ class WalletService {
     walletStore.setBalance(+utils.formatEther(balance))
   }
 
-  connect = async (addressToConnect: string) => {
+  connect = async (addressToConnect: string, openModal: any) => {
     if (!addressToConnect || walletStore.accounts.length === 0) {
       await this.getAccounts()
     }
@@ -53,15 +54,36 @@ class WalletService {
       addressToConnect,
       JSON.stringify(params),
     ])
+
     const { data } = await axios.post('/api/verifySignature', {
       chainId,
       addressToVerify: addressToConnect,
       typedSignature,
     })
     if (data.verified) {
+      console.log(1)
       walletStore.setAddress(addressToConnect)
+      console.log(2)
       walletStore.setVerified(true)
+      console.log(3)
       walletStore.updateSigner()
+
+      // Galleryst database verification
+      const document = await firebase.findbyAddress('creatorParcel', addressToConnect )
+      let databaseVerification = false
+      if (document.exists) {
+        const response: any = document.data()
+        const { profile: { verified } } = response
+        if(verified){
+          databaseVerification = true
+        }
+      }
+      console.log(4)
+      walletStore.setDatabaseVerified(databaseVerification)
+      console.log('vrrrrrrrriiiiify >>>> ' + databaseVerification)
+      if(!databaseVerification){
+        openModal(true)
+      }
     }
   }
 

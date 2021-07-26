@@ -74,7 +74,7 @@ const getUserProfile = async (address: string): Promise<Profile> => {
   return { marketCheck: {}, pic: 'https://www.galleryst.co/favicon/ms-icon-310x310.png', address }
 }
 
-export const creatorFetch = async (address: string, action: any , nifty_slug: string | false, profile?: Profile) => {
+export const creatorFetch = async (address: string, action: any , nifty_slug: string | false, profile?: Profile, loginModal?: boolean, setClaimStage?: any) => {
   let rari : RaribleGetResponse  = { onsale: [], created: [], owned: [], allID: [], items: [] }
   let fnd : FoundationGetResponse = { onsale: [], created: [], owned: [], allID: [], items: [] }
   let os : OpenseaGetResponse = { onsale: [], created: [], owned: [], allID: [], items: [] }
@@ -88,15 +88,18 @@ export const creatorFetch = async (address: string, action: any , nifty_slug: st
 
   // Fetch and collect data
   let userProfile = await getUserProfile(address)
-  let updateProfile = profile !== undefined ? { ...profile, ...userProfile} : userProfile
-
-  // Prepare auto generated ID
-  updateProfile['shortUrl'] = updateProfile['shortUrl'] != undefined ? updateProfile['shortUrl'] : makeid(5)
-  updateProfile['verified'] = false
-  updateProfile['name'] = updateProfile['username'] != undefined ? updateProfile['username'] : `Creator`
-
+  userProfile['shortUrl'] = userProfile['shortUrl'] != undefined ? userProfile['shortUrl'] : makeid(5)
+  userProfile['verified'] = false
+  userProfile['name'] = userProfile['username'] != undefined ? userProfile['username'] : `Creator`
+  let updateProfile = profile !== undefined ? profile : userProfile
   action.setProfile(updateProfile)
+
   checkMarket(action.setProfile, updateProfile, nf, 'nifty')
+
+  // Auto popup ClaimModal after load creator information from anny platform
+  if(loginModal){
+    setClaimStage(true)
+  }
 
   // Rarible NFTs
   rari = await rarible.ownByAddress(address, {
