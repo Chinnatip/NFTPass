@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react'
 import * as firebase from "../method/firebase"
-import { faCopy, faShareAlt, faSync, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faCopy, faShareAlt, faSync, faCheck, faTimes, faEdit } from '@fortawesome/free-solid-svg-icons'
 import { mask } from 'utils/address.util'
 import { walletStore } from 'stores/wallet.store'
 import { observer } from 'mobx-react-lite'
@@ -18,22 +18,22 @@ const lockDigit = (price: number) => {
   return (Math.floor(price * 10000)) / 10000
 }
 
-const fixPath = (path: string| undefined) => {
-  if(path !== undefined){
+const fixPath = (path: string | undefined) => {
+  if (path !== undefined) {
     const splitColon = path.split('://')
-    if( splitColon.length > 1){
+    if (splitColon.length > 1) {
       return `http://${splitColon[1]}`
-    }else{
+    } else {
       return `http://${splitColon[0]}`
     }
-  }else{
+  } else {
     return undefined
   }
 }
 
 // HEADER
 export const CreatorHeader = ({ profile, parcel, claimable = false }: { profile: Profile, parcel?: any, claimable?: boolean }) => {
-  const [ claimStage, setClaimStage ] = useState(false)
+  const [claimStage, setClaimStage] = useState(false)
   return <>
     {/* Creator profile image */}
     <span className="relative">
@@ -108,9 +108,10 @@ export const AddressBox = ({ address }: { address: string | undefined }) => {
 const ClaimBox = ({ address, action, profile }: { address: string | undefined, profile: Profile, action: any }) => {
   return <button
     onClick={() => address != undefined && action(true)}
-    className="bg-black text-sm text-white rounded-full inline-block px-3 py-2 ml-3 active-shadow">
+    className="button-red text-sm  rounded-full inline-block px-3 py-2 ml-3 active-shadow font-semibold">
     <div>
-      { profile.verified ? 'Edit profile' : 'Claim profile' }
+      <Icon fill={faEdit} />
+      {profile.verified ? 'Edit Profile' : 'Claim Profile'}
     </div>
   </button>
 }
@@ -119,16 +120,16 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
   const [username, setUsername] = useState(profile.username)
   const [shortUrl, setShorthand] = useState(profile.shortUrl)
   const [email, setEmail] = useState(profile.email)
-  const [pic, setProfileImg ] = useState(profile?.pic)
+  const [pic, setProfileImg] = useState(profile?.pic)
   const [website, setWebsite] = useState(profile.website)
   const [description, setDescription] = useState(profile.description)
   const router = useRouter()
   const claimPage = async () => {
     let checkShortURL = true
-    let checkAddress = address !=  undefined ? true : false
+    let checkAddress = address != undefined ? true : false
     // Check duplicate shortURL
-    if(shortUrl != undefined && shortUrl != profile.shortUrl){
-      const document = await firebase.findDocument("creatorParcel",shortUrl, "profile.shortUrl")
+    if (shortUrl != undefined && shortUrl != profile.shortUrl) {
+      const document = await firebase.findDocument("creatorParcel", shortUrl, "profile.shortUrl")
       if (document.docs.length > 0) {
         checkShortURL = false
       }
@@ -149,14 +150,14 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
         }
       })
       // Reload page
-      if(profile.shortUrl == shortUrl){
+      if (profile.shortUrl == shortUrl) {
         router.reload()
-      }else{
-        if(window != undefined){
+      } else {
+        if (window != undefined) {
           window.location.href = `/${shortUrl}`
         }
       }
-    }else{
+    } else {
       alert('please check URL or other input.')
     }
     // setTimeout(() => { modalAction(false) }, 1300)
@@ -171,7 +172,7 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
       </div>
       <div className="text-center text-gray-600 text-sm hidden">Edit Profile</div>
       <div className="text-center">
-        <img src={pic} className="h-20 rounded-full m-auto border border-white border-4 shadow-lg" />
+        <img src={pic} className="rounded-full m-auto border border-white border-4 shadow-lg h-20 w-20 object-cover" />
         <UploadButton action={setProfileImg} />
       </div>
       <div className="mt-5 mb-4">
@@ -402,19 +403,19 @@ export const Filter = ({ platform, profile }: { platform: 'rarible' | 'opensea' 
   const check = (platform: 'rarible' | 'opensea' | 'foundation' | 'nifty') => {
     switch (platform) {
       case 'rarible':
-        return { style: 'text-black bg-yellow-500 rarible-logo ', text: 'R' }
+        return { style: 'text-black bg-yellow-500 rarible-logo ', text: '', ref: 'Rarible' }
       case 'opensea':
-        return { style: 'text-white bg-blue-500 opensea-logo ', text: 'O' }
+        return { style: 'text-white bg-blue-500 opensea-logo ', text: '', ref: 'Opensea' }
       case 'foundation':
-        return { style: 'text-white bg-black foundation-logo ', text: 'F' }
+        return { style: 'text-white bg-black foundation-logo ', text: '', ref: 'Foundation' }
       case 'nifty':
-        return { style: 'text-white bg-blue-700 nifty-logo ', text: 'N' }
+        return { style: 'text-white bg-blue-700 nifty-logo ', text: '', ref: 'Nifty Gateway' }
     }
   }
-  const default_style = 'border text-gray-400 bg-gray-200'
+  const default_style = 'border text-gray-400 bg-gray-200 hidden'
   const { text, style } = check(platform)
   return <div className={`h-8 w-8 mx-2 flex items-center justify-center rounded-full shadow-nft text-lg ${market[platform] ? style : default_style}`}>
-    { !market[platform] && text }
+    {!market[platform] && text}
   </div>
 }
 

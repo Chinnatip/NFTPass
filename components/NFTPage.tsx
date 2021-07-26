@@ -136,11 +136,11 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
           <div className="order-5 mb-3"><h3 >{description != null ? description : 'No description.'}</h3></div>
           {/* Link to Platform */}
           {platform.check['rarible']?.status && <a href={platform.check['rarible']?.link} target="_blank" className="order-6 flex mt-4 p-4 items-center rounded-24 bg-white shadow-nft active-shadow">
-            <span className="flex-grow ">Link to Rarible</span>
+            <span className="flex-grow ">View on Rarible</span>
             <div className="text-black bg-yellow-500 rarible-logo logo-48 h-12 w-12 rounded-full" ></div>
           </a>}
           {platform.check['opensea']?.status && <a href={platform.check['opensea']?.link} target="_blank" className="order-6 flex mt-4 p-4 items-center rounded-24 bg-white shadow-nft active-shadow">
-            <span className="flex-grow ">Link to Opensea</span>
+            <span className="flex-grow ">View on Opensea</span>
             <div className="text-white bg-blue-500 opensea-logo logo-48 h-12 w-12 rounded-full" ></div>
           </a>}
           {platform.check['foundation']?.status && <a href={platform.check['foundation']?.link} target="_blank" className="order-6 flex mt-4 p-4 items-center rounded-24 bg-white shadow-nft active-shadow">
@@ -160,13 +160,13 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
           <div className="order-3 mb-4">
             {openseas.pricing?.eth != undefined && <div className="flex text-xl items-center py-2">
               <span className="flex-grow text-gray-500 text-left flex items-center">
-                <Picon platform="opensea"></Picon> <span className="text-sm">Lowest listing price</span>
+                <Picon platform="opensea"></Picon> <span className="text-base">Lowest listing price</span>
               </span>
               <span className="text-right">{openseas.pricing?.eth} ETH</span>
             </div>}
             {raribles.pricing?.eth != undefined && <div className="flex text-xl items-center py-2">
               <span className="flex-grow text-gray-500 text-left flex items-center">
-                <Picon platform="rarible"></Picon> <span className="text-sm">Lowest listing price</span>
+                <Picon platform="rarible"></Picon> <span className="text-base">Lowest listing price</span>
               </span>
               <span className="text-right">{raribles.pricing?.eth} ETH</span>
             </div>}
@@ -178,7 +178,7 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
             </div>}
             {openseas.offer?.status && <div className="flex text-xl items-center py-2">
               <span className="flex-grow text-gray-500 text-left flex items-center">
-                <Picon platform="opensea"></Picon> <span className="text-sm">Current best offer</span>
+                <Picon platform="opensea"></Picon> <span className="text-base">Current best offer</span>
               </span>
               <span className="text-right"> {openseas.offer?.best_offer?.toFixed(2)} ETH</span>
             </div>}
