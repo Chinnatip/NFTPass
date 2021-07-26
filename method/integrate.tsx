@@ -39,12 +39,17 @@ export const sanitizeArray = (objs: Galleryst[]) => {
 const getUserProfile = async (address: string): Promise<Profile> => {
   const [resp, errResp] = await withError(rarible.userInfo(address))
   if (errResp == null ) {
-    console.log(resp.data)
-    if(resp.data?.name != undefined && resp.data?.image != undefined){
-      let restructureResp = { ...resp.data,
-        username: resp.data?.name,
-        address: resp.data?.id,
-        pic: raribleImg(resp.data?.image),
+    if(resp.data != undefined && resp.data?.name != undefined && resp.data?.image != undefined){
+      const { name, id, image , imageMedia } = resp.data
+      let useImage = raribleImg(image)
+      if(imageMedia.length > 0 && imageMedia[imageMedia.length - 1].url != undefined){
+        useImage = imageMedia[imageMedia.length - 1].url
+      }
+      let restructureResp = {
+        ...resp.data,
+        username: name,
+        address: id,
+        pic: useImage,
         marketCheck: {},
         // meta: metaResp.data,
       }
@@ -54,6 +59,7 @@ const getUserProfile = async (address: string): Promise<Profile> => {
       delete restructureResp.acceptedTerms;
       delete restructureResp.blacklisted;
       delete restructureResp.badges;
+      console.log(restructureResp)
       return restructureResp
     }
   }
