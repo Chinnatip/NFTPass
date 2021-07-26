@@ -47,7 +47,7 @@ const getPriceHistory = async(contact_address: string, token_id: string) => {
 
 const getBestOffer = async(contact_address: string, token_id: string) => {
   const resp = await axios.get(`/api/opensea/offer?address=${contact_address}:${token_id}`)
-  console.log(resp.data)
+  // console.log(resp.data)
   if(resp.status ==200){
     return resp.data
   }else{
@@ -115,26 +115,28 @@ export const nftDetail = async(address: string, defaultAction?: (data: any) => v
     try{ activity = await getPriceHistory(contact_address, token_id) }catch(e){
       console.log('get error while catch history')
     }
+    const findOwner = activity[0]
+    const findCreator = activity[activity.length-1]
     const data : NFTDetail = {
       address,
       image: os.image_original_url,
       title: os.name,
       description: os.description,
       owner: [{
-        address: os.owner?.address,
-        name: os.owner?.user?.username,
-        image: os.owner?.profile_img_url
+        address: findOwner?.current_owner?.address , //os.owner?.address,
+        name: findOwner?.current_owner?.user?.publicUsername , //os.owner?.user?.username,
+        image: findOwner?.current_owner?.image //os.owner?.profile_img_url
       }],
       creator: {
-        address: os.creator?.address,
-        name: os.creator?.user?.username,
-        image: os.creator?.profile_img_url
+        address: findCreator?.current_owner?.address , //os.owner?.address,
+        name: findCreator?.current_owner?.user?.publicUsername , //os.owner?.user?.username,
+        image: findCreator?.current_owner?.image //os.owner?.profile_img_url
       },
       pricing,
       offer,
       activity
     }
-    // console.log(returner)
+    console.log(data)
     defaultAction?.(data)
     action?.(data)
     return {

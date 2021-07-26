@@ -108,11 +108,12 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getFoundation, ge
         const foundationCheck: ResponseDetail = await foundation.nftDetail(address, setNFT, setFoundation)
 
         const FNDCollection = '0x3b3ee1931dc30c1957379fac9aba94d1c48a5405'
+        const RARICollection = '0xd07dc4262bcdbf85190c01c996b4c06a461d2430'
 
         const checkCurrent =
         // gallerystTokenMetadata !== null ? 'galleryst' :
           (foundationCheck.status && address.split(':')[0] == FNDCollection) ? 'foundation' :
-          raribleCheck.status ? 'rarible' :
+          (foundationCheck.status && address.split(':')[0] == RARICollection) ? 'rarible' :
           openseaCheck.status ? 'opensea' :
           ''
         const platform = {

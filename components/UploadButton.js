@@ -4,7 +4,7 @@ import Icon from '@/Icon'
 import { faSync } from '@fortawesome/free-solid-svg-icons'
 
 const MyCustomButton = (props) => {
-  return <button className="bg-black text-white py-1 text-xs p-3 rounded-full" onClick={props.onClick} >Change pic</button>;
+  return <button className="bg-black text-white py-1 text-xs p-3 rounded-full" onClick={props.onClick} >Change image</button>;
 };
 
 const UploadButton = ({action}) => {
@@ -43,32 +43,3 @@ const UploadButton = ({action}) => {
 };
 
 export default UploadButton;
-
-
-// const firestore = admin.firestore()
-// const bucket = firebase.storage().bucket()
-
-// const uploadMedia = async (mediaList: Media[]): Promise<Array<Media & { ipfsHash: string }>> => {
-//   return Promise.all(
-//     mediaList.map(async media => {
-//       const ipfsHash = media.src.split('/').pop()!
-//       const filepath = `ipfs-media/${ipfsHash}`
-//       const documentRef = firestore.collection('ipfsToContent').doc(ipfsHash)
-//       const document = await documentRef.get()
-//       let newUrl: string
-//       if (!document.exists) {
-//         const response = await axios.get<Buffer>(media.src, { responseType: 'arraybuffer' })
-//         console.log('saving', ipfsHash)
-//         await bucket.file(filepath).save(response.data)
-//       }
-//       newUrl = (
-//         await bucket.file(filepath).getSignedUrl({
-//           action: 'read',
-//           expires: dayjs().add(1, 'year').toDate(),
-//         })
-//       )[0]
-//       await documentRef.set({ type: media.type, src: newUrl })
-//       return { type: media.type, src: newUrl, ipfsHash }
-//     })
-//   )
-// }
