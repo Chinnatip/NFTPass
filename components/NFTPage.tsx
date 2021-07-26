@@ -215,9 +215,18 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
               </div>
               {owner !== undefined && owner.length > 0 && <div className="flex h-auto items-center flex-col w-full content-start">
                 <div className="flex w-full text-gray-700 mb-2">Collected by </div>
-                <div className="flex content-start w-full flex-wrap">
-                  {owner.map((owner, index) => profileAddress(owner, index))}
-                </div>
+                { owner.length > 1 ?
+                  <div className="flex content-start w-full flex-wrap">
+                    {owner.map((owner, index) => profileAddress(owner, index))}
+                  </div>:
+                  <a href={`/profile?address=${creator?.address}`} className="flex justify-start w-full mb-4 items-center	">
+                    {profileAddress(owner[0], 0)}
+                    <div className="ml-2">
+                      {owner[0]?.name}
+                      <div className="text-gray-500 underline">View Profile</div>
+                    </div>
+                  </a>
+                 }
               </div>}
             </div>
           </div>
