@@ -2,7 +2,7 @@ import { recoverTypedSignature_v4 } from 'eth-sig-util'
 import { VercelRequest, VercelResponse } from '@vercel/node'
 export default async function handler(req: VercelRequest, res: VercelResponse): Promise<void> {
   // variables
-  const { chainId } = req.body;
+  const { chainId } = req.body
   const params: any = {
     domain: {
       chainId,
@@ -10,7 +10,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
       version: '0.1',
     },
     message: {
-      contents: "Sign Typed Data will verify you're real",
+      contents: 'Signature is requested to verify your Ethereum address ownership',
     },
     primaryType: 'Payload',
     types: {
@@ -34,7 +34,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         data: params,
         sig: typedSignature,
       })
-      const verified = addressToVerify === recoveredAddr
+      const verified = addressToVerify.toLowerCase() === recoveredAddr.toLowerCase()
       res.status(200).send({ verified })
       break
     }

@@ -23,6 +23,8 @@
     "@sendgrid/mail": "^6.4.0",
     "@types/google-map-react": "^1.1.8",
     "@types/js-cookie": "^2.2.6",
+    "@walletconnect/client": "^1.4.1",
+    "@walletconnect/qrcode-modal": "^1.4.1",
     "@xstate/react": "^0.8.1",
     "axios": "^0.21.1",
     "chart.js": "^2.9.4",
@@ -61,8 +63,9 @@
     "reactstrap": "^8.9.0",
     "schema-dts": "^0.8.2",
     "tailwindcss": "^1.9.6",
+    "ua-parser-js": "^0.7.28",
     "video-react": "^0.14.1",
-    "web3": "1.2.9",
+    "web3": "^1.4.0",
     "xstate": "^4.13.0"
   },
   "devDependencies": {
@@ -82,6 +85,7 @@
     "@types/react-dom": "^16.9.4",
     "@types/react-helmet": "^6.1.0",
     "@types/react-lottie": "^1.2.5",
+    "@types/ua-parser-js": "^0.7.36",
     "@vercel/node": "^1.11.1",
     "@zeit/next-css": "^1.0.1",
     "postcss-preset-env": "^6.7.0",

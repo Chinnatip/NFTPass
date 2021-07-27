@@ -1,21 +1,20 @@
 import dayjs from 'dayjs'
-import { ethers, VoidSigner } from 'ethers'
 import { makeAutoObservable } from 'mobx'
-
-type JsonRpcSigner = ethers.providers.JsonRpcSigner
+import UAParser from 'ua-parser-js'
 
 class WalletStore {
   constructor() {
     makeAutoObservable(this)
+    const uaParser = new UAParser()
+    const os = uaParser.getOS()
+    this.isMobileBrowser = os.name !== undefined && ['iOS', 'Android'].includes(os.name)
   }
 
   address: string = ''
-  accounts: string[] = []
   balance: number = 0
   verified: boolean = false
-  defaultProvider!: ethers.providers.Web3Provider
-  signer!: JsonRpcSigner | VoidSigner
-  isMetaMaskInstalled: boolean = false
+  isMetaMaskAvailable: boolean = typeof window !== 'undefined' && window.ethereum !== undefined
+  isMobileBrowser!: boolean
 
   get isConnected() {
     return !!this.address
@@ -26,26 +25,14 @@ class WalletStore {
   }
 
   init = () => {
-    this.defaultProvider = new ethers.providers.Web3Provider(window.ethereum, 'any')
-    this.defaultProvider.on('network', this.onNetworkChanged)
-    this.signer = this.defaultProvider.getSigner()
-    this.isMetaMaskInstalled = true
-    this.readStorage()
-  }
-
-  private onNetworkChanged = (_newNetwork: any, oldNetwork: any) => {
-    if (!!oldNetwork && typeof window !== 'undefined') {
-      window.location.reload()
+    if (this.isMetaMaskAvailable) {
+      this.readStorage()
     }
   }
 
-  setAccounts = (accounts: string[]) => {
-    this.accounts = accounts
-  }
-
-  setAddress = (address: string) => {
+  setAddress = (address: string, saveToStorage = false) => {
     this.address = address
-    this.writeStorage()
+    if (saveToStorage) this.writeStorage()
   }
 
   setVerified = (verified: boolean) => {
@@ -64,15 +51,9 @@ class WalletStore {
 
   reset = () => {
     this.address = ''
-    this.accounts = []
     this.balance = 0
     this.verified = false
-    this.signer = new VoidSigner('')
     this.clearStorage()
-  }
-
-  updateSigner = () => {
-    this.signer = this.defaultProvider.getSigner()
   }
 
   // use 'read/write' instead of 'get/set' to prevent ambiguity
@@ -90,7 +71,6 @@ class WalletStore {
     } else {
       this.address = address
       this.verified = true
-      this.updateSigner()
     }
   }
 

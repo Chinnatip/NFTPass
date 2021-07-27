@@ -13,6 +13,7 @@ import { Galleryst, User } from '../interfaces/index'
 import { Drop } from '../method/nifty/interface'
 import { useRouter } from 'next/router'
 import Icon from '@/Icon'
+import { WalletProviderName } from 'static/Enum'
 
 const lockDigit = (price: number) => {
   return (Math.floor(price * 10000)) / 10000
@@ -285,15 +286,10 @@ export const ConnectBtn = observer(() => {
   const popperRef = useRef(null)
   createPopper(btnRef.current!, popperRef.current!, { placement: 'bottom-start' })
   const handleClick = async () => {
-    if (!show && walletStore.isMetaMaskInstalled) {
-      await walletService.getAccounts()
-    }
     setShow(!show)
   }
   const getBtnText = () => {
-    if (!walletStore.isMetaMaskInstalled) {
-      return 'Connect Wallet'
-    } else if (walletStore.verified) {
+    if (walletStore.verified) {
       return `${mask(walletStore.address)} | ${walletStore.readableBalance}`
     } else {
       return 'Connect Wallet'
@@ -306,34 +302,40 @@ export const ConnectBtn = observer(() => {
         onClick={handleClick}
         //disabled={!}
         style={{ color: '#9a6b6b', backgroundColor: '#9a6b6b29' }}
-        className={`py-3 px-4 mx-2 font-semibold md:text-sm text-xs focus:outline-none appearance-none my-4 rounded-full ${walletStore.isMetaMaskInstalled ? 'cursor-pointer' : 'cursor-default'}`}
+        className={`py-3 px-4 mx-2 font-semibold md:text-sm text-xs focus:outline-none appearance-none my-4 rounded-full ${walletStore.isMetaMaskAvailable ? 'cursor-pointer' : 'cursor-default'}`}
       >
         {getBtnText()}
       </button>
       <div ref={popperRef} className={`${show ? '' : 'hidden'} p-4 rounded-2xl bg-white text-gray-500 absolute mt-20 right-0 z-50 shadow-nft`}>
-        {!walletStore.isMetaMaskInstalled && <div>
-          To connect to Galleryst please install Metamask to your browser. <a href="https://metamask.io/download.html" target="_blank" className="underline text-black">Get Metamask</a>
+        {/* MetaMask not available */}
+        {!walletStore.isMobileBrowser && !walletStore.isMetaMaskAvailable && <div>
+          <a href="https://metamask.io/download.html" target="_blank" className="underline text-black">Get Metamask</a>
         </div>}
-        {walletStore.isMetaMaskInstalled && !walletStore.isConnected && walletStore.accounts.length > 0 && <div className="text-sm mb-3 text-center">
-          we found {walletStore.accounts.length} account in your wallets <br />
-          please select account to verify
-        </div>}
-        {walletStore.isMetaMaskInstalled && (!walletStore.isConnected && walletStore.accounts.length > 0) && walletStore.accounts.map((account, index) => {
-          return (
-            <React.Fragment key={account} >
-              <button
-                className='text-xs bg-white p-3 rounded-full text-black flex items-center shadow-nft'
-                onClick={() => {
-                  setShow(false)
-                  walletService.connect(account)
-                }}
-              >
-                {account}
-              </button>
-              {index !== walletStore.accounts.length - 1 && <hr />}
-            </React.Fragment>
-          )
-        })}
+        {/* Show only if MetaMask is available */}
+        {walletStore.isMetaMaskAvailable  && !walletStore.isConnected && 
+          <button
+            className='text-xs bg-white p-3 rounded-full text-black flex items-center shadow-nft'
+            onClick={() => {
+              setShow(false)
+              walletService.connect(WalletProviderName.MetaMask)
+            }}
+          >
+            MetaMask
+          </button>
+        }
+        {/* WalletConnect always available */}
+        <p className="w-full text-center text-xs my-2">OR</p>
+        {!walletStore.isConnected && 
+          <button
+            className='text-xs bg-white p-3 rounded-full text-black flex items-center shadow-nft'
+            onClick={() => {
+              setShow(false)
+              walletService.connect(WalletProviderName.WalletConnect)
+            }}
+          >
+            WalletConnect
+          </button>
+        }
         {walletStore.isConnected && (
           <>
             {walletStore.address != '' && <a href={`/profile?address=${walletStore.address}`} className=" w-full inline-block bg-white text-black focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft">
