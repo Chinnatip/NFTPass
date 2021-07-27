@@ -119,18 +119,19 @@ export const nftDetail = async(address: string, defaultAction?: (data: any) => v
     const findCreator = activity[activity.length-1]
     const data : NFTDetail = {
       address,
-      image: os.image_original_url,
+      image: os.image_url,
+      video: os.animation_url,
       title: os.name,
       description: os.description,
       owner: [{
-        address: findOwner?.current_owner?.address , //os.owner?.address,
-        name: findOwner?.current_owner?.user?.publicUsername , //os.owner?.user?.username,
-        image: findOwner?.current_owner?.image //os.owner?.profile_img_url
+        address: findOwner?.current_owner?.address ,
+        name: findOwner?.current_owner?.user?.publicUsername ,
+        image: findOwner?.current_owner?.image
       }],
       creator: {
-        address: findCreator?.current_owner?.address , //os.owner?.address,
-        name: findCreator?.current_owner?.user?.publicUsername , //os.owner?.user?.username,
-        image: findCreator?.current_owner?.image //os.owner?.profile_img_url
+        address: findCreator?.previous_owner?.address ,
+        name: findCreator?.previous_owner?.user?.publicUsername ,
+        image: findCreator?.previous_owner?.image
       },
       pricing,
       offer,

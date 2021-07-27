@@ -34,11 +34,11 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
   }
 }) => {
   const {
-    nft, loading, gallerystID, raribles, openseas,foundations, platform, copied, mediaList, displayMedia, displayIdx
+    nft, loading, gallerystID, raribles, openseas, foundations, platform, copied, mediaList, displayMedia, displayIdx
   } = stateData
   const { setDisplayMedia, setDisplayIdx, setCopied } = stateAction
   const getDate = (dayFormat: string) => dayjs(dayFormat).format('DD MMM YYYY')
-  const getDateUnix = (day: string) => dayjs.unix( parseInt(day)).format('DD MMM YYYY')
+  const getDateUnix = (day: string) => dayjs.unix(parseInt(day)).format('DD MMM YYYY')
   const useCopyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
     setCopied(true)
@@ -215,18 +215,18 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
               </div>
               {owner !== undefined && owner.length > 0 && <div className="flex h-auto items-center flex-col w-full content-start">
                 <div className="flex w-full text-gray-700 mb-2">Collected by </div>
-                { owner.length > 1 ?
+                {owner.length > 1 ?
                   <div className="flex content-start w-full flex-wrap">
                     {owner.map((owner, index) => profileAddress(owner, index))}
-                  </div>:
-                  <a href={`/profile?address=${creator?.address}`} className="flex justify-start w-full mb-4 items-center	">
+                  </div> :
+                  <a href={`/profile?address=${owner[0]?.address}`} className="flex justify-start w-full mb-4 items-center	">
                     {profileAddress(owner[0], 0)}
                     <div className="ml-2">
                       {owner[0]?.name}
                       <div className="text-gray-500 underline">View Profile</div>
                     </div>
                   </a>
-                 }
+                }
               </div>}
             </div>
           </div>
@@ -247,10 +247,10 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
               {profilePic(current_owner)} - {type} @ {getDate(date)}
             </div>
             case 'Minted': return <div className="flex items-center my-5 text-sm text-gray-500" key={index}>
-            {profilePic(current_owner)} - {type} @ {getDateUnix(date)}
+              {profilePic(current_owner)} - {type} @ {getDateUnix(date)}
             </div>
             case 'Bid': return <div className="flex items-center my-5 text-sm text-gray-500" key={index}>
-            {profilePic(current_owner)} - {type} @ {getDateUnix(date)}
+              {profilePic(current_owner)} - {type} @ {getDateUnix(date)}
             </div>
             // case 'Sold': return <div className="flex items-center my-5 text-sm text-gray-500" key={index}>
             // {profilePic(current_owner)} - {type} @ {getDateUnix(date)}
@@ -259,7 +259,7 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
             // {profilePic(current_owner)} - {type} @ {getDateUnix(date)}
             // </div>
             case 'Listed': return <div className="flex items-center my-5 text-sm text-gray-500" key={index}>
-            {profilePic(current_owner)} - {type} @ {getDateUnix(date)}
+              {profilePic(current_owner)} - {type} @ {getDateUnix(date)}
             </div>
           }
         })}

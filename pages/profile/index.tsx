@@ -9,7 +9,7 @@ import { observer } from 'mobx-react-lite'
 import { ConnectBtn } from '@/Galleryst'
 import { NextSeo } from 'next-seo'
 
-const Page = observer(({ address, nifty_slug, seo, response }: {
+const Page = observer(({ address, nifty_slug, seo, response, loginModal=false }: {
   address: string,
   nifty_slug: string | false
   seo: {
@@ -18,12 +18,14 @@ const Page = observer(({ address, nifty_slug, seo, response }: {
     description: string
   }
   response?: any
+  loginModal: boolean
 }) => {
   const [profile, setProfile] = useState<Profile>(response != undefined ? response.profile : {
     pic: 'https://www.galleryst.co/favicon/ms-icon-310x310.png',
     address
   })
   const [NFTLists, setNFTLists] = useState<Galleryst[]>([])
+  const [claimStage, setClaimStage] = useState(false)
   const [ownLists, setOwnLists] = useState<string[]>([])
   const [onsaleLists, setOnsaleLists] = useState<string[]>([])
   const [createdLists, setCreatedLists] = useState<string[]>([])
@@ -41,7 +43,7 @@ const Page = observer(({ address, nifty_slug, seo, response }: {
         setCreatedLists(createdLists)
         setNFTLists(NFTLists)
       } else {
-        await creatorFetch(address, stateAction, nifty_slug)
+        await creatorFetch(address, stateAction, nifty_slug, undefined ,loginModal, setClaimStage)
       }
     })()
   }, []);
@@ -69,13 +71,13 @@ const Page = observer(({ address, nifty_slug, seo, response }: {
       </a>
       <ConnectBtn />
     </div>
-    <ProfilePage profile={profile} action={stateAction} lists={stateLists} />
+    <ProfilePage claimStage={claimStage} setClaimStage={setClaimStage} profile={profile} action={stateAction} lists={stateLists} />
   </div>
 })
 
 
 export async function getServerSideProps(context: any) {
-  const { address, nifty_slug } = context.query
+  const { address, loginModal, nifty_slug } = context.query
   let seo = {
     image: '',
     title: '',
@@ -95,7 +97,8 @@ export async function getServerSideProps(context: any) {
           title: `${name} - Galleryst`,
           description: response.profile?.description != undefined ? response.profile?.description : ''
         },
-        response
+        response,
+        loginModal: loginModal == 'true' ? true : false
       },
     }
   } else {
@@ -103,7 +106,8 @@ export async function getServerSideProps(context: any) {
       props: {
         address: address != undefined ? address : false,
         nifty_slug: nifty_slug != undefined ? nifty_slug : false,
-        seo
+        seo,
+        loginModal: loginModal == 'true' ? true : false
       },
     }
   }

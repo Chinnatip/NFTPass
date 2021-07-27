@@ -4,6 +4,7 @@ import { walletStore } from 'stores/wallet.store'
 import QRCodeModal from '@walletconnect/qrcode-modal'
 import WalletConnect from '@walletconnect/client'
 import { WalletProviderName } from 'static/Enum'
+import * as firebase from "../method/firebase"
 
 class WalletService {
   private walletProviderName: WalletProviderName = walletStore.isMetaMaskAvailable
@@ -129,9 +130,29 @@ class WalletService {
     })
     if (data.verified) {
       const saveToStorage = this.walletProviderName === WalletProviderName.MetaMask
+      console.log(1)
       walletStore.setAddress(addressToVerify, saveToStorage) // only save MetaMask, for now
+      console.log(2)
       walletStore.setVerified(true)
+      console.log(3)
       this.resetListeners()
+
+      // Galleryst database verification
+      const document = await firebase.findbyAddress('creatorParcel', addressToVerify )
+      let databaseVerification = false
+      if (document.exists) {
+        const response: any = document.data()
+        const { profile: { verified } } = response
+        if(verified){
+          databaseVerification = true
+        }
+      }
+      console.log(4)
+      walletStore.setDatabaseVerified(databaseVerification)
+      console.log('vrrrrrrrriiiiify >>>> ' + databaseVerification)
+      if(!databaseVerification){
+        // openModal(true)
+      }
     }
   }
 

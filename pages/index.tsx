@@ -36,7 +36,6 @@ const Page = () => {
         <div className="bg-white rounded-16 flex md:flex-col flex-row justify-center active-shadow">
           <img src="/image/Connect.png" className="md:w-3/4 w-1/3 md:mx-auto mx-0 my-0 object-contain md:p-0 p-4 md:rounded-none rounded-16" />
           <div className="m-auto">
-
             <div className="text-center sm:text-lg text-sm w-2/3 m-auto p-4">
               Connect your wallet to claim your NFT portfolio
             </div>

@@ -11,7 +11,7 @@ import { Profile } from '../method/rarible/interface'
 import { creatorFetch } from '../method/integrate'
 import { Galleryst, User } from '../interfaces/index'
 import { Drop } from '../method/nifty/interface'
-import { useRouter } from 'next/router'
+// import { useRouter } from 'next/router'
 import Icon from '@/Icon'
 import { WalletProviderName } from 'static/Enum'
 
@@ -33,8 +33,8 @@ const fixPath = (path: string | undefined) => {
 }
 
 // HEADER
-export const CreatorHeader = ({ profile, parcel, claimable = false }: { profile: Profile, parcel?: any, claimable?: boolean }) => {
-  const [claimStage, setClaimStage] = useState(false)
+export const CreatorHeader = ({ claimStage=false, setClaimStage, profile, parcel, claimable = false }: { claimStage: boolean, setClaimStage: any, profile: Profile, parcel?: any, claimable?: boolean }) => {
+  // const [claimStage, setClaimStage] = useState(false)
   return <>
     {/* Creator profile image */}
     <span className="relative">
@@ -124,7 +124,7 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
   const [pic, setProfileImg] = useState(profile?.pic)
   const [website, setWebsite] = useState(profile.website)
   const [description, setDescription] = useState(profile.description)
-  const router = useRouter()
+  // const router = useRouter()
   const claimPage = async () => {
     let checkShortURL = true
     let checkAddress = address != undefined ? true : false
@@ -151,12 +151,9 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
         }
       })
       // Reload page
-      if (profile.shortUrl == shortUrl) {
-        router.reload()
-      } else {
-        if (window != undefined) {
-          window.location.href = `/${shortUrl}`
-        }
+      if (window != undefined) {
+        walletStore.setDatabaseVerified(true)
+        window.location.href = `/profile?address=${address}`
       }
     } else {
       alert('please check URL or other input.')
@@ -324,7 +321,6 @@ export const ConnectBtn = observer(() => {
           </button>
         }
         {/* WalletConnect always available */}
-        <p className="w-full text-center text-xs my-2">OR</p>
         {!walletStore.isConnected && 
           <button
             className='text-xs bg-white p-3 rounded-full text-black flex items-center shadow-nft'
@@ -338,9 +334,9 @@ export const ConnectBtn = observer(() => {
         }
         {walletStore.isConnected && (
           <>
-            {walletStore.address != '' && <a href={`/profile?address=${walletStore.address}`} className=" w-full inline-block bg-white text-black focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft">
-              View My Page
-            </a>}
+            {walletStore.address != '' && !walletStore.dbVerified ?
+              <a href={`/profile?address=${walletStore.address}&loginModal=true`} className=" w-full inline-block bg-black text-white focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft">Claim My Page</a>:
+              <a href={`/profile?address=${walletStore.address}`} className=" w-full inline-block bg-black text-white focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft">View My Page</a>}
             <button className=" w-full inline-block mt-4 bg-white focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft text-black" onClick={() => {
               setShow(false)
               walletService.disconnect()
