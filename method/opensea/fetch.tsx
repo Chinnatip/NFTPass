@@ -129,9 +129,9 @@ export const nftDetail = async(address: string, defaultAction?: (data: any) => v
         image: findOwner?.current_owner?.image
       }],
       creator: {
-        address: findCreator?.current_owner?.address ,
-        name: findCreator?.current_owner?.user?.publicUsername ,
-        image: findCreator?.current_owner?.image
+        address: findCreator?.previous_owner?.address ,
+        name: findCreator?.previous_owner?.user?.publicUsername ,
+        image: findCreator?.previous_owner?.image
       },
       pricing,
       offer,
