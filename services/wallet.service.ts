@@ -1,15 +1,56 @@
 import axios from 'axios'
 import { ethers, utils } from 'ethers'
 import { walletStore } from 'stores/wallet.store'
+import QRCodeModal from '@walletconnect/qrcode-modal'
+import WalletConnect from '@walletconnect/client'
+import { WalletProviderName } from 'static/Enum'
 import * as firebase from "../method/firebase"
 
 class WalletService {
+  private walletProviderName: WalletProviderName = walletStore.isMetaMaskAvailable
+    ? WalletProviderName.MetaMask
+    : WalletProviderName.WalletConnect
   private provider!: ethers.providers.Web3Provider
+  private wcConnector!: WalletConnect
 
   constructor() {}
 
   init = () => {
-    this.provider = walletStore.defaultProvider
+    if (walletStore.isMetaMaskAvailable) {
+      this.provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
+    }
+    this.wcConnector = new WalletConnect({
+      bridge: 'https://bridge.walletconnect.org', // Required
+      qrcodeModal: QRCodeModal,
+    })
+  }
+
+  resetListeners = () => {
+    switch (this.walletProviderName) {
+      case WalletProviderName.MetaMask: {
+        this.provider.removeAllListeners()
+        this.provider.on('network', this.onNetworkChanged)
+        this.provider.on(walletStore.address, this.onBalanceChange)
+        this.provider
+          .getBalance(walletStore.address)
+          .then(this.onBalanceChange)
+          .catch(console.error)
+        break
+      }
+      case WalletProviderName.WalletConnect: {
+        break
+      }
+    }
+  }
+
+  private onNetworkChanged = (_newNetwork: any, oldNetwork: any) => {
+    if (!!oldNetwork && typeof window !== 'undefined') {
+      window.location.reload()
+    }
+  }
+
+  private onBalanceChange = (balance: ethers.BigNumber) => {
+    walletStore.setBalance(+utils.formatEther(balance))
   }
 
   checkGallerystVerified = async (address: string): Promise<boolean> => {
@@ -19,57 +60,85 @@ class WalletService {
     return verified
   }
 
-  getAccounts = async () => {
-    const accounts = await this.provider.send('eth_requestAccounts', [])
-    walletStore.setAccounts(accounts)
+  getAccounts = async (): Promise<string> => {
+    switch (this.walletProviderName) {
+      case WalletProviderName.MetaMask: {
+        const accounts = await this.provider.send('eth_requestAccounts', [])
+        return accounts[0]
+      }
+      case WalletProviderName.WalletConnect: {
+        if (!this.wcConnector.connected) {
+          await this.wcConnector.createSession()
+          const address: string = await new Promise((resolve, reject) => {
+            this.wcConnector.on('connect', (err, payload) => {
+              if (err) reject(err)
+              resolve(payload.params[0].accounts[0])
+            })
+          })
+          return address
+        } else {
+          return this.wcConnector.accounts[0]
+        }
+      }
+      default: {
+        throw new Error('Invalid wallet provider')
+      }
+    }
   }
 
-  updateBalance = async () => {
-    if (!walletStore.address) return
-    const balance = await this.provider.getBalance(walletStore.address)
-    walletStore.setBalance(+utils.formatEther(balance))
+  signTypedData = async (address: string): Promise<{ chainId: number; typedSignature: string }> => {
+    const { data: params } = await axios.get('/api/verifySignature')
+    switch (this.walletProviderName) {
+      case WalletProviderName.MetaMask: {
+        const chainId = this.provider.network.chainId
+        params.domain.chainId = chainId
+        const typedSignature = await this.provider.send('eth_signTypedData_v4', [
+          address,
+          JSON.stringify(params),
+        ])
+        return { chainId, typedSignature }
+      }
+      case WalletProviderName.WalletConnect: {
+        const chainId = this.wcConnector.chainId
+        params.domain.chainId = this.wcConnector.chainId
+        const typedSignature = await this.wcConnector.signTypedData([
+          address,
+          JSON.stringify(params),
+        ])
+        return { chainId, typedSignature }
+      }
+      default: {
+        throw new Error('Invalid wallet provider')
+      }
+    }
   }
 
-  connect = async (addressToConnect: string, openModal: any) => {
-    if (!addressToConnect || walletStore.accounts.length === 0) {
-      await this.getAccounts()
-    }
-    if (!walletStore.accounts.includes(addressToConnect)) {
-      return
-    }
-    // Check if verified by Galleryst
-    const gallerystVerified = await this.checkGallerystVerified(addressToConnect)
+  connect = async (walletProviderName: WalletProviderName) => {
+    this.walletProviderName = walletProviderName
+    const addressToVerify = await this.getAccounts()
+    const gallerystVerified = await this.checkGallerystVerified(addressToVerify)
     if (gallerystVerified) {
-      walletStore.setAddress(addressToConnect)
+      walletStore.setAddress(addressToVerify)
       walletStore.setVerified(true)
       return
     }
-    // Not verified, process signing
-    // use separate provider instance
-    const provider = new ethers.providers.Web3Provider(window.ethereum)
-    const { data: params } = await axios.get('/api/verifySignature')
-    const chainId = walletStore.defaultProvider.network.chainId
-    params.domain.chainId = chainId
-    const typedSignature = await provider.send('eth_signTypedData_v4', [
-      addressToConnect,
-      JSON.stringify(params),
-    ])
-
+    const { chainId, typedSignature } = await this.signTypedData(addressToVerify)
     const { data } = await axios.post('/api/verifySignature', {
       chainId,
-      addressToVerify: addressToConnect,
+      addressToVerify,
       typedSignature,
     })
     if (data.verified) {
+      const saveToStorage = this.walletProviderName === WalletProviderName.MetaMask
       console.log(1)
-      walletStore.setAddress(addressToConnect)
+      walletStore.setAddress(addressToVerify, saveToStorage) // only save MetaMask, for now
       console.log(2)
       walletStore.setVerified(true)
       console.log(3)
-      walletStore.updateSigner()
+      this.resetListeners()
 
       // Galleryst database verification
-      const document = await firebase.findbyAddress('creatorParcel', addressToConnect )
+      const document = await firebase.findbyAddress('creatorParcel', addressToVerify )
       let databaseVerification = false
       if (document.exists) {
         const response: any = document.data()
@@ -82,12 +151,23 @@ class WalletService {
       walletStore.setDatabaseVerified(databaseVerification)
       console.log('vrrrrrrrriiiiify >>>> ' + databaseVerification)
       if(!databaseVerification){
-        openModal(true)
+        // openModal(true)
       }
     }
   }
 
-  disconnect = () => {
+  disconnect = async () => {
+    switch(this.walletProviderName) {
+      case WalletProviderName.MetaMask: {
+        this.provider.removeAllListeners()
+        break
+      }
+      case WalletProviderName.WalletConnect: {
+        if (this.wcConnector.connected) {
+          await this.wcConnector.killSession()
+        }
+      }
+    }
     walletStore.reset()
   }
 }

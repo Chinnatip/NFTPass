@@ -4,21 +4,18 @@ import { walletStore } from 'stores/wallet.store'
 
 export const useSetup = () => {
   const [isReady, setReady] = useState(false)
-  const [isMetaMaskInstalled, setMetaMaskInstalled] = useState(false)
 
   useEffect(() => {
     if (typeof window === 'undefined') return // ignore on server-side
-    if (typeof window.ethereum === 'undefined') return // metamask not installed
-    setMetaMaskInstalled(true)
     let pollingId: NodeJS.Timeout
 
     const setup = async () => {
       walletStore.init()
       walletService.init()
 
-      pollingId = setInterval(() => {
-        walletService.updateBalance()
-      }, 1000)
+      // pollingId = setInterval(() => {
+      //   walletService.updateBalance()
+      // }, 1000)
       setReady(true)
     }
 
@@ -31,5 +28,5 @@ export const useSetup = () => {
     }
   }, [])
 
-  return { isReady, isMetaMaskInstalled }
+  return { isReady }
 }
