@@ -33,7 +33,7 @@ const fixPath = (path: string | undefined) => {
 }
 
 // HEADER
-export const CreatorHeader = ({ claimStage=false, setClaimStage, profile, parcel, claimable = false }: { claimStage: boolean, setClaimStage: any, profile: Profile, parcel?: any, claimable?: boolean }) => {
+export const CreatorHeader = ({ claimStage = false, setClaimStage, profile, parcel, claimable = false }: { claimStage: boolean, setClaimStage: any, profile: Profile, parcel?: any, claimable?: boolean }) => {
   // const [claimStage, setClaimStage] = useState(false)
   return <>
     {/* Creator profile image */}
@@ -99,7 +99,7 @@ export const AddressBox = ({ address }: { address: string | undefined }) => {
       <span className="indent">{address}</span>
     </div>
     {address && <span
-      className="text-black w-8 h-8 ml-2 inline-flex items-center justify-center inline-block bg-gray-200 hover:bg-gray-400 rounded-full cursor-pointer"
+      className="text-black w-8 h-8 ml-2 inline-flex items-center justify-center bg-gray-200 hover:bg-gray-400 rounded-full cursor-pointer"
       onClick={() => { useCopyToClipboard(address != undefined ? address : '') }}>
       <Icon fill={faCopy} noMargin />
     </span>}
@@ -303,39 +303,41 @@ export const ConnectBtn = observer(() => {
       >
         {getBtnText()}
       </button>
-      <div ref={popperRef} className={`${show ? '' : 'hidden'} p-4 rounded-2xl bg-white text-gray-500 absolute mt-20 right-0 z-50 shadow-nft`}>
+      <div ref={popperRef} className={`${show ? '' : 'hidden'} p-4 rounded-2xl bg-white text-gray-500 absolute mt-20 right-0 z-50 shadow-nft`} style={{ width: '200px' }} >
         {/* MetaMask not available */}
         {!walletStore.isMobileBrowser && !walletStore.isMetaMaskAvailable && <div>
           <a href="https://metamask.io/download.html" target="_blank" className="underline text-black">Get Metamask</a>
         </div>}
         {/* Show only if MetaMask is available */}
-        {walletStore.isMetaMaskAvailable  && !walletStore.isConnected && 
+        {walletStore.isMetaMaskAvailable && !walletStore.isConnected &&
           <button
-            className='text-xs bg-white p-3 rounded-full text-black flex items-center shadow-nft'
+            className='text-xs bg-white p-3 mb-3 w-full rounded-full text-black flex items-center shadow-nft'
             onClick={() => {
               setShow(false)
               walletService.connect(WalletProviderName.MetaMask)
             }}
           >
-            MetaMask
+
+            <div className="flex flex-row "><img src={`/image/metamask_logo.png`} className="h-4 w-4 object-contain rounded-full" /> <span className="ml-1">MetaMask </span></div>
           </button>
         }
         {/* WalletConnect always available */}
-        {!walletStore.isConnected && 
+        {!walletStore.isConnected &&
           <button
-            className='text-xs bg-white p-3 rounded-full text-black flex items-center shadow-nft'
+            className='text-xs bg-white p-3 mt-2 rounded-full w-full text-black flex items-center shadow-nft'
             onClick={() => {
               setShow(false)
               walletService.connect(WalletProviderName.WalletConnect)
             }}
           >
-            WalletConnect
+            <img src="/image/walletconnect_logo.png" className="h-4 w-4 object-contain rounded-full" />
+            <span className="ml-1">WalletConnect</span>
           </button>
         }
         {walletStore.isConnected && (
           <>
             {walletStore.address != '' && !walletStore.dbVerified ?
-              <a href={`/profile?address=${walletStore.address}&loginModal=true`} className=" w-full inline-block bg-black text-white focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft">Claim My Page</a>:
+              <a href={`/profile?address=${walletStore.address}&loginModal=true`} className=" w-full inline-block bg-black text-white focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft">Claim My Page</a> :
               <a href={`/profile?address=${walletStore.address}`} className=" w-full inline-block bg-black text-white focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft">View My Page</a>}
             <button className=" w-full inline-block mt-4 bg-white focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft text-black" onClick={() => {
               setShow(false)
