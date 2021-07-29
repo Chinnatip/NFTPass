@@ -198,6 +198,13 @@ const Page = ({ address, seo, getPlatform, getNFT, getOpensea, getFoundation, ge
   return <NFTPage prefix={true} getNFT={getNFT} stateData={stateData} stateAction={stateAction} address={address} seo={seo} />
 }
 
+const getFallbackCurrent = (platform: any): string => {
+  for (const current in platform.check) {
+    if (platform.check[current].status) return current
+  }
+  return '' // should not reaches here since one of platform should be true.
+}
+
 export async function getServerSideProps(context: any) {
   const { id } = context.params
   let seo = {
@@ -216,7 +223,11 @@ export async function getServerSideProps(context: any) {
       rarible: { data: getRarible } = { data: {}},
       foundation: { data: getFoundation } = { data: {} },
       address , current_update, galleryst_id } = response
-    const getNFT = response[getPlatform.current]?.data
+    const current = getPlatform.current || getFallbackCurrent(getPlatform)
+    const getNFT = response[current]?.data
+    if (!getNFT) {
+      return { props: { address, seo } }
+    }
     const constructImage = `https://api.placid.app/u/sxpwrxogf?&thumbnail[image]=${prepareURI(getNFT.image)}&title[text]=${prepareURI(getNFT.title)}&creator_name[text]=${prepareURI(getNFT.creator?.name)}`
     seo = {
       image: constructImage,
