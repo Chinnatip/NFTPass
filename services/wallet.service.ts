@@ -20,7 +20,7 @@ class WalletService {
       this.provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
     }
     this.wcConnector = new WalletConnect({
-      bridge: 'https://bridge.walletconnect.org', // Required
+      bridge: 'wss://bridge.walletconnect.org', // Required
       qrcodeModal: QRCodeModal,
     })
   }
@@ -38,6 +38,7 @@ class WalletService {
         break
       }
       case WalletProviderName.WalletConnect: {
+        this.wcConnector.on('session_update', (_err, _payload) => {})
         break
       }
     }
@@ -115,23 +116,28 @@ class WalletService {
 
   connect = async (walletProviderName: WalletProviderName) => {
     this.walletProviderName = walletProviderName
+    const saveToStorage = walletProviderName === WalletProviderName.MetaMask
+    walletStore.setLoading(true, 'Waiting: Confirm connect')
     const addressToVerify = await this.getAccounts()
     const gallerystVerified = await this.checkGallerystVerified(addressToVerify)
     if (gallerystVerified) {
-      walletStore.setAddress(addressToVerify)
+      walletStore.setAddress(addressToVerify, saveToStorage)
       walletStore.setVerified(true)
+      walletStore.setLoading(false, '')
       return
     }
+    walletStore.setLoading(true, 'Waiting: Signature request')
     const { chainId, typedSignature } = await this.signTypedData(addressToVerify)
+    walletStore.setLoading(true, 'Waiting: Verify signature')
     const { data } = await axios.post('/api/verifySignature', {
       chainId,
       addressToVerify,
       typedSignature,
     })
     if (data.verified) {
-      const saveToStorage = this.walletProviderName === WalletProviderName.MetaMask
       console.log(1)
       walletStore.setAddress(addressToVerify, saveToStorage) // only save MetaMask, for now
+      walletStore.setLoading(false, '')
       console.log(2)
       walletStore.setVerified(true)
       console.log(3)

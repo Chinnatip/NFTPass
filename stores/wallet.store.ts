@@ -10,6 +10,8 @@ class WalletStore {
     this.isMobileBrowser = os.name !== undefined && ['iOS', 'Android'].includes(os.name)
   }
 
+  loading = false;
+  stage = ''
   address: string = ''
   balance: number = 0
   verified: boolean = false
@@ -86,6 +88,11 @@ class WalletStore {
   private clearStorage = () => {
     localStorage.removeItem('address')
     localStorage.removeItem('expires')
+  }
+
+  setLoading = (loading: boolean, stage: string) => {
+    this.loading = loading
+    this.stage = stage
   }
 }
 
