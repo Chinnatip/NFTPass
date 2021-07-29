@@ -20,7 +20,7 @@ class WalletService {
       this.provider = new ethers.providers.Web3Provider(window.ethereum, 'any')
     }
     this.wcConnector = new WalletConnect({
-      bridge: 'wss://bridge.walletconnect.org', // Required
+      bridge: 'https://bridge.walletconnect.org', // Required
       qrcodeModal: QRCodeModal,
     })
   }
