@@ -77,6 +77,15 @@ class WalletService {
           })
           return address
         } else {
+          await this.wcConnector.killSession()
+          await this.wcConnector.createSession()
+          const address: string = await new Promise((resolve, reject) => {
+            this.wcConnector.on('connect', (err, payload) => {
+              if (err) reject(err)
+              resolve(payload.params[0].accounts[0])
+            })
+          })
+          return address
           return this.wcConnector.accounts[0]
         }
       }
