@@ -18,7 +18,7 @@ const Page = () => {
       <div
         className="bg-transparent m-auto md:px-24 p-4 pt-8 pb-8 md:text-5xl text-3xl text-white text-center"
         style={{ letterSpacing: '0.04rem', textShadow: '0 0 40px #884d4d52', opacity: '90%' }}>
-        Display All Your NFTs in One Click.
+        Display All Your NFTs in One Click. Connect Your Wallet To See the Magic.
       </div>
       {/* search-box */}
       {/* <div className="text-center">
