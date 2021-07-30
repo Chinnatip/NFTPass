@@ -12,13 +12,13 @@ const Page = () => {
     getCreator(setCreators)
     getNFTS(setNFTS)
   }, [])
-  return <div className="w-screen h-screen pt-0 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")' }}>
+  return <div className="w-screen h-screen pt-0 relative overflow-y-scroll overflow-x-hidden pb-10" style={{ background: 'url("image/bg_blur.jpg")' }}>
     <div className="md:w-4/5 w-full m-auto z-10">
       <Navbar current={0} />
       <div
-        className="bg-transparent m-auto md:px-24 p-4 pt-8 pb-8 md:text-5xl text-3xl text-white text-center font-serif"
+        className="bg-transparent m-auto md:px-24 p-4 pt-8 pb-8 md:text-5xl text-3xl text-white text-center"
         style={{ letterSpacing: '0.04rem', textShadow: '0 0 40px #884d4d52', opacity: '90%' }}>
-        We curate, You discover. Explore NFTs from all platforms in one place.
+        Display All Your NFTs in One Click.
       </div>
       {/* search-box */}
       {/* <div className="text-center">
@@ -57,7 +57,7 @@ const Page = () => {
           <div className="m-auto">
 
             <div className="text-center sm:text-lg text-sm w-2/3 m-auto p-4">
-              Galleryst.co URL to Instagram and Twitter bio!
+              Put your Galleryst.co/ page URL to Instagram and Twitter bio!
             </div>
           </div>
         </div>
@@ -101,6 +101,7 @@ const Page = () => {
         </div>
       </div >
     </div>
+    <a href={`https://galleryst.hellonext.co`} className="fixed right-0 bottom-0 my-2 mx-4 w-max inline bg-white text-gray-700 focus:outline-none rounded-full p-2 px-3 items-center shadow-nft" target="_blank" ><img src="/image/feedback_icon.svg" style={{ height: '24px', opacity: '.6' }} className="inline-block mr-2 mb-1" />Send us feedback</a>
   </div>
 }
 

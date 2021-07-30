@@ -4,7 +4,7 @@ import { sanitizeArray } from '../method/integrate'
 import { walletStore } from 'stores/wallet.store'
 import { CreatorHeader, ShareAction, UpdateAction, Filter, Toggle, NFTDrop, NFTGroup } from '@/Galleryst'
 
-const ProfilePage = ({ profile, action, lists, claimStage=false, setClaimStage }: {
+const ProfilePage = ({ profile, action, lists, claimStage = false, setClaimStage }: {
   profile: Profile,
   action: any,
   lists: any,
@@ -66,7 +66,9 @@ const ProfilePage = ({ profile, action, lists, claimStage=false, setClaimStage }
       {/* Footer */}
       <div className="text-white text-center text-sm mt-8">© 2021 Galleryst.co, All rights reserved.</div>
     </div>
+    <a href={`https://galleryst.hellonext.co`} className="fixed right-0 bottom-0 my-2 mx-4 w-max inline bg-white text-gray-700 focus:outline-none rounded-full p-2 px-3 items-center shadow-nft" target="_blank" ><img src="/image/feedback_icon.svg" style={{ height: '24px', opacity: '.6' }} className="inline-block mr-2 mb-1" />Send us feedback</a>
   </div>
+
 }
 
 export default ProfilePage
