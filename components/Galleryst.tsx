@@ -156,7 +156,7 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
         window.location.href = `/profile?address=${address}`
       }
     } else {
-      alert('please check URL or other input.')
+      alert('Oops! This URL is already taken. Please try again.')
     }
     // setTimeout(() => { modalAction(false) }, 1300)
   }
@@ -357,6 +357,7 @@ export const ConnectBtn = observer(() => {
           </>
         )}
       </div>
+
     </div>
   )
 })
