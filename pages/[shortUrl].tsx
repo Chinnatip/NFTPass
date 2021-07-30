@@ -83,7 +83,6 @@ export async function getServerSideProps(context: any) {
     const { profile: { pic, name } } = response
     const prepareText = name ? `View%20${prepareURI(name)}%27s%20NFT%20portfolio%20on%20Galleryst` : 'View%20My%20NFT%20portfolio%20on%20Galleryst'
     const constructImage = `https://api.placid.app/u/9h6ycuatn?&profile_image[image]=${encodeURIComponent(pic)}&title-copy[text]=${prepareText}`
-
     return {
       props: {
         response,

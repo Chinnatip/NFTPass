@@ -3,16 +3,40 @@ import Card from "../components/Card"
 import Navbar from "../components/Navbar"
 import { getCreator, getNFTS, Creator, shuffle, randomNFT, profileNFT, NFT } from '../method/fetchJSON'
 import { ConnectBtn } from '@/Galleryst'
+import { NextSeo } from 'next-seo';
 
 const Page = () => {
   const [current, setCurrent] = useState('all')
   const [creators, setCreators] = useState<Creator[]>([])
   const [nfts_lists, setNFTS] = useState<NFT[]>([])
+  const seo = {
+    image: 'https://koh-assets.s3-ap-southeast-1.amazonaws.com/galleryst/ogimage.png',
+    title: 'Galleryst',
+    description: 'Explore NFTs from all platforms in one place.'
+
+  }
   useEffect(() => {
     getCreator(setCreators)
     getNFTS(setNFTS)
   }, [])
   return <div className="w-screen h-screen pt-0 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")' }}>
+    <NextSeo
+      title={seo.title}
+      description={seo.description}
+      canonical="https://www.canonical.ie/"
+      openGraph={{
+        site_name: seo.title,
+        url: `https://www.galleryst.co`,
+        title: seo.title,
+        description: seo.description,
+        images: [{ url: seo.image, alt: seo.title, width: 1200, height: 600 }]
+      }}
+      twitter={{
+        handle: '@handle',
+        site: '@site',
+        cardType: 'summary_large_image',
+      }}
+    />
     <div className="md:w-4/5 w-full m-auto z-10">
       <Navbar current={0} />
       <div
