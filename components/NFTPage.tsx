@@ -264,7 +264,7 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
           }
         })}
       </div>}
-      <a href={`https://galleryst.hellonext.co`} className="fixed right-0 bottom-0 my-2 mx-4 w-max inline bg-white text-gray-700 focus:outline-none rounded-full p-2 px-3 items-center shadow-nft" target="_blank" ><img src="/image/feedback_icon.svg" style={{ height: '24px', opacity: '.6' }} className="inline-block mr-2 mb-1" />Send us feedback</a>
+      <a href={`https://galleryst.hellonext.co`} className="fixed right-0 bottom-0 z-20 my-2 mx-4 w-max inline bg-white text-gray-700 focus:outline-none rounded-full p-2 items-center shadow-nft text-xs" target="_blank" ><img src="/image/feedback_icon.svg" style={{ height: '20px', opacity: '.6' }} className="inline-block mr-2 mb-0 " />Send us feedback</a>
       <div className="h-24" />
     </div>
   </div>

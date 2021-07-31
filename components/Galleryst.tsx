@@ -206,7 +206,7 @@ export const NFTDrop = ({ lists, text = '' }: { lists: Drop[], text: string }) =
   return <>
     {lists.length > 0 && <>
       <h2 className="text-xl">{text}</h2>
-      <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 md:p-4 p-0 gap-2 w-full">
+      <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-3 md:gap-4 md:p-4 p-0 gap-1 w-full">
         {lists.map(item => {
           const { address, title, image } = item
           return image != undefined && <a target="_blank" href={`/nft?address=${address}`} className="relative cursor-pointer bg-white rounded-16 mb-2 active-shadow" key={`${address}`}>
@@ -231,9 +231,9 @@ export const NFTDrop = ({ lists, text = '' }: { lists: Drop[], text: string }) =
 // NFT GROUP
 export const NFTGroup = ({ lists, nfts, text = '', type = '' }: { type?: string, text?: string, lists: string[], nfts: Galleryst[] }) => {
   return <>
-    {lists.length > 0 && <div className="mx-3 mt-6">
+    {lists.length > 0 && <div className="mx-1 mt-6">
       <h2 className="text-sm bg-gray-200 rounded-full inline-block mb-2 px-3 py-1 shadow-nft text-gray-600 md:mx-4">{text}</h2>
-      <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 md:p-4 p-0 gap-2 w-full">
+      <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-3 md:gap-4 md:p-4 p-0 gap-1 w-full">
         {nfts.filter(item => lists.includes(item.id)).map(item => {
           const { imagePreview, check, alternateUrl } = item
           // @ts-ignore
@@ -241,14 +241,14 @@ export const NFTGroup = ({ lists, nfts, text = '', type = '' }: { type?: string,
             event.target.onerror = null;
             event.target.src = alternateUrl;
           }
-          return imagePreview != undefined && <a target="_blank" href={`/nft?address=${item.id}`} className="relative cursor-pointer bg-white rounded-16 mb-2 active-shadow" key={`${item.id}`}>
+          return imagePreview != undefined && <a target="_blank" href={`/nft?address=${item.id}`} className="relative cursor-pointer bg-white rounded-16 mb-0 active-shadow" key={`${item.id}`}>
             <div className="thumbnail-wrapper w-full relative">
               {imagePreview.slice(imagePreview.length - 3, imagePreview.length) == 'mp4' ?
-                <video className="rounded-16 border-8 border-white thumbnail-height" autoPlay loop muted>
+                <video className="rounded-16  md:border-8 border-4 border-white thumbnail-height" autoPlay loop muted>
                   <source src={imagePreview} />
                   <source src={alternateUrl} />
                 </video> :
-                <img className="rounded-16 border-8 border-white thumbnail-height" src={imagePreview} onError={onImgError} />
+                <img className="rounded-16 md:border-8 border-4 border-white thumbnail-height" src={imagePreview} onError={onImgError} />
               }
               <div className="absolute flex justify-end	z-10 bottom-0  w-full mb-2 px-2 pt-6 ">
                 <div className="flex px-2 rounded-b-16 pt-10 justify-end w-full" style={{ background: 'linear-gradient(360deg, rgba(0, 0, 0, 0.52) 10%, rgba(196, 196, 196, 0) 50%)' }}>
