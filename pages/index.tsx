@@ -10,7 +10,7 @@ const Page = () => {
   const [creators, setCreators] = useState<Creator[]>([])
   const [nfts_lists, setNFTS] = useState<NFT[]>([])
   const seo = {
-    image: '../image/OG_galleryst.png',
+    image: 'https:// www.galleryst.co/image/OG_galleryst.png',
     title: 'Galleryst',
     description: 'Display All Your NFTs in One Place. Connect Your Wallet To See The Magic.'
 
