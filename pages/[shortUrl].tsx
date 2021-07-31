@@ -46,7 +46,7 @@ const Page = ({ seo, response }: {
       canonical="https://www.canonical.ie/"
       openGraph={{
         site_name: 'Galleryst',
-        url: `https://www.galleryst.co/profile?address=${profile.address}`,
+        url: `https://www.galleryst.co/profile?address=${profile.address}&lead=true`,
         title: seo.title,
         description: seo.description,
         images: [{ url: seo.image, alt: seo.title, width: 1200, height: 600 }]
