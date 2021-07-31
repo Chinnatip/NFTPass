@@ -10,9 +10,9 @@ const Page = () => {
   const [creators, setCreators] = useState<Creator[]>([])
   const [nfts_lists, setNFTS] = useState<NFT[]>([])
   const seo = {
-    image: 'https://koh-assets.s3-ap-southeast-1.amazonaws.com/galleryst/ogimage.png',
+    image: '../image/OG_galleryst.png',
     title: 'Galleryst',
-    description: 'Explore NFTs from all platforms in one place.'
+    description: 'Display All Your NFTs in One Place. Connect Your Wallet To See The Magic.'
 
   }
   useEffect(() => {
