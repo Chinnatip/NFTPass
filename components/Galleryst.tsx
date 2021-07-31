@@ -250,7 +250,7 @@ export const NFTGroup = ({ lists, nfts, text = '', type = '' }: { type?: string,
                 </video> :
                 <img className="rounded-16 md:border-8 border-4 border-white thumbnail-height" src={imagePreview} onError={onImgError} />
               }
-              <div className="absolute flex justify-end	z-10 bottom-0  w-full mb-2 px-2 pt-6 ">
+              <div className="absolute flex justify-end	z-10 bottom-0  w-full md:mb-2 md:px-2 mb-1 px-1 pt-6 ">
                 <div className="flex px-2 rounded-b-16 pt-10 justify-end w-full" style={{ background: 'linear-gradient(360deg, rgba(0, 0, 0, 0.52) 10%, rgba(196, 196, 196, 0) 50%)' }}>
                   {type == 'onsale' && item.priceETH != undefined &&
                     <span className="text-white font-bold text-right " >
