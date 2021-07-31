@@ -89,7 +89,7 @@ const Modal = ({ src, action, nfts_lists, creator }: { action?: any, src: NFT, n
     <div className="py-16 md:px-20 px-2">
       <h1 className="px-4 font-thin text-gray-600 text-2xl">More Like This</h1>
 
-      <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 md:gap-4 md:p-4 p-0 gap-2 w-full">
+      <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-3 md:gap-4 md:p-4 p-0 gap-1 w-full">
         {profileNFT(nfts_lists, creator).map((item, index) => (
           <div className="rounded-16 shadow-nft mb-8" key={index}>
             <Card src={item} nfts_lists={nfts_lists} creator={creator} />

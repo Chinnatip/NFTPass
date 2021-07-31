@@ -1474,6 +1474,13 @@ body.video-react-full-window .video-react-fullscreen {
   }
 }
 
+
+@screen md {
+  .rounded-16 {
+    border-radius: 16px;
+  }
+}
+
 .thumbnail-wrapper {
   position: relative;
   overflow: hidden;
