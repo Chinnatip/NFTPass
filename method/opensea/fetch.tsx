@@ -37,7 +37,7 @@ export const userInfo = async(contact_address: string) => {
 
 const getPriceHistory = async(contact_address: string, token_id: string) => {
   const resp = await axios.get(`/api/opensea/tradeHistory?address=${contact_address}:${token_id}`)
-  console.log(resp.data)
+  // console.log(resp.data)
   if(resp.status ==200){
     return resp.data
   }else{
@@ -116,7 +116,7 @@ export const nftDetail = async(address: string, defaultAction?: (data: any) => v
       console.log('get error while catch history')
     }
     const findOwner = activity[0]
-    const findCreator = activity[activity.length-1]
+    const findCreator = activity[activity.length-1].previous_owner.address !== "0x0000000000000000000000000000000000000000" ? activity[activity.length-1]['previous_owner'] : activity[activity.length-1]['current_owner']
     const data : NFTDetail = {
       address,
       image: os.image_url,
@@ -129,15 +129,15 @@ export const nftDetail = async(address: string, defaultAction?: (data: any) => v
         image: findOwner?.current_owner?.image
       }],
       creator: {
-        address: findCreator?.previous_owner?.address ,
-        name: findCreator?.previous_owner?.user?.publicUsername ,
-        image: findCreator?.previous_owner?.image
+        address: findCreator?.address ,
+        name: findCreator?.user?.publicUsername ,
+        image: findCreator?.image
       },
       pricing,
       offer,
       activity
     }
-    console.log(data)
+    // console.log(data)
     defaultAction?.(data)
     action?.(data)
     return {
