@@ -30,10 +30,12 @@ const Page = observer(({ address, nifty_slug, seo, response, loginModal=false }:
   const [onsaleLists, setOnsaleLists] = useState<string[]>([])
   const [createdLists, setCreatedLists] = useState<string[]>([])
   const [dropLists, setDropLists] = useState<Drop[]>([])
+  const [toggle, setToggle] = useState<'drops'|'creates'|'collection'>('collection')
   const stateLists = { NFTLists, ownLists, onsaleLists, createdLists, dropLists }
-  const stateAction = { setProfile, setOwnLists, setOnsaleLists, setDropLists, setCreatedLists, setNFTLists }
+  const stateAction = { setProfile, setOwnLists, setOnsaleLists, setDropLists, setCreatedLists, setNFTLists, setToggle }
   useEffect(() => {
     (async () => {
+      console.log(response)
       if (response != undefined) {
         const { profile, ownLists, onsaleLists, dropLists, createdLists, NFTLists } = response
         setProfile(profile)
@@ -42,9 +44,13 @@ const Page = observer(({ address, nifty_slug, seo, response, loginModal=false }:
         setDropLists(dropLists)
         setCreatedLists(createdLists)
         setNFTLists(NFTLists)
+
+        // Config toggle
+        if(onsaleLists.length == 0 && ownLists.length == 0 && createdLists.length > 0) setToggle('creates')
       } else {
         await creatorFetch(address, stateAction, nifty_slug, undefined ,loginModal, setClaimStage)
       }
+
     })()
   }, []);
   return <div className="w-screen h-screen pt-0 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")' }}>
@@ -71,7 +77,7 @@ const Page = observer(({ address, nifty_slug, seo, response, loginModal=false }:
       </a>
       <ConnectBtn />
     </div>
-    <ProfilePage claimStage={claimStage} setClaimStage={setClaimStage} profile={profile} action={stateAction} lists={stateLists} />
+    <ProfilePage toggle={toggle} setToggle={setToggle} claimStage={claimStage} setClaimStage={setClaimStage} profile={profile} action={stateAction} lists={stateLists} />
   </div>
 })
 
@@ -84,6 +90,7 @@ export async function getServerSideProps(context: any) {
     description: ''
   }
   const document = await firebase.findbyAddress("creatorParcel", `${address.toLowerCase()}`)
+  //console.log(document.data())
   if (document.exists) {
     const response: any = document.data()
     const { profile: { pic, name } } = response

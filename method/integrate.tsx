@@ -156,7 +156,7 @@ export const creatorFetch = async (address: string, action: any , nifty_slug: st
   const NFTLists = sanitizeArray(constructNFTlists)
 
   //Attach parcel to firebase
-  await firebase.writeDocument("creatorParcel", address, {
+  await firebase.writeDocument("creatorParcel", address.toLowerCase(), {
     profile: updateProfile,
     NFTLists: sanitizeArray(NFTLists),
     onsaleLists,
@@ -164,6 +164,12 @@ export const creatorFetch = async (address: string, action: any , nifty_slug: st
     createdLists,
     dropLists
   })
+
+  // Config toggle
+  if(onsaleLists.length == 0 && ownLists.length == 0 && createdLists.length > 0) {
+    action.setToggle('creates')
+  }
+
   return {
     profile: updateProfile,
     NFTLists,

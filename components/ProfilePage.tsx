@@ -1,17 +1,19 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Profile } from '../method/rarible/interface'
 import { sanitizeArray } from '../method/integrate'
 import { walletStore } from 'stores/wallet.store'
 import { CreatorHeader, ShareAction, UpdateAction, Filter, Toggle, NFTDrop, NFTGroup } from '@/Galleryst'
 
-const ProfilePage = ({ profile, action, lists, claimStage = false, setClaimStage }: {
+const ProfilePage = ({ toggle,setToggle, profile, action, lists, claimStage = false, setClaimStage }: {
   profile: Profile,
   action: any,
   lists: any,
   claimStage: boolean
   setClaimStage: any
+  toggle: 'drops'|'creates'|'collection'
+  setToggle: any
 }) => {
-  const [toggle, setToggle] = useState('collection')
+
   const { onsaleLists, ownLists, createdLists, dropLists, NFTLists } = lists
   const parcel = {
     profile: { ...profile, verified: true },

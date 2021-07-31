@@ -23,6 +23,7 @@ const Page = ({ seo, response }: {
   const [onsaleLists, setOnsaleLists] = useState<string[]>([])
   const [createdLists, setCreatedLists] = useState<string[]>([])
   const [dropLists, setDropLists] = useState<Drop[]>([])
+  const [toggle, setToggle] = useState<'drops'|'creates'|'collection'>('collection')
   const stateLists = { NFTLists, ownLists, onsaleLists, createdLists, dropLists }
   const stateAction = { setProfile, setOwnLists, setOnsaleLists, setDropLists, setCreatedLists, setNFTLists }
   useEffect(() => {
@@ -36,6 +37,8 @@ const Page = ({ seo, response }: {
         setCreatedLists(createdLists)
         setNFTLists(NFTLists)
       }
+      // Config toggle
+      if(onsaleLists.length == 0 && ownLists.length == 0 && createdLists.length > 0) setToggle('creates')
     })()
   }, []);
 
@@ -64,7 +67,7 @@ const Page = ({ seo, response }: {
         </a>
         <ConnectBtn />
       </div>
-      <ProfilePage claimStage={claimStage} setClaimStage={setClaimStage}  profile={profile} action={stateAction} lists={stateLists} />
+      <ProfilePage toggle={toggle} setToggle={setToggle}  claimStage={claimStage} setClaimStage={setClaimStage}  profile={profile} action={stateAction} lists={stateLists} />
     </div>
   </div>
 }
