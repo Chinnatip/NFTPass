@@ -29,6 +29,14 @@ export const findbyAddress = async (doc: string, address: string) => {
   return await db.get()
 }
 
+export const getAllUser = async() => {
+  const db = fire.firestore().collection('creatorParcel')
+  const documents = await db.get()
+  return documents.docs.map(doc => {
+    return doc.data()
+  })
+}
+
 export const findDocument = async (doc: string, shortUrl: string, rules: string) => {
   const db = fire.firestore().collection(doc).where(rules,'==',shortUrl)
   return await db.get()

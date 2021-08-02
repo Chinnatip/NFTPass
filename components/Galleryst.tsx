@@ -7,6 +7,7 @@ import { observer } from 'mobx-react-lite'
 import { walletService } from 'services/wallet.service'
 import { createPopper } from '@popperjs/core'
 import UploadButton from '@/UploadButton'
+import OtpInput from 'react-otp-input'
 import { Profile } from '../method/rarible/interface'
 import { creatorFetch } from '../method/integrate'
 import { Galleryst, User } from '../interfaces/index'
@@ -118,11 +119,13 @@ const ClaimBox = ({ address, action, profile }: { address: string | undefined, p
 }
 
 const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string | undefined, parcel: any, profile: Profile, modalAction: any }) => {
+  const [present, setPresent] = useState('profileEditor')
   const [username, setUsername] = useState(profile.username)
   const [shortUrl, setShorthand] = useState(profile.shortUrl)
   const [email, setEmail] = useState(profile.email)
   const [pic, setProfileImg] = useState(profile?.pic)
   const [website, setWebsite] = useState(profile.website)
+  const [otp, setOtp] = useState('')
   const [description, setDescription] = useState(profile.description)
   // const router = useRouter()
   const claimPage = async () => {
@@ -160,9 +163,36 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
     }
     // setTimeout(() => { modalAction(false) }, 1300)
   }
+  const handleChange = (e: string) => {
+    console.log(isNaN(parseInt(e)))
+    if( !isNaN(parseInt(e))){
+      if(e.length == 4){
+        setPresent('profileEditor')
+      }
+      setOtp(e)
+    }
+
+  }
   return <>
     <div className="top-0 left-0 fixed w-screen h-screen bg-black opacity-50" />
-    <div className="fixed top-0 left-0 md:w-1/2 w-full px-8 py-8 bg-white z-30 rounded-3xl shadow-nft text-left overflow-scroll " style={{ height: '70vh', transform: 'translate(-50%,-50%)', top: '50%', left: '50%' }}>
+    { present == 'otpValidator' && <div className="fixed top-0 left-0 px-10 py-10 bg-white z-30 rounded-3xl shadow-nft text-left overflow-scroll " style={{ transform: 'translate(-50%,-50%)', top: '50%', left: '50%' }}>
+      <div className="text-lg font-bold">Confirm your email</div>
+      <OtpInput
+        value={otp}
+        onChange={handleChange}
+        numInputs={4}
+        inputStyle={{ fontSize:'1.7rem', width: '80px', height: '72px', boxShadow: '0px 8px 20px 5px rgba(0, 0, 0, 0.08)', borderRadius: '15px', margin: '20px 7px' }}
+        // separator={<span>-</span>}
+      />
+      <div className="text-gray-500 text-sm">
+        We sent a verification code to 'thanon@galleryst.com'. <br />
+        Haven't you got the code try <a href="" className="underline">resend</a>
+      </div>
+      <div className="text-gray-500 mt-4 text-sm underline">
+        <a href="">Wrong email? Let's start over</a>
+      </div>
+    </div> }
+    { present == 'profileEditor' && <div className="fixed top-0 left-0 md:w-1/2 w-full px-8 py-8 bg-white z-30 rounded-3xl shadow-nft text-left overflow-scroll " style={{ height: '70vh', transform: 'translate(-50%,-50%)', top: '50%', left: '50%' }}>
       <div className="relative w-full">
         <button onClick={() => modalAction(false)} className="absolute top-0 right-0 border rounded-full h-8 w-8 flex items-center justify-center">
           <Icon fill={faTimes} noMargin />
@@ -186,7 +216,10 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
       </div>
       <div className="mt-5 mb-4">
         <div className="text-black">Received Notification via Email</div>
-        <input className="bg-white rounded-full shadow-nft w-full px-4 h-12 my-2 text-gray-700" placeholder="Email" value={email} type="email" onChange={e => setEmail(e.target.value)} />
+        <div className="flex w-full items-center ">
+          <input className="bg-white rounded-full shadow-nft flex-grow px-4 h-12 my-2 text-gray-700" placeholder="Email" value={email} type="email" onChange={e => setEmail(e.target.value)} />
+          {/* <button onClick={() => setPresent('otpValidator') } className="bg-blue-600 text-white rounded-full ml-3 px-3 h-12">Verify email</button> */}
+        </div>
       </div>
       <div className="mt-5 mb-4">
         <div className="text-black">Your website</div>
@@ -197,7 +230,7 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
         <textarea rows={6} className="bg-white rounded-2xl shadow-nft w-full px-4 py-2 my-2 text-gray-700" placeholder="Enter your short bio" value={description} onChange={e => setDescription(e.target.value)} />
       </div>
       <button onClick={() => claimPage()} className="bg-black w-full h-12 rounded-full text-white">Save</button>
-    </div>
+    </div>}
   </>
 }
 
