@@ -4,13 +4,13 @@ import { sanitizeArray } from '../method/integrate'
 import { walletStore } from 'stores/wallet.store'
 import { CreatorHeader, ShareAction, UpdateAction, Filter, Toggle, NFTDrop, NFTGroup } from '@/Galleryst'
 
-const ProfilePage = ({ toggle,setToggle, profile, action, lists, claimStage = false, setClaimStage }: {
+const ProfilePage = ({ toggle, setToggle, profile, action, lists, claimStage = false, setClaimStage }: {
   profile: Profile,
   action: any,
   lists: any,
   claimStage: boolean
   setClaimStage: any
-  toggle: 'drops'|'creates'|'collection'
+  toggle: 'drops' | 'creates' | 'collection'
   setToggle: any
 }) => {
 
@@ -68,7 +68,7 @@ const ProfilePage = ({ toggle,setToggle, profile, action, lists, claimStage = fa
       {/* Footer */}
       <div className="text-white text-center text-sm mt-8">© 2021 Galleryst.co, All rights reserved.</div>
     </div>
-    <a href={`https://galleryst.hellonext.co`} className="fixed right-0 bottom-0 z-20 my-2 mx-4 w-max inline bg-white text-gray-700 focus:outline-none rounded-full p-2 items-center shadow-nft text-xs" target="_blank" ><img src="/image/feedback_icon.svg" style={{ height: '20px', opacity: '.6' }} className="inline-block mr-2 mb-0 " />Send us feedback</a>
+    <a href={`https://galleryst.hellonext.co`} className="fixed right-0 bottom-0 z-20 my-2 mx-4 w-auto inline bg-white text-gray-700 focus:outline-none rounded-full p-2 items-center shadow-nft text-xs" target="_blank" ><img src="/image/feedback_icon.svg" style={{ height: '20px', opacity: '.6' }} className="inline-block mr-2 mb-0 " />Send us feedback</a>
   </div>
 
 }
