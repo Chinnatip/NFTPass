@@ -9,12 +9,13 @@ import { createPopper } from '@popperjs/core'
 import UploadButton from '@/UploadButton'
 import OtpInput from 'react-otp-input'
 import { Profile } from '../method/rarible/interface'
-import { creatorFetch } from '../method/integrate'
+import { creatorFetch, makeotp } from '../method/integrate'
 import { Galleryst, User } from '../interfaces/index'
 import { Drop } from '../method/nifty/interface'
 // import { useRouter } from 'next/router'
 import Icon from '@/Icon'
 import { WalletProviderName } from 'static/Enum'
+import axios from 'axios'
 
 const lockDigit = (price: number) => {
   return (Math.floor(price * 10000)) / 10000
@@ -53,7 +54,7 @@ export const CreatorHeader = ({ claimStage = false, setClaimStage, profile, parc
 
     {/* Address and claim */}
     <div className="mt-1 mb-6  flex align-middle justify-center m-auto relative">
-      <AddressBox address={profile?.address} />
+      <AddressBox address={profile?.address}/>
       {claimable && <ClaimBox address={profile.address} profile={profile} action={setClaimStage} />}
       {claimStage && <ClaimModal profile={profile} address={profile.address} parcel={parcel} modalAction={setClaimStage} />}
     </div>
@@ -110,11 +111,12 @@ export const AddressBox = ({ address }: { address: string | undefined }) => {
 const ClaimBox = ({ address, action, profile }: { address: string | undefined, profile: Profile, action: any }) => {
   return <button
     onClick={() => address != undefined && action(true)}
-    className="button-red text-sm  rounded-full inline-block px-3 py-2 ml-3 active-shadow font-semibold">
+    className="relative button-red text-sm  rounded-full inline-block px-3 py-2 ml-3 active-shadow font-semibold">
     <div>
       <Icon fill={faEdit} />
       {profile.verified ? 'Edit Profile' : 'Claim Profile'}
     </div>
+    { profile.verified && !profile.emailConfirmed && <div className="absolute top-0 right-0 bg-red-600 h-3 w-3 rounded-full "/> }
   </button>
 }
 
@@ -123,9 +125,12 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
   const [username, setUsername] = useState(profile.username)
   const [shortUrl, setShorthand] = useState(profile.shortUrl)
   const [email, setEmail] = useState(profile.email)
+  const [emailState, setEmailState] = useState(profile.email)
+  const [emailConfirmed, setEmailConfirmed] = useState(profile.emailConfirmed ? profile.emailConfirmed : false)
   const [pic, setProfileImg] = useState(profile?.pic)
   const [website, setWebsite] = useState(profile.website)
   const [otp, setOtp] = useState('')
+  const [otpErr, setOtpError] = useState(false)
   const [description, setDescription] = useState(profile.description)
   // const router = useRouter()
   const claimPage = async () => {
@@ -149,6 +154,7 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
           name: username,
           shortUrl,
           email,
+          emailConfirmed,
           website,
           description
         }
@@ -163,33 +169,62 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
     }
     // setTimeout(() => { modalAction(false) }, 1300)
   }
-  const handleChange = (e: string) => {
-    console.log(isNaN(parseInt(e)))
-    if( !isNaN(parseInt(e))){
-      if(e.length == 4){
-        setPresent('profileEditor')
+  const sendVerifyEmail = async (email: string) => {
+    const otp = await makeotp(4)
+    // Create OTP session on firebase
+    await firebase.writeDocument("emailVerify", email, { otp: otp })
+    // Send OTP code to email
+    await axios.post('/api/verifyEmailer', { otp, email })
+  }
+
+  const otpInput = async (e: string, email: string| undefined) => {
+    if(email == undefined) return undefined
+    if(e.length == 1){
+      setOtpError(false)
+      setOtp(e)
+    }else if(e.length == 4){
+      const document = await firebase.findbyAddress('emailVerify', email)
+      if (document.exists) {
+        const { otp }: any = document.data()
+        if(otp == e){
+          setEmailConfirmed(true)
+          setEmailState(email)
+          setPresent('profileEditor')
+        }else{
+          setOtp('')
+          setOtpError(true)
+        }
+      }else{
+        setOtp('')
+        setOtpError(true)
       }
+    }else{
       setOtp(e)
     }
-
   }
   return <>
     <div className="top-0 left-0 fixed w-screen h-screen bg-black opacity-50" />
     { present == 'otpValidator' && <div className="fixed top-0 left-0 px-10 py-10 bg-white z-30 rounded-3xl shadow-nft text-left overflow-scroll " style={{ transform: 'translate(-50%,-50%)', top: '50%', left: '50%' }}>
-      <div className="text-lg font-bold">Confirm your email</div>
+      <div className="text-lg font-bold">{ !otpErr ? 'Confirm your email' : 'Please input correct otp code'}</div>
       <OtpInput
         value={otp}
-        onChange={handleChange}
+        onChange={(e: string) => otpInput(e, email)}
         numInputs={4}
+        isInputNum={true}
+        hasErrored={otpErr}
+        errorStyle={{ border: '1px solid red'}}
         inputStyle={{ fontSize:'1.7rem', width: '80px', height: '72px', boxShadow: '0px 8px 20px 5px rgba(0, 0, 0, 0.08)', borderRadius: '15px', margin: '20px 7px' }}
         // separator={<span>-</span>}
       />
       <div className="text-gray-500 text-sm">
-        We sent a verification code to 'thanon@galleryst.com'. <br />
-        Haven't you got the code try <a href="" className="underline">resend</a>
+        We sent a verification code to '{email}'. <br />
+        Haven't you got the code try <button onClick={() => otpInput('', email)} className="underline">resend</button>
       </div>
-      <div className="text-gray-500 mt-4 text-sm underline">
-        <a href="">Wrong email? Let's start over</a>
+      <div className="text-gray-500 mt-4 text-sm">
+        <button className="underline" onClick={() => {
+          otpInput('', email)
+          setPresent('profileEditor')
+        }} >Wrong email? Let's start over</button>
       </div>
     </div> }
     { present == 'profileEditor' && <div className="fixed top-0 left-0 md:w-1/2 w-full px-8 py-8 bg-white z-30 rounded-3xl shadow-nft text-left overflow-scroll " style={{ height: '70vh', transform: 'translate(-50%,-50%)', top: '50%', left: '50%' }}>
@@ -198,7 +233,9 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
           <Icon fill={faTimes} noMargin />
         </button>
       </div>
-      <div className="text-center text-gray-600 text-sm hidden">Edit Profile</div>
+      <div className="text-center text-gray-600 text-sm hidden relative">
+        Edit Profile
+      </div>
       <div className="text-center">
         <img src={pic} className="rounded-full m-auto border border-white border-4 shadow-lg h-20 w-20 object-cover" />
         <UploadButton action={setProfileImg} />
@@ -218,7 +255,15 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
         <div className="text-black">Received Notification via Email</div>
         <div className="flex w-full items-center ">
           <input className="bg-white rounded-full shadow-nft flex-grow px-4 h-12 my-2 text-gray-700" placeholder="Email" value={email} type="email" onChange={e => setEmail(e.target.value)} />
-          {/* <button onClick={() => setPresent('otpValidator') } className="bg-blue-600 text-white rounded-full ml-3 px-3 h-12">Verify email</button> */}
+          { (emailConfirmed && email == emailState) ?
+            <span className=" flex items-center button-red  rounded-full ml-3 px-3 h-12">Verified</span>:
+            <button onClick={() => {
+            if(email != undefined && email.length > 4) {
+              sendVerifyEmail(email)
+              setPresent('otpValidator')
+              setOtp('')
+            }
+          }} className={` ${ (email != undefined && email.length > 4) ? 'bg-blue-600 text-white' : 'bg-gray-400 text-white' }  rounded-full ml-3 px-3 h-12`}>Verify email</button> }
         </div>
       </div>
       <div className="mt-5 mb-4">
