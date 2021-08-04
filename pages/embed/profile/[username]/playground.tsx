@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import QueryString from 'querystring'
 import { useClipboard } from 'use-clipboard-copy'
 import ReactDOMServer from 'react-dom/server'
@@ -27,13 +27,18 @@ const Page = () => {
     ],
   })
 
-  const [iWidth, setIWidth] = useState(viewportWidth * 0.5)
-  const [iHeight, setIHeight] = useState(viewportHeight * 0.5)
+  const [iWidth, setIWidth] = useState(0)
+  const [iHeight, setIHeight] = useState(0)
   const [cols, setCols] = useState(4)
   const [scrolling, setScrolling] = useState(true)
   const [showAvatar, setShowAvatar] = useState(true)
   const [showUsername, setShowUsername] = useState(true)
   const [showAddress, setShowAddress] = useState(true)
+
+  useEffect(() => {
+    setIWidth(viewportWidth / 2)
+    setIHeight(viewportHeight / 2)
+  }, [viewportWidth, viewportHeight])
 
   const checkboxes = [
     { label: 'Vertical Scroll', checked: scrolling, onChange: setScrolling },

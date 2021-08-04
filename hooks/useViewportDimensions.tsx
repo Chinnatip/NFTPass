@@ -1,6 +1,13 @@
+import { useEffect, useState } from 'react'
+
 export const useViewportDimensions = () => {
-  const isBrowser = typeof window !== 'undefined'
-  const viewportHeight = isBrowser ? window.innerHeight : 0
-  const viewportWidth = isBrowser ? window.innerWidth : 0
+  const [viewportWidth, setViewportWidth] = useState(0)
+  const [viewportHeight, setViewportHeight] = useState(0)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setViewportWidth(window.innerWidth)
+      setViewportHeight(window.innerHeight)
+    }
+  }, [typeof window])
   return { viewportHeight, viewportWidth }
 }
