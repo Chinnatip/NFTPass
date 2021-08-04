@@ -3,9 +3,14 @@ import QueryString from 'querystring'
 import { useClipboard } from 'use-clipboard-copy'
 import ReactDOMServer from 'react-dom/server'
 import { createPopper } from '@popperjs/core'
+import { useRouter } from 'next/router'
+import { useViewportDimensions } from 'hooks/useViewportDimensions'
 
 const Page = () => {
   const clipboard = useClipboard()
+  const router = useRouter()
+  const { viewportWidth, viewportHeight } = useViewportDimensions()
+
   const [hovering, setHovering] = useState(false)
   const [copied, setCopied] = useState(false)
   const btnRef = useRef(null)
@@ -22,13 +27,13 @@ const Page = () => {
     ],
   })
 
-  const [iWidth, setIWidth] = useState(500)
-  const [iHeight, setIHeight] = useState(500)
-  const [cols, setCols] = useState(5)
-  const [scrolling, setScrolling] = useState(false)
-  const [showAvatar, setShowAvatar] = useState(false)
-  const [showUsername, setShowUsername] = useState(false)
-  const [showAddress, setShowAddress] = useState(false)
+  const [iWidth, setIWidth] = useState(viewportWidth * 0.5)
+  const [iHeight, setIHeight] = useState(viewportHeight * 0.5)
+  const [cols, setCols] = useState(4)
+  const [scrolling, setScrolling] = useState(true)
+  const [showAvatar, setShowAvatar] = useState(true)
+  const [showUsername, setShowUsername] = useState(true)
+  const [showAddress, setShowAddress] = useState(true)
 
   const checkboxes = [
     { label: 'Vertical Scroll', checked: scrolling, onChange: setScrolling },
@@ -36,7 +41,7 @@ const Page = () => {
     { label: 'Show username', checked: showUsername, onChange: setShowUsername },
     { label: 'Show address', checked: showAddress, onChange: setShowAddress },
   ]
-  const username = 'someone'
+  const username = router.query.username
   const renderOptions = {
     width: iWidth,
     height: iHeight,
@@ -62,7 +67,7 @@ const Page = () => {
       <div
         id="showcase-pg-canvas"
         className="bg-white my-8 p-5 w-screen h-3/4 flex items-center justify-center"
-        style={{ width: '1200px', height: '900px' }}
+        style={{ width: viewportWidth * 0.95, height: viewportHeight * 0.7 }}
       >
         <iframe
           src={iframePath}
@@ -82,6 +87,8 @@ const Page = () => {
             name="iframe-pg-cols"
             type="number"
             value={cols}
+            min={1}
+            max={4}
             onChange={e => {
               setCols(+e.target.value)
             }}
@@ -115,7 +122,7 @@ const Page = () => {
             name="iframe-pg-width"
             value={iWidth}
             min={200}
-            max={1000}
+            max={viewportWidth}
             onChange={e => {
               setIWidth(+e.target.value)
             }}
@@ -139,7 +146,7 @@ const Page = () => {
             name="iframe-pg-height"
             value={iHeight}
             min={200}
-            max={1000}
+            max={viewportHeight}
             onChange={e => {
               setIHeight(+e.target.value)
             }}
