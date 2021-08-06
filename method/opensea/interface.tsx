@@ -192,6 +192,8 @@ export interface OpenseaItem {
   is_presale: boolean
   transfer_fee_payment_token?: null,
   transfer_fee?: null
+  display_image_url?: string
+  asset_event_data?: any
 }
 
 export interface Offer {

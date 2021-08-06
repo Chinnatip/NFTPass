@@ -23,14 +23,14 @@ export default async function handler(req, res) {
     if(response.status == 200){
       const accountLists = response.data.data.accounts.edges
       if( accountLists.length > 0 ){
-        const { chain: { identifier }, imageUrl, user: { publicUsername }} = accountLists[0].node
+        const { /*chain: { identifier },*/ imageUrl, user: { publicUsername }} = accountLists[0].node
         result = {
           status:  true,
           pic:   imageUrl,
           username: publicUsername,
           address: address,
           description: '',
-          chain:   identifier
+          // chain:   identifier // not existed
         }
       }else{
         result = { status: false }

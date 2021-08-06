@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { OpenseaItem, SaleOrder } from './interface'
 import { Galleryst, NFTDetail, ResponseDetail } from '../../interfaces/index'
+import { formatEther, parseEther } from 'ethers/lib/utils'
 const OPENSEA_URL = 'https://api.opensea.io/api/v1/assets'
 
 const osPriceCal = (sell_order : SaleOrder) => {
@@ -14,14 +15,14 @@ const osPriceCal = (sell_order : SaleOrder) => {
 
 const constructOpensea = (nftLists: OpenseaItem[]) : Galleryst[] => {
   return nftLists.map(item => {
-    const {image_thumbnail_url , name , token_id , asset_contract: {address} , sell_orders  } = item
-    // item.asset_contract
+    const {image_thumbnail_url , name , token_id , asset_contract: {address} , sell_orders, display_image_url, image_url, animation_url } = item
+    const lastSale = item.asset_event_data?.last_sale?.unit_price_quantity
     return {
       name: name,
       id: `${address}:${token_id}`,
-      priceETH: sell_orders != undefined ? osPriceCal(sell_orders[0]).base : undefined,
-      priceUSD: sell_orders != undefined ? osPriceCal(sell_orders[0]).usd : undefined,
-      imagePreview: image_thumbnail_url,
+      priceETH: sell_orders != undefined ? osPriceCal(sell_orders[0]).base : +formatEther(lastSale?.quantity || 0) || undefined,
+      priceUSD: sell_orders != undefined ? osPriceCal(sell_orders[0]).usd : lastSale?.asset?.usd_spot_price || undefined,
+      imagePreview: image_thumbnail_url || display_image_url || image_url,
     }
   })
 }
@@ -59,19 +60,18 @@ export const ownByAddress = async(address: string) => {
   const limitSize = 50
   const parse_url = `${OPENSEA_URL}?owner=${address}&order_direction=desc&offset=0&limit=${limitSize}`
   const resp = await axios.get(parse_url)
-  const items : OpenseaItem[] = resp.data.assets
-  const created = items
-    .filter(({creator}) => {
-      if(creator != null){
-        return creator.address == address
-      }else{
-        return false
-      }})
-    .map(item => `${item.asset_contract.address}:${item.token_id}`)
-  // console.log(created)
+  let items : OpenseaItem[] = resp.data.assets
+  const user = await userInfo(address)
+  const createdByResponse = await axios.post('/api/opensea/createdBy', { username: user.username })
+  const createdItems: any[] = createdByResponse.data.assets
+    .map((asset: any) => ({ 
+      ...asset,
+      id: `${asset.asset_contract.address}:${asset.token_id}`
+    }))
+  items = [...items, ...createdItems]
   return {
     onsale: items.filter(({ sell_orders }) => sell_orders != undefined ).map(item => `${item.asset_contract.address}:${item.token_id}`) ,
-    created ,
+    created: createdItems.map(item => `${item.asset_contract.address}:${item.token_id}`) ,
     owned: items.map(item => `${item.asset_contract.address}:${item.token_id}`),
     allID: items.map(item => `${item.asset_contract.address}:${item.token_id}`),
     items: constructOpensea(items)
