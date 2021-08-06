@@ -153,7 +153,7 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
           pic,
           name: username,
           shortUrl,
-          email,
+          email: email && email.length > 4 && emailConfirmed ? email : undefined ,
           emailConfirmed,
           website,
           description
