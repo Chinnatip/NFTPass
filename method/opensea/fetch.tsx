@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { OpenseaItem, SaleOrder } from './interface'
 import { Galleryst, NFTDetail, ResponseDetail } from '../../interfaces/index'
-import { formatEther, parseEther } from 'ethers/lib/utils'
+import { formatEther } from 'ethers/lib/utils'
 const OPENSEA_URL = 'https://api.opensea.io/api/v1/assets'
 
 const osPriceCal = (sell_order : SaleOrder) => {
@@ -23,6 +23,7 @@ const constructOpensea = (nftLists: OpenseaItem[]) : Galleryst[] => {
       priceETH: sell_orders != undefined ? osPriceCal(sell_orders[0]).base : +formatEther(lastSale?.quantity || 0) || undefined,
       priceUSD: sell_orders != undefined ? osPriceCal(sell_orders[0]).usd : lastSale?.asset?.usd_spot_price || undefined,
       imagePreview: image_thumbnail_url || display_image_url || image_url,
+      animation_url
     }
   })
 }
