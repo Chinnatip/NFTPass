@@ -135,12 +135,9 @@ class WalletService {
       typedSignature,
     })
     if (data.verified) {
-      console.log(1)
       walletStore.setAddress(addressToVerify, saveToStorage) // only save MetaMask, for now
       walletStore.setLoading(false, '')
-      console.log(2)
       walletStore.setVerified(true)
-      console.log(3)
       this.resetListeners()
 
       // Galleryst database verification
@@ -153,9 +150,8 @@ class WalletService {
           databaseVerification = true
         }
       }
-      console.log(4)
       walletStore.setDatabaseVerified(databaseVerification)
-      console.log('vrrrrrrrriiiiify >>>> ' + databaseVerification)
+      // console.log('vrrrrrrrriiiiify >>>> ' + databaseVerification)
       if(!databaseVerification){
         // openModal(true)
       }

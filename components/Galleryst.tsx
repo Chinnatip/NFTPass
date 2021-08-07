@@ -6,15 +6,16 @@ import { walletStore } from 'stores/wallet.store'
 import { observer } from 'mobx-react-lite'
 import { walletService } from 'services/wallet.service'
 import { createPopper } from '@popperjs/core'
-import UploadButton from '@/UploadButton'
-import OtpInput from 'react-otp-input'
 import { Profile } from '../method/rarible/interface'
+import { WalletProviderName } from 'static/Enum'
 import { creatorFetch, makeotp } from '../method/integrate'
 import { Galleryst, User } from '../interfaces/index'
 import { Drop } from '../method/nifty/interface'
-// import { useRouter } from 'next/router'
+import TagManager from "react-gtm-module"
+import UploadButton from '@/UploadButton'
+import OtpInput from 'react-otp-input'
 import Icon from '@/Icon'
-import { WalletProviderName } from 'static/Enum'
+
 import axios from 'axios'
 
 const lockDigit = (price: number) => {
@@ -190,6 +191,7 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
           setEmailConfirmed(true)
           setEmailState(email)
           setPresent('profileEditor')
+          TagManager.dataLayer({ dataLayer: { event: 'emailverificationComplete'}})
         } else {
           setOtp('')
           setOtpError(true)
@@ -397,24 +399,31 @@ export const ConnectBtn = observer(() => {
         </div>}
         {/* Show only if MetaMask is available */}
         {walletStore.isMetaMaskAvailable && !walletStore.isConnected &&
-          <button
-            className='text-xs bg-white p-3 mb-3 w-full rounded-full text-black flex items-center shadow-nft'
+          <button className='text-xs bg-white p-3 mb-3 w-full rounded-full text-black flex items-center shadow-nft'
             onClick={() => {
               setShow(false)
               walletService.connect(WalletProviderName.MetaMask)
-            }}
-          >
-
-            <div className="flex flex-row "><img src={`/image/metamask_logo.png`} className="h-4 w-4 object-contain rounded-full" /> <span className="ml-1">MetaMask </span></div>
+              TagManager.dataLayer({ dataLayer: {
+                event: 'connectwalletComplete',
+                wallet: 'MetaMask'
+              } })
+            }}>
+            <div className="flex flex-row ">
+              <img src={`/image/metamask_logo.png`} className="h-4 w-4 object-contain rounded-full" />
+              <span className="ml-1">MetaMask </span>
+            </div>
           </button>
         }
         {/* WalletConnect always available */}
         {!walletStore.isConnected &&
-          <button
-            className='text-xs bg-white p-3 mt-2 rounded-full w-full text-black flex items-center shadow-nft'
+          <button className='text-xs bg-white p-3 mt-2 rounded-full w-full text-black flex items-center shadow-nft'
             onClick={() => {
               setShow(false)
               walletService.connect(WalletProviderName.WalletConnect)
+              TagManager.dataLayer({ dataLayer: {
+                event: 'connectwalletComplete',
+                wallet: 'WalletConnect'
+              } })
             }}
           >
             <img src="/image/walletconnect_logo.png" className="h-4 w-4 object-contain rounded-full" />
