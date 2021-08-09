@@ -15,7 +15,6 @@ import TagManager from "react-gtm-module"
 import UploadButton from '@/UploadButton'
 import OtpInput from 'react-otp-input'
 import Icon from '@/Icon'
-
 import axios from 'axios'
 
 const lockDigit = (price: number) => {
@@ -63,7 +62,9 @@ export const CreatorHeader = ({ claimStage = false, setClaimStage, profile, parc
     {/* Contact url */}
     <div className="p-4 pt-0">
       <div className="md:px-8 px-1">{profile?.description}</div>
-      <a target="_blank" className="my-2 inline-block text-blue-700" href={fixPath(profile?.website)}>{profile?.website}</a>
+      <a target="_blank" className="my-2 inline-block text-blue-700" href={fixPath(profile?.website)}>
+        {profile?.website}
+      </a>
     </div>
 
     {/* Follower */}
@@ -72,6 +73,7 @@ export const CreatorHeader = ({ claimStage = false, setClaimStage, profile, parc
         {profile?.meta?.followers} followers | {profile?.meta?.followings} followings
       </div>
     </div>}
+    {/* <GalleryModal /> */}
   </>
 }
 

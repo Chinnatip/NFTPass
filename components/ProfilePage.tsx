@@ -42,6 +42,9 @@ const ProfilePage = ({ toggle, setToggle, profile, action, lists, claimStage = f
             {dropLists.length > 0 &&
               <Toggle text="Drops" trigger="drops" action={setToggle} toggle={toggle} amount={dropLists.length} />
             }
+            <a href={`/customize/${profile.shortUrl}`} className={`button-red active-shadow shadow-nft mx-2 px-3 py-2 font-semibold text-sm focus:outline-none appearance-none rounded-full `}>
+              custom this page
+            </a>
           </div>
         </div>
       </div>
@@ -62,7 +65,6 @@ const ProfilePage = ({ toggle, setToggle, profile, action, lists, claimStage = f
       {toggle == 'collection' && <>
         <NFTGroup type="onsale" text={`On sale (${onsaleLists.length} items)`} lists={onsaleLists} nfts={NFTLists} />
         <NFTGroup type="owned" text={`Own by ${profile?.username} (${ownLists.length} items)`} lists={ownLists} nfts={NFTLists} /></>}
-
       {toggle == 'creates' && <NFTGroup type="created" text={`Created (${createdLists.length} items)`} lists={createdLists} nfts={NFTLists} />}
 
       {/* Footer */}

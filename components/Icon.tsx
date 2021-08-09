@@ -1,4 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+// Review full icon at ....
+// https://fontawesome.com/v5.15/icons?d=gallery&p=2&q=close
 
 type Props = {
   fill: any
