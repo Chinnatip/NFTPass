@@ -17,6 +17,7 @@ const Page = ({ seo, response }: {
   }
 }) => {
   const [profile, setProfile] = useState<Profile>(response != undefined ? response.profile : {})
+  const [gallery, setGalleryst] = useState<string[]>([])
   const [claimStage, setClaimStage] = useState(false)
   const [NFTLists, setNFTLists] = useState<Galleryst[]>([])
   const [ownLists, setOwnLists] = useState<string[]>([])
@@ -28,13 +29,14 @@ const Page = ({ seo, response }: {
   useEffect(() => {
     (async () => {
       if (response != undefined) {
-        const { profile, ownLists, onsaleLists, dropLists, createdLists, NFTLists } = response
+        const { profile, galleryst, ownLists, onsaleLists, dropLists, createdLists, NFTLists } = response
         setProfile(profile)
         setOwnLists(ownLists)
         setOnsaleLists(onsaleLists)
         setDropLists(dropLists)
         setCreatedLists(createdLists)
         setNFTLists(NFTLists)
+        setGalleryst(galleryst)
       }
     })()
   }, []);
@@ -64,7 +66,7 @@ const Page = ({ seo, response }: {
         </a>
         <ConnectBtn />
       </div>
-      <CustomizePage claimStage={claimStage} setClaimStage={setClaimStage}  profile={profile} action={stateAction} lists={stateLists} />
+      <CustomizePage claimStage={claimStage} galleryst={gallery} setClaimStage={setClaimStage}  profile={profile} action={stateAction} lists={stateLists} />
     </div>
   </div>
 }

@@ -47,6 +47,11 @@ export const writeDocument = async (doc: string, address: string, parcel: any) =
   await db.set(JSON.parse(JSON.stringify(parcel)))
 }
 
+export const updateDocument = async (doc: string, address: string, parcel: any) => {
+  const db = firebase.firestore().collection(doc).doc(address)
+  await db.update(parcel)
+}
+
 export const uploadFile = async (file: any) => {
   const storage = fire.storage();
   const storageRef = storage.ref("create-profile");

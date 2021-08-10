@@ -15,7 +15,6 @@ const Dragger = ({ lists }:{lists: any[]}) => {
     const items = reorder( lists, result )
     setItems(items)
   }
-  console.log(lists)
   return <DragDropContext onDragEnd={(e) => onDragEnd(e, items)}>
     <Droppable droppableId="droppable" direction="horizontal">
       {(provided) => (

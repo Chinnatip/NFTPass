@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Profile } from '../method/rarible/interface'
-import { sanitizeArray } from '../method/integrate'
+import * as firebase from "../method/firebase"
+import { sanitizeArray, makeid } from '../method/integrate'
 import { walletStore } from 'stores/wallet.store'
 import Icon from '@/Icon'
 import DragContainer from '@/DragContainer'
@@ -21,12 +22,13 @@ type Section = {
   nftLists: string[]
 }
 
-const ProfilePage = ({profile, action, lists, claimStage = false, setClaimStage }: {
+const ProfilePage = ({profile, action, lists, claimStage = false, setClaimStage, galleryst }: {
   profile: Profile,
   action: any,
   lists: any,
   claimStage: boolean
   setClaimStage: any
+  galleryst?: string[]
 }) => {
   const { onsaleLists, ownLists, createdLists, dropLists, NFTLists } = lists
   const [ modal, setModal ] = useState(false)
@@ -41,45 +43,81 @@ const ProfilePage = ({profile, action, lists, claimStage = false, setClaimStage 
   const wallet = walletStore
   const address = profile.address
   const claimCheck = address == wallet?.address
-  const [ sections , setSection] = useState<Section[]>([])
+  const [ collections , setCollection] = useState<Section[]>([])
   const [ activeSection, setActive ] = useState('')
-  const [ sectionLists, setSectionList ] = useState<string[]>([])
+  const [ collectionLists, setCollectionList ] = useState<string[]>([])
   const [ newSectionName, setName] = useState('')
+  useEffect(() => {
+    (async () => {
+      if (galleryst != undefined && galleryst.length > 0) {
+        let colls: Section[] = []
+        console.log(galleryst)
+        await Promise.all(galleryst.map(async (gallID) => {
+          const collection = await firebase.findbyAddress('galleryst', gallID)
+          if(collection.exists){
+            const colGet: any = collection.data()
+            console.log(colGet)
+            colls.push(colGet)
+          }
+        }))
+        setCollection(colls)
+      }
+    })()
+  }, [galleryst]);
+
   const onDragEnd = (result: any, lists: any[]) => {
     if (!result.destination) return
     const items = reorder( lists, result )
-    setSection(items)
+    setCollection(items)
   }
   const newSection = () => {
     if(newSectionName != ''){
-      setSection([ ...sections , { id: newSectionName, name: newSectionName, nftLists: []}])
+      setCollection([ ...collections , {
+        id: makeid(5), //newSectionName,
+        name: newSectionName,
+        nftLists: []
+      }])
       setName('')
     }
   }
   const removeSection = (id: string) => {
-    const filtered = sections.filter((section: any) => section.id != id)
-    setSection(filtered)
+    const filtered = collections.filter((section: any) => section.id != id)
+    setCollection(filtered)
   }
   const openNFTModal = (id: string) => {
     setModal(true)
     setActive(id)
   }
   const reorderNFT = (id: string) => {
-    const findIndex = sectionLists.indexOf(id)
+    const findIndex = collectionLists.indexOf(id)
     if(findIndex == -1){
-      setSectionList([...sectionLists, id])
+      setCollectionList([...collectionLists, id])
     }else{
-      setSectionList(sectionLists.filter(nftID => nftID != id))
+      setCollectionList(collectionLists.filter(nftID => nftID != id))
     }
   }
   const addNFTtoSectionLists = () => {
-    let findSection = sections.find(section => section.id == activeSection)
+    let findSection = collections.find(section => section.id == activeSection)
     if(findSection != undefined){
-      findSection['nftLists'] = sectionLists
-      setSectionList([])
+      findSection['nftLists'] = collectionLists
+      setCollectionList([])
     }
     setModal(false)
   }
+  const saveCollection = async () => {
+    if(collections.length > 0 && profile.address != undefined){
+      await Promise.all(
+        collections.map(async (section) => {
+          await firebase.writeDocument('galleryst', section.id ,section)
+        })
+      )
+      firebase.updateDocument("creatorParcel",profile.address,{
+        galleryst: collections.map(section => section.id)
+      })
+      alert('Updated !')
+    }
+  }
+
   return <div className="md:w-4/5 w-full m-auto z-10 relative">
     { modal && <>
       <div className="z-10 top-0 left-0 fixed w-screen h-screen bg-black opacity-50" />
@@ -98,9 +136,9 @@ const ProfilePage = ({profile, action, lists, claimStage = false, setClaimStage 
           { NFTLists.map((nft: any) =>
             <button onClick={() => reorderNFT(nft.id)} className="thumbnail-wrapper w-full relative">
               <img className="rounded-16 md:border-8 border-4 border-white thumbnail-height" src={nft.imagePreview}  />
-              { sectionLists.indexOf(nft.id) > -1 && <div className="absolute w-full h-full rounded-xl flex items-center justify-center text-green-500" style={{ background: '#000000a8' }}>
+              { collectionLists.indexOf(nft.id) > -1 && <div className="absolute w-full h-full rounded-xl flex items-center justify-center text-green-500" style={{ background: '#000000a8' }}>
                 <span className="text-3xl rounded-full border-4 border-green-500 h-12 w-12 flex items-center justify-center">
-                  { sectionLists.indexOf(nft.id) + 1 }
+                  { collectionLists.indexOf(nft.id) + 1 }
                 </span>
               </div>}
             </button>
@@ -134,7 +172,7 @@ const ProfilePage = ({profile, action, lists, claimStage = false, setClaimStage 
           <input onChange={e => setName(e.target.value)} value={newSectionName} className="outline-none block bg-white rounded-full p-3 shadow-nft w-full" type="text" placeholder="My Top Fav NFT" />
           <button onClick={() => newSection() } className="button-red rounded-full mt-4 p-3 w-full font-semibold">+ Add</button>
         </div>
-        <DragDropContext onDragEnd={(e) => onDragEnd(e, sections)}>
+        <DragDropContext onDragEnd={(e) => onDragEnd(e, collections)}>
           <Droppable droppableId="droppable">
             {(provided) => (
               <div
@@ -142,7 +180,7 @@ const ProfilePage = ({profile, action, lists, claimStage = false, setClaimStage 
                 ref={provided.innerRef}
                 className="w-full inline"
               >
-                {sections.map((item, index) => {
+                {collections.map((item, index) => {
                   const { id, name, nftLists } = item
                   const filters: any[] = (nftLists != undefined && nftLists.length > 0) ? NFTLists.filter((nft: any) => nftLists.indexOf(nft.id) != -1 ) : []
                   return <Draggable key={id} draggableId={id} index={index}>
@@ -170,9 +208,10 @@ const ProfilePage = ({profile, action, lists, claimStage = false, setClaimStage 
             )}
           </Droppable>
         </DragDropContext>
+        <button onClick={() => saveCollection()} className="rounded-full bg-black text-white w-full text-center h-12 mt-8">
+          Save
+        </button>
       </div>
-
-      {/* { JSON.stringify(sections) } */}
 
       {/* Footer */}
       <div className="text-white text-center text-sm mt-8">© 2021 Galleryst.co, All rights reserved.</div>
