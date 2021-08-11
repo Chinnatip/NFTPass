@@ -493,10 +493,10 @@ export const UpdateAction = ({ action, profile }: { action: any, profile: Profil
     </div>
 
     {/* Go to Gallery */}
-    <a href={`/customize/${profile.shortUrl}`} className="rounded-full h-10 flex px-3 ml-2 items-center justify-center button-red">
+    { profile.verified && <a href={`/customize/${profile.shortUrl}`} className="rounded-full h-10 flex px-3 ml-2 items-center justify-center button-red">
       <span className="text-xl font-bold">G</span>
       <span className="md:block hidden ml-2 text-sm">Custom Gallery</span>
-    </a>
+    </a>}
   </div>
 }
 

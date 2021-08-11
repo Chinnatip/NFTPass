@@ -188,10 +188,7 @@ const ProfilePage = ({profile, action, lists, claimStage = false, setClaimStage,
               >
                 {collections.map((item, index) => {
                   const { id, name, nftLists } = item
-                  // TODO: sort by collectionList
-                  // const filters: any[] = (nftLists != undefined && nftLists.length > 0) ? NFTLists.filter((nft: any) => nftLists.indexOf(nft.id) != -1 ) : []
                   const filters: any[] = (nftLists != undefined && nftLists.length > 0) ?  nftLists.map(nft => NFTLists.find((n: any) => n.id === nft)) : []
-                  // console.log('filter >>>> ',filters)
                   return <Draggable key={id} draggableId={id} index={index}>
                     {(provided) => (
                       <div className="bg-gray-100 shadow-nft rounded-2xl p-3 mt-4 w-full"
