@@ -62,7 +62,6 @@ const ProfilePage = ({profile, action, lists, claimStage = false, setClaimStage,
       }
     })()
   }, [galleryst]);
-
   const onDragEnd = (result: any, lists: any[]) => {
     if (!result.destination) return
     const items = reorder( lists, result )
@@ -78,7 +77,6 @@ const ProfilePage = ({profile, action, lists, claimStage = false, setClaimStage,
       setName('')
     }
   }
-
   const editSection = (item: Section) => {
     setModal(true)
     setActive(item.id)
@@ -107,7 +105,6 @@ const ProfilePage = ({profile, action, lists, claimStage = false, setClaimStage,
     if(findSection != undefined){
       findSection['nftLists'] = collectionLists
       const replace = collections.map((obj: Section) => [ findSection ].find((o: any) => o.id === obj.id) || obj)
-      console.log(replace)
       setCollection(replace)
       setCollectionList([])
     }
@@ -191,8 +188,10 @@ const ProfilePage = ({profile, action, lists, claimStage = false, setClaimStage,
               >
                 {collections.map((item, index) => {
                   const { id, name, nftLists } = item
-                  const filters: any[] = (nftLists != undefined && nftLists.length > 0) ? NFTLists.filter((nft: any) => nftLists.indexOf(nft.id) != -1 ) : []
-                  console.log('filter >>>> ',filters)
+                  // TODO: sort by collectionList
+                  // const filters: any[] = (nftLists != undefined && nftLists.length > 0) ? NFTLists.filter((nft: any) => nftLists.indexOf(nft.id) != -1 ) : []
+                  const filters: any[] = (nftLists != undefined && nftLists.length > 0) ?  nftLists.map(nft => NFTLists.find((n: any) => n.id === nft)) : []
+                  // console.log('filter >>>> ',filters)
                   return <Draggable key={id} draggableId={id} index={index}>
                     {(provided) => (
                       <div className="bg-gray-100 shadow-nft rounded-2xl p-3 mt-4 w-full"
