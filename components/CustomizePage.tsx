@@ -51,12 +51,10 @@ const ProfilePage = ({profile, action, lists, claimStage = false, setClaimStage,
     (async () => {
       if (galleryst != undefined && galleryst.length > 0) {
         let colls: Section[] = []
-        console.log(galleryst)
         await Promise.all(galleryst.map(async (gallID) => {
           const collection = await firebase.findbyAddress('galleryst', gallID)
           if(collection.exists){
             const colGet: any = collection.data()
-            console.log(colGet)
             colls.push(colGet)
           }
         }))
@@ -80,6 +78,12 @@ const ProfilePage = ({profile, action, lists, claimStage = false, setClaimStage,
       setName('')
     }
   }
+
+  const editSection = (item: Section) => {
+    setModal(true)
+    setActive(item.id)
+    setCollectionList(item.nftLists)
+  }
   const removeSection = (id: string) => {
     const filtered = collections.filter((section: any) => section.id != id)
     setCollection(filtered)
@@ -98,8 +102,13 @@ const ProfilePage = ({profile, action, lists, claimStage = false, setClaimStage,
   }
   const addNFTtoSectionLists = () => {
     let findSection = collections.find(section => section.id == activeSection)
+    // console.log(findSection)
+    // console.log(collectionLists)
     if(findSection != undefined){
       findSection['nftLists'] = collectionLists
+      const replace = collections.map((obj: Section) => [ findSection ].find((o: any) => o.id === obj.id) || obj)
+      console.log(replace)
+      setCollection(replace)
       setCollectionList([])
     }
     setModal(false)
@@ -183,6 +192,7 @@ const ProfilePage = ({profile, action, lists, claimStage = false, setClaimStage,
                 {collections.map((item, index) => {
                   const { id, name, nftLists } = item
                   const filters: any[] = (nftLists != undefined && nftLists.length > 0) ? NFTLists.filter((nft: any) => nftLists.indexOf(nft.id) != -1 ) : []
+                  console.log('filter >>>> ',filters)
                   return <Draggable key={id} draggableId={id} index={index}>
                     {(provided) => (
                       <div className="bg-gray-100 shadow-nft rounded-2xl p-3 mt-4 w-full"
@@ -192,7 +202,7 @@ const ProfilePage = ({profile, action, lists, claimStage = false, setClaimStage,
                         <div className="flex items-center justify-center mb-3">
                           <Icon fill={faBars} />
                           <h3 className="flex-grow font-semibold">{name}</h3>
-                          { filters.length > 0 && <button className="underline outline-none mr-3">Edit</button>}
+                          { filters.length > 0 && <button onClick={() => editSection(item) } className="underline outline-none mr-3">Edit</button>}
                           <button onClick={() => removeSection(id)} className="underline outline-none">Remove</button>
                         </div>
                         { filters.length > 0 ?

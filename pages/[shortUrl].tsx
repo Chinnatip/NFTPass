@@ -18,6 +18,7 @@ const Page = ({ seo, response }: {
 }) => {
   const [profile, setProfile] = useState<Profile>(response != undefined ? response.profile : {})
   const [claimStage, setClaimStage] = useState(false)
+  const [gallery, setGalleryst] = useState<string[]>([])
   const [NFTLists, setNFTLists] = useState<Galleryst[]>([])
   const [ownLists, setOwnLists] = useState<string[]>([])
   const [onsaleLists, setOnsaleLists] = useState<string[]>([])
@@ -29,13 +30,14 @@ const Page = ({ seo, response }: {
   useEffect(() => {
     (async () => {
       if (response != undefined) {
-        const { profile, ownLists, onsaleLists, dropLists, createdLists, NFTLists } = response
+        const { profile, galleryst, ownLists, onsaleLists, dropLists, createdLists, NFTLists } = response
         setProfile(profile)
         setOwnLists(ownLists)
         setOnsaleLists(onsaleLists)
         setDropLists(dropLists)
         setCreatedLists(createdLists)
         setNFTLists(NFTLists)
+        setGalleryst(galleryst)
 
         // Config toggle
         if(onsaleLists.length == 0 && ownLists.length == 0 && createdLists.length > 0) setToggle('creates')
@@ -68,7 +70,7 @@ const Page = ({ seo, response }: {
         </a>
         <ConnectBtn />
       </div>
-      <ProfilePage toggle={toggle} setToggle={setToggle}  claimStage={claimStage} setClaimStage={setClaimStage}  profile={profile} action={stateAction} lists={stateLists} />
+      <ProfilePage toggle={toggle} galleryst={gallery} setToggle={setToggle}  claimStage={claimStage} setClaimStage={setClaimStage}  profile={profile} action={stateAction} lists={stateLists} />
     </div>
   </div>
 }

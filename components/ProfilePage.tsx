@@ -1,19 +1,27 @@
-import React from 'react'
+import React , { useState, useEffect } from 'react'
+import * as firebase from "../method/firebase"
 import { Profile } from '../method/rarible/interface'
 import { sanitizeArray } from '../method/integrate'
 import { walletStore } from 'stores/wallet.store'
 import { CreatorHeader, ShareAction, UpdateAction, Filter, Toggle, NFTDrop, NFTGroup } from '@/Galleryst'
 
-const ProfilePage = ({ toggle, setToggle, profile, action, lists, claimStage = false, setClaimStage }: {
+type Section = {
+  id: string
+  name: string
+  nftLists: string[]
+}
+
+const ProfilePage = ({ toggle, galleryst, setToggle, profile, action, lists, claimStage = false, setClaimStage }: {
   profile: Profile,
   action: any,
   lists: any,
   claimStage: boolean
   setClaimStage: any
-  toggle: 'drops' | 'creates' | 'collection'
+  toggle: 'drops' | 'creates' | 'collection' | 'gallery'
   setToggle: any
+  galleryst?: string[]
 }) => {
-
+  const [ collections , setCollection] = useState<Section[]>([])
   const { onsaleLists, ownLists, createdLists, dropLists, NFTLists } = lists
   const parcel = {
     profile: { ...profile, verified: true },
@@ -26,6 +34,26 @@ const ProfilePage = ({ toggle, setToggle, profile, action, lists, claimStage = f
   const wallet = walletStore
   const address = profile.address
   const claimCheck = address == wallet?.address //&& profile?.verified != true //true
+
+  useEffect(() => {
+    (async () => {
+      if (galleryst != undefined && galleryst.length > 0) {
+        let colls: Section[] = []
+        console.log(galleryst)
+        await Promise.all(galleryst.map(async (gallID) => {
+          const collection = await firebase.findbyAddress('galleryst', gallID)
+          if(collection.exists){
+            const colGet: any = collection.data()
+            // console.log(colGet)
+            colls.push(colGet)
+          }
+        }))
+        setCollection(colls)
+        setToggle('gallery')
+      }
+    })()
+  }, [galleryst]);
+
   return <div className="md:w-4/5 w-full m-auto z-10 relative">
     <UpdateAction profile={profile} action={action} />
     {profile.shortUrl && <ShareAction gallerystID={profile.shortUrl != undefined ? `${profile.shortUrl}` : `profile?address=${profile.address}`} />}
@@ -37,14 +65,10 @@ const ProfilePage = ({ toggle, setToggle, profile, action, lists, claimStage = f
 
           {/* Tabbar */}
           <div className="mb-8 inline-block" >
+            { collections.length > 0 && <Toggle text="Gallery" trigger="gallery" action={setToggle} toggle={toggle} amount={collections.length} />}
             <Toggle text="Owned" trigger="collection" action={setToggle} toggle={toggle} amount={ownLists.length} />
             <Toggle text="Created" trigger="creates" action={setToggle} toggle={toggle} amount={createdLists.length} />
-            {dropLists.length > 0 &&
-              <Toggle text="Drops" trigger="drops" action={setToggle} toggle={toggle} amount={dropLists.length} />
-            }
-            <a href={`/customize/${profile.shortUrl}`} className={`button-red active-shadow shadow-nft mx-2 px-3 py-2 font-semibold text-sm focus:outline-none appearance-none rounded-full `}>
-              custom this page
-            </a>
+            {dropLists.length > 0 && <Toggle text="Drops" trigger="drops" action={setToggle} toggle={toggle} amount={dropLists.length} />}
           </div>
         </div>
       </div>
@@ -62,6 +86,9 @@ const ProfilePage = ({ toggle, setToggle, profile, action, lists, claimStage = f
       <div className="h-4 relative" />
 
       {toggle == 'drops' && <NFTDrop text={`Nifty drops (${dropLists.length} items)`} lists={dropLists} />}
+      {toggle == 'gallery' && <>
+        { collections.map(({ name, nftLists }) => <NFTGroup type="onsale" text={`${name} (${nftLists.length} items)`} lists={nftLists} nfts={NFTLists} /> ) }
+      </>}
       {toggle == 'collection' && <>
         <NFTGroup type="onsale" text={`On sale (${onsaleLists.length} items)`} lists={onsaleLists} nfts={NFTLists} />
         <NFTGroup type="owned" text={`Own by ${profile?.username} (${ownLists.length} items)`} lists={ownLists} nfts={NFTLists} /></>}

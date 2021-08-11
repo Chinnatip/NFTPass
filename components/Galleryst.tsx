@@ -476,18 +476,27 @@ export const ShareAction = ({ gallerystID }: { gallerystID: string }) => {
 export const UpdateAction = ({ action, profile }: { action: any, profile: Profile }) => {
   const [show, setShow] = useState(false)
   const { address } = profile
-  return <div
-    onClick={async () => {
-      setShow(true)
-      if (address != undefined) {
-        const parcel = await creatorFetch(address, action, false, profile)
-        await firebase.writeDocument("creatorParcel", address, parcel)
-      }
-      setShow(false)
-    }}
-    className="absolute top-0 left-0 mt-2 ml-2 flex items-center button-red py-2 px-2 rounded-full cursor-pointer text-sm font-semibold">
-    {show && <div className="absolute bg-black text-white top-0 right-0 p-1 px-2 -mt-10 text-sm rounded-full w-300">Updating...</div>}
-    <Icon fill={faSync} noMargin /><span className="md:block hidden ml-3"> Refresh Info</span>
+  return <div className="absolute top-0 left-0 mt-2 ml-2 flex ">
+    {/* Refresh */}
+    <div
+      onClick={async () => {
+        setShow(true)
+        if (address != undefined) {
+          const parcel = await creatorFetch(address, action, false, profile)
+          await firebase.writeDocument("creatorParcel", address, parcel)
+        }
+        setShow(false)
+      }}
+      className="flex items-center button-red py-2 px-2 rounded-full cursor-pointer text-sm font-semibold">
+      {show && <div className="absolute bg-black text-white top-0 right-0 p-1 px-2 -mt-10 text-sm rounded-full w-300">Updating...</div>}
+      <Icon fill={faSync} noMargin /><span className="md:block hidden ml-3"> Refresh Info</span>
+    </div>
+
+    {/* Go to Gallery */}
+    <a href={`/customize/${profile.shortUrl}`} className="rounded-full h-10 flex px-3 ml-2 items-center justify-center button-red">
+      <span className="text-xl font-bold">G</span>
+      <span className="md:block hidden ml-2 text-sm">Custom Gallery</span>
+    </a>
   </div>
 }
 

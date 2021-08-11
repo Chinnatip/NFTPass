@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 const reorder = (list: any[], result: any) => {
@@ -15,6 +15,7 @@ const Dragger = ({ lists }:{lists: any[]}) => {
     const items = reorder( lists, result )
     setItems(items)
   }
+  useEffect(() => { setItems(lists) }, [lists]);
   return <DragDropContext onDragEnd={(e) => onDragEnd(e, items)}>
     <Droppable droppableId="droppable" direction="horizontal">
       {(provided) => (
