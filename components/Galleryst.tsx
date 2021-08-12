@@ -316,8 +316,9 @@ export const NFTGroup = ({ lists, nfts, text = '', type = '' }: { type?: string,
     {lists.length > 0 && <div className="pt-5 rounded-24 section-tile ">
       <h2 className="text-sm bg-gray-200 rounded-full inline-block mb-2 px-3 py-1 shadow-nft text-gray-600 md:mx-4">{text}</h2>
       <div className="grid grid-cols-3 md:gap-4 md:p-4 p-0 gap-1 w-full">
-        {nfts.filter(item => lists.includes(item.id)).map(item => {
-          const { imagePreview, check, alternateUrl } = item
+        {lists.map((id) => nfts.find(nft => nft.id == id )).map(item => {
+          if(item != undefined){
+            const { imagePreview, check, alternateUrl } = item
           // @ts-ignore
           const onImgError = (event) => {
             event.target.onerror = null;
@@ -351,6 +352,7 @@ export const NFTGroup = ({ lists, nfts, text = '', type = '' }: { type?: string,
             </span>
             <span className="hidden text-black opacity-50 absolute bottom-0 left-0 -mb-5 text-xs w-full text-center">{item?.name}</span>
           </a>
+          }
         })}
       </div>
 

@@ -5,7 +5,7 @@ const Dragger = ({ lists }:{lists: any[]}) => {
   useEffect(() => { setItems(lists) }, [lists]);
 
   //TODO: fix card style
-  return <div className="grid grid-cols-3 md:p-4 p-0 gap-4 w-full">
+  return <div className="grid grid-cols-3 md:p-4 p-0 gap-4 mt-4 w-full bg-gray-300 rounded-xl border-gray-500 border-dashed border-2">
     {items.map((item, index) => <img key={index} src={item.imagePreview} className="shadow-nft border-4 border-white bg-white mr-2 rounded-lg p-1" />)}
   </div>
 }
