@@ -154,7 +154,7 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
           pic,
           name: username,
           shortUrl,
-          email: email && email.length > 4 && emailConfirmed ? email : undefined ,
+          email: email && email.length > 4 && emailConfirmed ? email : undefined,
           emailConfirmed,
           website,
           description
@@ -191,7 +191,7 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
           setEmailConfirmed(true)
           setEmailState(email)
           setPresent('profileEditor')
-          TagManager.dataLayer({ dataLayer: { event: 'emailverificationComplete'}})
+          TagManager.dataLayer({ dataLayer: { event: 'emailverificationComplete' } })
         } else {
           setOtp('')
           setOtpError(true)
@@ -286,7 +286,7 @@ export const NFTDrop = ({ lists, text = '' }: { lists: Drop[], text: string }) =
   return <>
     {lists.length > 0 && <>
       <h2 className="text-xl">{text}</h2>
-      <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-3 md:gap-4 md:p-4 p-0 gap-1 w-full">
+      <div className="grid grid-cols-3 md:gap-4 md:p-4 p-0 gap-1 w-full">
         {lists.map(item => {
           const { address, title, image } = item
           return image != undefined && <a target="_blank" href={`/nft?address=${address}`} className="relative cursor-pointer bg-white rounded-16 mb-2 active-shadow" key={`${address}`}>
@@ -313,7 +313,7 @@ export const NFTGroup = ({ lists, nfts, text = '', type = '' }: { type?: string,
   return <>
     {lists.length > 0 && <div className="mx-1 mt-6">
       <h2 className="text-sm bg-gray-200 rounded-full inline-block mb-2 px-3 py-1 shadow-nft text-gray-600 md:mx-4">{text}</h2>
-      <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-3 md:gap-4 md:p-4 p-0 gap-1 w-full">
+      <div className="grid grid-cols-3 md:gap-4 md:p-4 p-0 gap-1 w-full">
         {nfts.filter(item => lists.includes(item.id)).map(item => {
           const { imagePreview, check, alternateUrl } = item
           // @ts-ignore
@@ -403,10 +403,12 @@ export const ConnectBtn = observer(() => {
             onClick={() => {
               setShow(false)
               walletService.connect(WalletProviderName.MetaMask)
-              TagManager.dataLayer({ dataLayer: {
-                event: 'connectwalletComplete',
-                wallet: 'MetaMask'
-              } })
+              TagManager.dataLayer({
+                dataLayer: {
+                  event: 'connectwalletComplete',
+                  wallet: 'MetaMask'
+                }
+              })
             }}>
             <div className="flex flex-row ">
               <img src={`/image/metamask_logo.png`} className="h-4 w-4 object-contain rounded-full" />
@@ -420,10 +422,12 @@ export const ConnectBtn = observer(() => {
             onClick={() => {
               setShow(false)
               walletService.connect(WalletProviderName.WalletConnect)
-              TagManager.dataLayer({ dataLayer: {
-                event: 'connectwalletComplete',
-                wallet: 'WalletConnect'
-              } })
+              TagManager.dataLayer({
+                dataLayer: {
+                  event: 'connectwalletComplete',
+                  wallet: 'WalletConnect'
+                }
+              })
             }}
           >
             <img src="/image/walletconnect_logo.png" className="h-4 w-4 object-contain rounded-full" />
