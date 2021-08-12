@@ -1470,6 +1470,11 @@ body.video-react-full-window .video-react-fullscreen {
   column-gap: 2rem;
 }
 
+.section-tile {
+  margin: 10px auto;
+  background: rgba(255, 255, 255, 0);
+}
+
 @screen lg {
   .masonry {
     column-count: 4;
@@ -1480,6 +1485,14 @@ body.video-react-full-window .video-react-fullscreen {
 @screen md {
   .rounded-16 {
     border-radius: 16px;
+  }
+  .section-tile {
+    
+    max-width: 800px;
+  width: 100%;
+  margin: 16px auto;
+  background: rgba(255, 255, 255, 0.3);
+ border-radius: 20px;
   }
 }
 
@@ -1647,3 +1660,4 @@ white-space: nowrap;
   backdrop-filter: blur(10px);
   background-color: rgba(0, 0, 0, 0.5);
 }
+

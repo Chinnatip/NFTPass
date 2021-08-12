@@ -156,7 +156,7 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
           pic,
           name: username,
           shortUrl,
-          email: email && email.length > 4 && emailConfirmed ? email : undefined ,
+          email: email && email.length > 4 && emailConfirmed ? email : undefined,
           emailConfirmed,
           website,
           description
@@ -193,7 +193,7 @@ const ClaimModal = ({ address, parcel, profile, modalAction }: { address: string
           setEmailConfirmed(true)
           setEmailState(email)
           setPresent('profileEditor')
-          TagManager.dataLayer({ dataLayer: { event: 'emailverificationComplete'}})
+          TagManager.dataLayer({ dataLayer: { event: 'emailverificationComplete' } })
         } else {
           setOtp('')
           setOtpError(true)
@@ -288,7 +288,7 @@ export const NFTDrop = ({ lists, text = '' }: { lists: Drop[], text: string }) =
   return <>
     {lists.length > 0 && <>
       <h2 className="text-xl">{text}</h2>
-      <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-3 md:gap-4 md:p-4 p-0 gap-1 w-full">
+      <div className="grid grid-cols-3 md:gap-4 md:p-4 p-0 gap-1 w-full">
         {lists.map(item => {
           const { address, title, image } = item
           return image != undefined && <a target="_blank" href={`/nft?address=${address}`} className="relative cursor-pointer bg-white rounded-16 mb-2 active-shadow" key={`${address}`}>
@@ -305,7 +305,7 @@ export const NFTDrop = ({ lists, text = '' }: { lists: Drop[], text: string }) =
           </a>
         })}
       </div>
-      <br />
+
     </>}
   </>
 }
@@ -313,9 +313,9 @@ export const NFTDrop = ({ lists, text = '' }: { lists: Drop[], text: string }) =
 // NFT GROUP
 export const NFTGroup = ({ lists, nfts, text = '', type = '' }: { type?: string, text?: string, lists: string[], nfts: Galleryst[] }) => {
   return <>
-    {lists.length > 0 && <div className="mx-1 mt-6">
+    {lists.length > 0 && <div className="pt-5 rounded-24 section-tile ">
       <h2 className="text-sm bg-gray-200 rounded-full inline-block mb-2 px-3 py-1 shadow-nft text-gray-600 md:mx-4">{text}</h2>
-      <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-3 md:gap-4 md:p-4 p-0 gap-1 w-full">
+      <div className="grid grid-cols-3 md:gap-4 md:p-4 p-0 gap-1 w-full">
         {nfts.filter(item => lists.includes(item.id)).map(item => {
           const { imagePreview, check, alternateUrl } = item
           // @ts-ignore
@@ -353,8 +353,9 @@ export const NFTGroup = ({ lists, nfts, text = '', type = '' }: { type?: string,
           </a>
         })}
       </div>
-      <br />
-    </div>}
+
+    </div>
+    }
   </>
 }
 
@@ -405,10 +406,12 @@ export const ConnectBtn = observer(() => {
             onClick={() => {
               setShow(false)
               walletService.connect(WalletProviderName.MetaMask)
-              TagManager.dataLayer({ dataLayer: {
-                event: 'connectwalletComplete',
-                wallet: 'MetaMask'
-              } })
+              TagManager.dataLayer({
+                dataLayer: {
+                  event: 'connectwalletComplete',
+                  wallet: 'MetaMask'
+                }
+              })
             }}>
             <div className="flex flex-row ">
               <img src={`/image/metamask_logo.png`} className="h-4 w-4 object-contain rounded-full" />
@@ -422,10 +425,12 @@ export const ConnectBtn = observer(() => {
             onClick={() => {
               setShow(false)
               walletService.connect(WalletProviderName.WalletConnect)
-              TagManager.dataLayer({ dataLayer: {
-                event: 'connectwalletComplete',
-                wallet: 'WalletConnect'
-              } })
+              TagManager.dataLayer({
+                dataLayer: {
+                  event: 'connectwalletComplete',
+                  wallet: 'WalletConnect'
+                }
+              })
             }}
           >
             <img src="/image/walletconnect_logo.png" className="h-4 w-4 object-contain rounded-full" />
@@ -476,7 +481,7 @@ export const ShareAction = ({ gallerystID }: { gallerystID: string }) => {
 export const UpdateAction = ({ action, profile }: { action: any, profile: Profile }) => {
   const [show, setShow] = useState(false)
   const { address } = profile
-  return <div className="absolute top-0 left-0 mt-2 ml-2 flex ">
+  return <div className="mr-4 flex">
     {/* Refresh */}
     <div
       onClick={async () => {
@@ -487,16 +492,13 @@ export const UpdateAction = ({ action, profile }: { action: any, profile: Profil
         }
         setShow(false)
       }}
-      className="flex items-center button-red py-2 px-2 rounded-full cursor-pointer text-sm font-semibold">
-      {show && <div className="absolute bg-black text-white top-0 right-0 p-1 px-2 -mt-10 text-sm rounded-full w-300">Updating...</div>}
-      <Icon fill={faSync} noMargin /><span className="md:block hidden ml-3"> Refresh Info</span>
+      className="flex items-center button-red py-2 px-2 rounded-full cursor-pointer text-sm ">
+      {show && <div className=" bg-black text-white p-1 px-2 -mt-10 text-sm rounded-full w-300">Updating...</div>}
+      <Icon fill={faSync} noMargin /><span className="md:block hidden ml-3"> Refresh</span>
     </div>
 
     {/* Go to Gallery */}
-    { profile.verified && <a href={`/customize/${profile.shortUrl}`} className="rounded-full h-10 flex px-3 ml-2 items-center justify-center button-red">
-      <span className="text-xl font-bold">G</span>
-      <span className="md:block hidden ml-2 text-sm">Custom Gallery</span>
-    </a>}
+
   </div>
 }
 

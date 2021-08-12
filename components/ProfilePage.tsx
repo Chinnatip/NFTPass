@@ -1,4 +1,4 @@
-import React , { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import * as firebase from "../method/firebase"
 import { Profile } from '../method/rarible/interface'
 import { sanitizeArray } from '../method/integrate'
@@ -21,7 +21,7 @@ const ProfilePage = ({ toggle, galleryst, setToggle, profile, action, lists, cla
   setToggle: any
   galleryst?: string[]
 }) => {
-  const [ collections , setCollection] = useState<Section[]>([])
+  const [collections, setCollection] = useState<Section[]>([])
   const { onsaleLists, ownLists, createdLists, dropLists, NFTLists } = lists
   const parcel = {
     profile: { ...profile, verified: true },
@@ -42,20 +42,19 @@ const ProfilePage = ({ toggle, galleryst, setToggle, profile, action, lists, cla
         console.log(galleryst)
         await Promise.all(galleryst.map(async (gallID) => {
           const collection = await firebase.findbyAddress('galleryst', gallID)
-          if(collection.exists){
+          if (collection.exists) {
             const colGet: any = collection.data()
             // console.log(colGet)
             colls.push(colGet)
           }
         }))
         setCollection(colls)
-        setToggle('gallery')
       }
     })()
   }, [galleryst]);
 
   return <div className="md:w-4/5 w-full m-auto z-10 relative">
-    <UpdateAction profile={profile} action={action} />
+
     {profile.shortUrl && <ShareAction gallerystID={profile.shortUrl != undefined ? `${profile.shortUrl}` : `profile?address=${profile.address}`} />}
     <div className="rounded-24 border border-white shadow-nft mt-20 mb-20 pb-10" style={{ background: 'rgba(185, 184, 184, 0.32)', borderRadius: '24px' }}>
       <div className="bg-white" style={{ borderRadius: '24px 24px 0px 0px' }}>
@@ -65,7 +64,7 @@ const ProfilePage = ({ toggle, galleryst, setToggle, profile, action, lists, cla
 
           {/* Tabbar */}
           <div className="mb-8 inline-block" >
-            { collections.length > 0 && <Toggle text="Gallery" trigger="gallery" action={setToggle} toggle={toggle} amount={collections.length} />}
+
             <Toggle text="Owned" trigger="collection" action={setToggle} toggle={toggle} amount={ownLists.length} />
             <Toggle text="Created" trigger="creates" action={setToggle} toggle={toggle} amount={createdLists.length} />
             {dropLists.length > 0 && <Toggle text="Drops" trigger="drops" action={setToggle} toggle={toggle} amount={dropLists.length} />}
@@ -84,14 +83,18 @@ const ProfilePage = ({ toggle, galleryst, setToggle, profile, action, lists, cla
 
       {/* Gallery */}
       <div className="h-4 relative" />
-
+      <div className="flex w-full justify-end">
+        {profile.verified && <a href={`/customize/${profile.shortUrl}`} className="rounded-full h-10 flex py-2 px-2 justify-self-end items-center justify-center button-red mr-3">
+          <span className="md:block text-center text-sm">Edit Page</span>
+        </a>}
+        <UpdateAction profile={profile} action={action} />
+      </div>
       {toggle == 'drops' && <NFTDrop text={`Nifty drops (${dropLists.length} items)`} lists={dropLists} />}
-      {toggle == 'gallery' && <>
-        { collections.map(({ name, nftLists }) => <NFTGroup type="onsale" text={`${name} (${nftLists.length} items)`} lists={nftLists} nfts={NFTLists} /> ) }
-      </>}
+
       {toggle == 'collection' && <>
+        {collections.map(({ name, nftLists }) => <NFTGroup type="onsale" text={`${name} (${nftLists.length} items)`} lists={nftLists} nfts={NFTLists} />)}
         <NFTGroup type="onsale" text={`On sale (${onsaleLists.length} items)`} lists={onsaleLists} nfts={NFTLists} />
-        <NFTGroup type="owned" text={`Own by ${profile?.username} (${ownLists.length} items)`} lists={ownLists} nfts={NFTLists} /></>}
+        <NFTGroup type="owned" text={`Owned by ${profile?.username} (${ownLists.length} items)`} lists={ownLists} nfts={NFTLists} /></>}
       {toggle == 'creates' && <NFTGroup type="created" text={`Created (${createdLists.length} items)`} lists={createdLists} nfts={NFTLists} />}
 
       {/* Footer */}
