@@ -496,9 +496,6 @@ export const UpdateAction = ({ action, profile }: { action: any, profile: Profil
       {show && <div className=" bg-black text-white p-1 px-2 -mt-10 text-sm rounded-full w-300">Updating...</div>}
       <Icon fill={faSync} noMargin /><span className="md:block hidden ml-3"> Refresh</span>
     </div>
-
-    {/* Go to Gallery */}
-
   </div>
 }
 
