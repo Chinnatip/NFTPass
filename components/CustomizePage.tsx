@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { Profile } from '../method/rarible/interface'
 import * as firebase from "../method/firebase"
-import { sanitizeArray, makeid } from '../method/integrate'
-import { walletStore } from 'stores/wallet.store'
+import { makeid } from '../method/integrate'
 import Icon from '@/Icon'
 import DragContainer from '@/DragContainer'
-import { CreatorHeader, ShareAction, UpdateAction } from '@/Galleryst'
+import { useRouter } from 'next/router'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons'
+// import { walletStore } from 'stores/wallet.store'
+// import { CreatorHeader, ShareAction, UpdateAction } from '@/Galleryst'
 
 const reorder = (list: any[], result: any) => {
   const { source: { index: startIndex }, destination: { index: endIndex } } = result
@@ -22,7 +23,7 @@ type Section = {
   nftLists: string[]
 }
 
-const ProfilePage = ({ profile, action, lists, claimStage = false, setClaimStage, galleryst }: {
+const ProfilePage = ({ profile, lists, galleryst }: {
   profile: Profile,
   action: any,
   lists: any,
@@ -30,19 +31,20 @@ const ProfilePage = ({ profile, action, lists, claimStage = false, setClaimStage
   setClaimStage: any
   galleryst?: string[]
 }) => {
-  const { onsaleLists, ownLists, createdLists, dropLists, NFTLists } = lists
+  const { NFTLists } = lists
   const [modal, setModal] = useState(false)
-  const parcel = {
-    profile: { ...profile, verified: true },
-    NFTLists: sanitizeArray(NFTLists),
-    onsaleLists,
-    ownLists,
-    createdLists,
-    dropLists
-  }
-  const wallet = walletStore
-  const address = profile.address
-  const claimCheck = address == wallet?.address
+  // const parcel = {
+  //   profile: { ...profile, verified: true },
+  //   NFTLists: sanitizeArray(NFTLists),
+  //   onsaleLists,
+  //   ownLists,
+  //   createdLists,
+  //   dropLists
+  // }
+  const Router = useRouter()
+  // const wallet = walletStore
+  // const address = profile.address
+  // const claimCheck = address == wallet?.address
   const [collections, setCollection] = useState<Section[]>([])
   const [activeSection, setActive] = useState('')
   const [collectionLists, setCollectionList] = useState<string[]>([])
@@ -120,7 +122,8 @@ const ProfilePage = ({ profile, action, lists, claimStage = false, setClaimStage
       firebase.updateDocument("creatorParcel", profile.address, {
         galleryst: collections.map(section => section.id)
       })
-      alert('Updated !')
+      // alert('Updated !')
+      Router.push(`/${profile.shortUrl}`)
     }
   }
 
@@ -210,8 +213,6 @@ const ProfilePage = ({ profile, action, lists, claimStage = false, setClaimStage
           Save
         </button>
       </div>
-
-
     </div>
     <a href={`https://galleryst.hellonext.co`} className="fixed right-0 bottom-0 z-20 my-2 mx-4 w-auto inline bg-white text-gray-700 focus:outline-none rounded-full p-2 items-center shadow-nft text-xs" target="_blank" ><img src="/image/feedback_icon.svg" style={{ height: '20px', opacity: '.6' }} className="inline-block mr-2 mb-0 " />Send us feedback</a>
   </div>
