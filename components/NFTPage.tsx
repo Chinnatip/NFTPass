@@ -144,7 +144,7 @@ const NFTPage = ({ stateData, getNFT, address, seo, stateAction, prefix = false 
             <div className="text-white bg-blue-500 opensea-logo logo-48 h-12 w-12 rounded-full" ></div>
           </a>}
           {platform.check['foundation']?.status && <a href={platform.check['foundation']?.link} target="_blank" className="order-6 flex mt-4 p-4 items-center rounded-24 bg-white shadow-nft active-shadow">
-            <span className="flex-grow ">Link to Foundation</span>
+            <span className="flex-grow ">View on Foundation</span>
             <div className="text-white bg-blue-500 foundation-logo logo-48 h-12 w-12 rounded-full" ></div>
           </a>}
           {!!(getNFT as any)?.metadata && <div className='flex flex-wrap order-6 mt-3'>
