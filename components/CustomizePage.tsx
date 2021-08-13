@@ -157,8 +157,8 @@ const ProfilePage = ({ profile, lists, galleryst }: {
           <div className="flex-grow text-lg font-bold">Customize Page</div>
         </div>
         <div className="bg-white shadow-nft rounded-2xl p-3 mt-4">
-          <h3 className="mb-3 font-semibold">Section Name</h3>
-          <input onChange={e => setName(e.target.value)} value={newSectionName} className="outline-none block bg-white rounded-full p-3 shadow-nft w-full" type="text" placeholder="My Top Fav NFT" />
+          <h3 className="mb-3 font-semibold">Collection Name</h3>
+          <input onChange={e => setName(e.target.value)} value={newSectionName} className="outline-none block bg-white rounded-full p-3 shadow-nft w-full" type="text" placeholder="My Top Fav NFTs..." />
           <button onClick={() => newSection()} className="button-red rounded-full mt-4 p-3 w-full font-semibold">+ Add Collection</button>
         </div>
         <DragDropContext onDragEnd={(e) => onDragEnd(e, collections)}>
