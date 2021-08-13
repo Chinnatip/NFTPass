@@ -159,18 +159,16 @@ const ProfilePage = ({ profile, action, lists, claimStage = false, setClaimStage
       </div>
     </>}
 
-    <div className="rounded-24 shadow-nft mb-20 ">
-
-
+    <div className="rounded-24 mb-20">
       {/* Gallery */}
       <div className="lg:w-1/2 m-auto bg-white block p-10 mt-10 rounded-xl">
         <div className="flex items-center">
-          <div className="flex-grow text-lg font-bold">Customize my page</div>
+          <div className="flex-grow text-lg font-bold">Customize Page</div>
         </div>
         <div className="bg-white shadow-nft rounded-2xl p-3 mt-4">
           <h3 className="mb-3 font-semibold">Section Name</h3>
           <input onChange={e => setName(e.target.value)} value={newSectionName} className="outline-none block bg-white rounded-full p-3 shadow-nft w-full" type="text" placeholder="My Top Fav NFT" />
-          <button onClick={() => newSection()} className="button-red rounded-full mt-4 p-3 w-full font-semibold">+ Add</button>
+          <button onClick={() => newSection()} className="button-red rounded-full mt-4 p-3 w-full font-semibold">+ Add Collection</button>
         </div>
         <DragDropContext onDragEnd={(e) => onDragEnd(e, collections)}>
           <Droppable droppableId="droppable">
