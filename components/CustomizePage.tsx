@@ -7,8 +7,7 @@ import DragContainer from '@/DragContainer'
 import { useRouter } from 'next/router'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons'
-// import { walletStore } from 'stores/wallet.store'
-// import { CreatorHeader, ShareAction, UpdateAction } from '@/Galleryst'
+import { walletStore } from 'stores/wallet.store'
 
 const reorder = (list: any[], result: any) => {
   const { source: { index: startIndex }, destination: { index: endIndex } } = result
@@ -33,18 +32,9 @@ const ProfilePage = ({ profile, lists, galleryst }: {
 }) => {
   const { NFTLists } = lists
   const [modal, setModal] = useState(false)
-  // const parcel = {
-  //   profile: { ...profile, verified: true },
-  //   NFTLists: sanitizeArray(NFTLists),
-  //   onsaleLists,
-  //   ownLists,
-  //   createdLists,
-  //   dropLists
-  // }
   const Router = useRouter()
-  // const wallet = walletStore
-  // const address = profile.address
-  // const claimCheck = address == wallet?.address
+  const wallet = walletStore
+  const claimCheck = profile.address == wallet?.address
   const [collections, setCollection] = useState<Section[]>([])
   const [activeSection, setActive] = useState('')
   const [collectionLists, setCollectionList] = useState<string[]>([])
@@ -102,8 +92,6 @@ const ProfilePage = ({ profile, lists, galleryst }: {
   }
   const addNFTtoSectionLists = () => {
     let findSection = collections.find(section => section.id == activeSection)
-    // console.log(findSection)
-    // console.log(collectionLists)
     if (findSection != undefined) {
       findSection['nftLists'] = collectionLists
       const replace = collections.map((obj: Section) => [findSection].find((o: any) => o.id === obj.id) || obj)
@@ -122,7 +110,6 @@ const ProfilePage = ({ profile, lists, galleryst }: {
       firebase.updateDocument("creatorParcel", profile.address, {
         galleryst: collections.map(section => section.id)
       })
-      // alert('Updated !')
       Router.push(`/${profile.shortUrl}`)
     }
   }
@@ -162,7 +149,8 @@ const ProfilePage = ({ profile, lists, galleryst }: {
       </div>
     </>}
 
-    {profile.verified ? <div className="rounded-24 mb-20">
+    { (claimCheck && profile.verified) ?
+    <div className="rounded-24 mb-20">
       {/* Gallery */}
       <div className="lg:w-1/2 m-auto bg-white block p-10 mt-10 rounded-xl">
         <div className="flex items-center">
