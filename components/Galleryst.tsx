@@ -494,8 +494,8 @@ export const UpdateAction = ({ action, profile }: { action: any, profile: Profil
         }
         setShow(false)
       }}
-      className="flex items-center button-red py-2 px-2 rounded-full cursor-pointer text-sm ">
-      {show && <div className=" bg-black text-white p-1 px-2 -mt-10 text-sm rounded-full w-300">Updating...</div>}
+      className="flex items-center button-red py-2 px-2 rounded-full cursor-pointer text-sm relative">
+      {show && <div className=" bg-black text-white p-1 px-2 -mt-10 text-sm rounded-full w-300 absolute right-0 top-0">Updating...</div>}
       <Icon fill={faSync} noMargin /><span className="md:block hidden ml-3"> Refresh</span>
     </div>
   </div>
