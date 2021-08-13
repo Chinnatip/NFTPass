@@ -141,11 +141,11 @@ const ProfilePage = ({ profile, lists, galleryst }: {
         </div>
 
         {/* content */}
-        <div className="mt-3 grid grid-cols-3 md:gap-4 md:p-4 p-0 gap-1 w-full mb-3 overflow-y-scroll" style={{ height: '60vh' }}>
+        <div className="mt-3 grid grid-cols-3 md:gap-4 md:p-4 p-0 gap-1 w-full mb-3 overflow-y-scroll" style={{ height: 'auto' }}>
           {NFTLists.map((nft: any) =>
             <button onClick={() => reorderNFT(nft.id)} className="thumbnail-wrapper w-full relative">
               <img className="rounded-16 md:border-8 border-4 border-white thumbnail-height" src={nft.imagePreview} />
-              {collectionLists.indexOf(nft.id) > -1 && <div className="absolute w-full h-full rounded-xl flex items-center justify-center text-green-500" style={{ background: '#000000a8' }}>
+              {collectionLists.indexOf(nft.id) > -1 && <div className="absolute w-full h-full rounded-xl flex items-center justify-center text-green-500" style={{ background: '#000000a8', top: '0' }}>
                 <span className="text-3xl rounded-full border-4 border-green-500 h-12 w-12 flex items-center justify-center">
                   {collectionLists.indexOf(nft.id) + 1}
                 </span>
