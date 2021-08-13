@@ -141,7 +141,7 @@ const ProfilePage = ({ profile, lists, galleryst }: {
         </div>
 
         {/* content */}
-        <div className="mt-3 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-3 md:gap-4 md:p-4 p-0 gap-1 w-full mb-3">
+        <div className="mt-3 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-3 md:gap-4 md:p-4 p-0 gap-1 w-full mb-3 overflow-y-scroll" style={{ height: '60vh' }}>
           {NFTLists.map((nft: any) =>
             <button onClick={() => reorderNFT(nft.id)} className="thumbnail-wrapper w-full relative">
               <img className="rounded-16 md:border-8 border-4 border-white thumbnail-height" src={nft.imagePreview} />
@@ -162,7 +162,7 @@ const ProfilePage = ({ profile, lists, galleryst }: {
       </div>
     </>}
 
-    <div className="rounded-24 mb-20">
+    { profile.verified ? <div className="rounded-24 mb-20">
       {/* Gallery */}
       <div className="lg:w-1/2 m-auto bg-white block p-10 mt-10 rounded-xl">
         <div className="flex items-center">
@@ -213,7 +213,11 @@ const ProfilePage = ({ profile, lists, galleryst }: {
           Save
         </button>
       </div>
-    </div>
+    </div> :
+    <div className="fixed top-0 left-0 w-screen h-screen flex flex-col items-center justify-center" >
+      <a href="/" className="button-red py-4 px-12 text-xl rounded-full mb-4">Go Back</a>
+      <div className="text-center text-gray-600 " style={{ maxWidth: '240px' }}>You didn't have permission to Access this page</div>
+    </div>}
     <a href={`https://galleryst.hellonext.co`} className="fixed right-0 bottom-0 z-20 my-2 mx-4 w-auto inline bg-white text-gray-700 focus:outline-none rounded-full p-2 items-center shadow-nft text-xs" target="_blank" ><img src="/image/feedback_icon.svg" style={{ height: '20px', opacity: '.6' }} className="inline-block mr-2 mb-0 " />Send us feedback</a>
   </div>
 
