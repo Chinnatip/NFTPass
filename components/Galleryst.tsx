@@ -314,7 +314,7 @@ export const NFTDrop = ({ lists, text = '' }: { lists: Drop[], text: string }) =
 export const NFTGroup = ({ lists, nfts, text = '', type = '' }: { type?: string, text?: string, lists: string[], nfts: Galleryst[] }) => {
   return <>
     {lists.length > 0 && <div className="pt-5 rounded-24 section-tile ">
-      <h2 className="text-base	 rounded-full inline-block mb-2 py-1  text-white md:mx-4">{text}</h2>
+      <h2 className="text-base rounded-full inline-block mb-2 py-1  text-white md:mx-4">{text}</h2>
       <div className="grid grid-cols-3 md:gap-4 md:p-4 p-0 gap-1 w-full">
         {lists.map((id) => nfts.find(nft => nft.id == id)).map(item => {
           if (item != undefined) {
