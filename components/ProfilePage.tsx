@@ -83,7 +83,7 @@ const ProfilePage = ({ toggle, galleryst, setToggle, profile, action, lists, cla
       {/* Gallery */}
       <div className="h-4 relative" />
       <div className="flex w-full justify-end">
-        { claimCheck && profile.verified && <a href={`/customize/${profile.shortUrl}`} className="rounded-full h-10 flex py-2 px-2 justify-self-end items-center justify-center button-red mr-3">
+        { claimCheck && <a href={`/customize/${profile.shortUrl}`} className="rounded-full h-10 flex py-2 px-2 justify-self-end items-center justify-center button-red mr-3">
           <span className="md:block text-center text-sm">Edit Page</span>
         </a>}
         <UpdateAction profile={profile} action={action} />

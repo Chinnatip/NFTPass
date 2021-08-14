@@ -149,7 +149,7 @@ const ProfilePage = ({ profile, lists, galleryst }: {
       </div>
     </>}
 
-    { (claimCheck && profile.verified) ?
+    { (claimCheck) ?
     <div className="rounded-24 mb-20">
       {/* Gallery */}
       <div className="lg:w-1/2 m-auto bg-white block p-10 mt-10 rounded-xl">
