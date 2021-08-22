@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@0xcert/ethereum-erc721@^2.0.0-rc1":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@0xcert/ethereum-erc721/-/ethereum-erc721-2.4.0.tgz#deaa30a45156d9f1b924029ec40efdeae972b13e"
+  integrity sha512-lgxJ49dFl6MACH5DAKLCyatM+CJDux76YBuKAEGty47Jil1NGl2dutyxPZwhLUkxVYMMZFwByzLZ7wV6PWgYWQ==
+
 "@alloc/types@^1.2.1":
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/@alloc/types/-/types-1.3.0.tgz#904245b8d3260a4b7d8a801c12501968f64fac08"
