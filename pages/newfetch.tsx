@@ -70,7 +70,7 @@ const Page = ({address}: {
       { NFTLists.map(n => {
         console.log(n)
         return <div>
-          <img src={n.image.url.PREVIEW} alt="" />
+          <img src={n.image?.url?.PREVIEW} alt="" />
         </div>
       })}
     </>:
