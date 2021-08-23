@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import * as firebase from "../method/firebase"
 
 type NFTS = {
   ownLists: string[]
@@ -49,26 +50,51 @@ const Page = ({address}: {
 }) => {
   const [load, setLoad] = useState(true)
   const [NFTLists, setNFTLists] = useState<NFTMetadata[]>([])
-  const [ownLists, setOwnLists] = useState<string[]>([])
+  // const [ownLists, setOwnLists] = useState<string[]>([])
   useEffect(() => {
     (async () => {
       const resp = await axios(`/api/fetch?address=${address}`)
       if(resp.status == 200){
         const response : any  = resp.data
         const NFTdata: NFTS = response
-        setNFTLists(NFTdata.nfts)
-        setOwnLists(NFTdata.ownLists)
+        // setOwnLists(NFTdata.ownLists)
         setLoad(false)
+
+        let lists : NFTMetadata[] = []
+
+        NFTdata.ownLists.map(id => {
+          if(id.split(':')[1] != ''){
+            firebase.findbyAddress('metadata', id).then(doc => {
+              if(doc.exists){
+                const data: any = doc.data()
+                const metadata : NFTMetadata = data
+                lists = [...lists , metadata]
+                setNFTLists(lists)
+              }else{
+                axios(`/api/metadata?address=${id}`).then(res => {
+                  if(res.status == 200){
+                    const metadata = { ...res.data ,
+                      token: id,
+                      token_address: id.split(':')[0],
+                      token_id: id.split(':')[1]
+                    }
+                    lists = [...lists , metadata]
+                    setNFTLists(lists)
+                    firebase.writeDocument('metadata', id, metadata)
+                  }
+                })
+              }
+            })
+          }
+        })
+
       }
     })()
   }, []);
   return <div>
     <h1>{address}</h1>
     { !load ? <>
-      { ownLists.map(o => <div>{o}</div>) }
-      <br />
       { NFTLists.map(n => {
-        console.log(n)
         return <div>
           <img src={n.image?.url?.PREVIEW} alt="" />
         </div>

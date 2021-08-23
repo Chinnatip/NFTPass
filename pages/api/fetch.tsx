@@ -136,30 +136,26 @@ const NFTMetadata = async(token: string): Promise<NFTMetadata|undefined> => {
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   await cors(req, res)
   if(req.method === 'GET'){
-    const { address } = req.query
+    const { address, ft } = req.query
+    const fetchAll = ft != undefined
     if(address != undefined && typeof address === 'string'){
-      let result: NFTMetadata[] = []
+      // let result: NFTMetadata[] = []
+      let collectNFT : string[]
       const ownedResp = await NFTOf(address)
-      const transferResp = await NFTtransfer(address)
-      const transferVerbResp = await NFTtransferVerbose(address)
       const ownLists = [...new Set(ownedResp.map(o => `${o.token_address}:${o.token_id}`))]
-      const collectNFT : string[] = [...new Set([...ownLists, ...transferResp.map(o => `${o.token_address}:${o.token_id}`), ...transferVerbResp.map(o => `${o.address}:${o.token_id}`)])]
-      await Promise.all(collectNFT.map(async id => {
-        if(id.split(':')[1] != ''){
-          const resp = await NFTMetadata(id)
-          if(resp != undefined){
-            result.push({...resp,
-              token: id,
-              token_address: id.split(':')[0],
-              token_id: id.split(':')[1]
-            })
-          }
-        }
-      }))
+      if(fetchAll){
+        const transferResp = await NFTtransfer(address)
+        const transferVerbResp = await NFTtransferVerbose(address)
+        collectNFT = [...new Set([...ownLists, ...transferResp.map(o => `${o.token_address}:${o.token_id}`), ...transferVerbResp.map(o => `${o.address}:${o.token_id}`)])]
+      }else{
+        collectNFT = ownLists
+      }
       res.status(200).json({
         ownLists,
-        nfts: result
+        collectNFT
       })
+
+
     }else{
       res.json({ message: 'Missing query' })
     }
