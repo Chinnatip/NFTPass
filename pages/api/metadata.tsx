@@ -8,11 +8,13 @@ const cors = initMiddleware(
 )
 const RARIBLE_URL = 'http://api.rarible.com/protocol/v0.1'
 
+// Attribute schema
 type Attribute = {
   key: string
   value: string
 }
 
+// NFT Metadata schema
 type NFTMetadata = {
   name: string
   token: string
