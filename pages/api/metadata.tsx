@@ -49,9 +49,14 @@ type NFTMetadata = {
 }
 
 const NFTMetadata = async(token: string): Promise<NFTMetadata|undefined> => {
-  const resp = await axios(`${RARIBLE_URL}/ethereum/nft/items/${token}/meta`)
-  if(resp.status == 200){
-    return resp.data
+  const metaResp = await axios(`${RARIBLE_URL}/ethereum/nft/items/${token}/meta`)
+  const resp = await axios(`${RARIBLE_URL}/ethereum/nft/items/${token}`)
+  if(resp.status == 200 && metaResp.status == 200){
+    return { ...metaResp.data,
+      creators: resp.data?.creators,
+      supply: resp.data?.supply != undefined ? parseInt(resp.data?.supply) : 1,
+      syncDate: resp.data?.date
+    }
   }else{
     return undefined
   }

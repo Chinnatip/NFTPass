@@ -3,8 +3,16 @@ import axios from 'axios'
 import * as firebase from "../method/firebase"
 
 type NFTS = {
+  nfts: string[]
   ownLists: string[]
-  nfts: NFTMetadata[]
+  collection: {
+    name: string
+    symbol: string
+    address: string
+    token_uri: string
+    collection: boolean
+    tokenType: string
+  }[]
 }
 
 type Attribute = {
@@ -19,6 +27,18 @@ type NFTMetadata = {
   token_id: string
   description?: string
   attributes?: Attribute[],
+  creators: {
+    account: string
+    value: number
+  }[]
+  collection: {
+    address: string
+    collection: boolean
+    name: string
+    symbol: string
+    tokenType: string
+    token_url: string
+  }
   image: {
     url: {
       ORIGINAL: string
@@ -33,6 +53,8 @@ type NFTMetadata = {
       }
     }
   }
+  supply: number
+  syncDate: string
   animation?: {
     url: {
       ORIGINAL: string
@@ -50,19 +72,24 @@ const Page = ({address}: {
 }) => {
   const [load, setLoad] = useState(true)
   const [NFTLists, setNFTLists] = useState<NFTMetadata[]>([])
-  // const [ownLists, setOwnLists] = useState<string[]>([])
+  const [ownLists, setOwnLists] = useState<string[]>([])
+  const [createdLists, setCreatedLists] = useState<string[]>([])
+  
   useEffect(() => {
     (async () => {
       const resp = await axios(`/api/fetch?address=${address}`)
       if(resp.status == 200){
         const response : any  = resp.data
         const NFTdata: NFTS = response
-        // setOwnLists(NFTdata.ownLists)
+
+        setOwnLists(NFTdata.ownLists)
         setLoad(false)
 
         let lists : NFTMetadata[] = []
+        let parseCreatedList : string[] = []
 
-        NFTdata.ownLists.map(id => {
+
+        NFTdata.nfts.map(id => {
           if(id.split(':')[1] != ''){
             firebase.findbyAddress('metadata', id).then(doc => {
               if(doc.exists){
@@ -70,16 +97,26 @@ const Page = ({address}: {
                 const metadata : NFTMetadata = data
                 lists = [...lists , metadata]
                 setNFTLists(lists)
+                if(metadata.creators.map(c => c.account).includes(address)){
+                  parseCreatedList = [...parseCreatedList, id]
+                }
+                setCreatedLists(parseCreatedList)
               }else{
                 axios(`/api/metadata?address=${id}`).then(res => {
                   if(res.status == 200){
-                    const metadata = { ...res.data ,
+                    const data: any = res.data
+                    const metadata : NFTMetadata = { ...data ,
                       token: id,
                       token_address: id.split(':')[0],
-                      token_id: id.split(':')[1]
+                      token_id: id.split(':')[1],
+                      collection: NFTdata.collection.find(col => col.address == id.split(':')[0])
                     }
                     lists = [...lists , metadata]
                     setNFTLists(lists)
+                    if(metadata.creators.map(c => c.account).includes(address)){
+                      parseCreatedList = [...parseCreatedList, id]
+                    }
+                    setCreatedLists(parseCreatedList)
                     firebase.writeDocument('metadata', id, metadata)
                   }
                 })
@@ -87,18 +124,29 @@ const Page = ({address}: {
             })
           }
         })
-
       }
     })()
   }, []);
   return <div>
     <h1>{address}</h1>
     { !load ? <>
-      { NFTLists.map(n => {
-        return <div>
-          <img src={n.image?.url?.PREVIEW} alt="" />
+      <div className="w-screen flex ">
+        <div className="w-1/2">
+          <div>ownedLists</div>
+          { ownLists.map(l => {
+            const findItem = NFTLists.find(nft => nft.token == l)
+            return <img className="inline" src={findItem?.image?.url?.PREVIEW} alt="" />
+          }) }
+          
         </div>
-      })}
+        <div className="w-1/2">
+          <div>createdLists</div>
+          { createdLists.map(l => {
+            const findItem = NFTLists.find(nft => nft.token == l)
+            return <img className="inline" src={findItem?.image?.url?.PREVIEW} alt="" />
+          }) }
+        </div>
+      </div>
     </>:
     <div>Loading ...</div>
     }
