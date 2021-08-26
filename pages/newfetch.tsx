@@ -88,7 +88,6 @@ const Page = ({address}: {
         let lists : NFTMetadata[] = []
         let parseCreatedList : string[] = []
 
-
         NFTdata.nfts.map(id => {
           if(id.split(':')[1] != ''){
             firebase.findbyAddress('metadata', id).then(doc => {

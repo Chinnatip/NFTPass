@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react'
 import ProfilePage from '@/ProfilePage'
 import * as firebase from "../method/firebase"
 import { Profile } from '../method/rarible/interface'
-import { Drop } from '../method/nifty/interface'
-import { Galleryst } from '../interfaces/index'
+import { NFTMetadata } from '../interfaces/index'
 import { ConnectBtn } from '@/Galleryst'
 import { NextSeo } from 'next-seo';
-import { prepareURI } from '../method/integrate'
+import { prepareURI, fetchNFT } from '../method/integrate'
 
 const Page = ({ seo, response }: {
   response?: any
@@ -18,29 +17,17 @@ const Page = ({ seo, response }: {
 }) => {
   const [profile, setProfile] = useState<Profile>(response != undefined ? response.profile : {})
   const [claimStage, setClaimStage] = useState(false)
-  const [gallery, setGalleryst] = useState<string[]>([])
-  const [NFTLists, setNFTLists] = useState<Galleryst[]>([])
+  // const [gallery, setGalleryst] = useState<string[]>([])
+  const [NFTLists, setNFTLists] = useState<NFTMetadata[]>([])
   const [ownLists, setOwnLists] = useState<string[]>([])
-  const [onsaleLists, setOnsaleLists] = useState<string[]>([])
   const [createdLists, setCreatedLists] = useState<string[]>([])
-  const [dropLists, setDropLists] = useState<Drop[]>([])
   const [toggle, setToggle] = useState<'drops'|'creates'|'collection'>('collection')
-  const stateLists = { NFTLists, ownLists, onsaleLists, createdLists, dropLists }
-  const stateAction = { setProfile, setOwnLists, setOnsaleLists, setDropLists, setCreatedLists, setNFTLists }
+  const stateLists = { NFTLists, ownLists, createdLists }
+  const stateAction = { setProfile, setOwnLists, setCreatedLists, setNFTLists }
   useEffect(() => {
     (async () => {
       if (response != undefined) {
-        const { profile, galleryst, ownLists, onsaleLists, dropLists, createdLists, NFTLists } = response
-        setProfile(profile)
-        setOwnLists(ownLists)
-        setOnsaleLists(onsaleLists)
-        setDropLists(dropLists)
-        setCreatedLists(createdLists)
-        setNFTLists(NFTLists)
-        setGalleryst(galleryst)
-
-        // Config toggle
-        if(onsaleLists.length == 0 && ownLists.length == 0 && createdLists.length > 0) setToggle('creates')
+        await fetchNFT(response.profile.address, stateAction)
       }
     })()
   }, []);
@@ -70,7 +57,7 @@ const Page = ({ seo, response }: {
         </a>
         <ConnectBtn />
       </div>
-      <ProfilePage toggle={toggle} galleryst={gallery} setToggle={setToggle}  claimStage={claimStage} setClaimStage={setClaimStage}  profile={profile} action={stateAction} lists={stateLists} />
+      <ProfilePage toggle={toggle} setToggle={setToggle} claimStage={claimStage} setClaimStage={setClaimStage} profile={profile} action={stateAction} lists={stateLists} />
     </div>
   </div>
 }

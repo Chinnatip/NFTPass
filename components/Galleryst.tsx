@@ -9,7 +9,7 @@ import { createPopper } from '@popperjs/core'
 import { Profile } from '../method/rarible/interface'
 import { WalletProviderName } from 'static/Enum'
 import { creatorFetch, makeotp } from '../method/integrate'
-import { Galleryst, User } from '../interfaces/index'
+import { NFTMetadata, User } from '../interfaces/index'
 import { Drop } from '../method/nifty/interface'
 import TagManager from "react-gtm-module"
 import UploadButton from '@/UploadButton'
@@ -17,9 +17,9 @@ import OtpInput from 'react-otp-input'
 import Icon from '@/Icon'
 import axios from 'axios'
 
-const lockDigit = (price: number) => {
-  return (Math.floor(price * 10000)) / 10000
-}
+// const lockDigit = (price: number) => {
+//   return (Math.floor(price * 10000)) / 10000
+// }
 
 const fixPath = (path: string | undefined) => {
   if (path !== undefined) {
@@ -311,45 +311,25 @@ export const NFTDrop = ({ lists, text = '' }: { lists: Drop[], text: string }) =
 }
 
 // NFT GROUP
-export const NFTGroup = ({ lists, nfts, text = '', type = '' }: { type?: string, text?: string, lists: string[], nfts: Galleryst[] }) => {
+export const NFTGroup = ({ lists, nfts, text = ''}: { type?: string, text?: string, lists: string[], nfts: NFTMetadata[] }) => {
   return <>
     {lists.length > 0 && <div className="pt-5 rounded-24 section-tile ">
       <h2 className="text-base rounded-full inline-block mb-2 py-1  text-white md:mx-4">{text}</h2>
       <div className="grid grid-cols-3 md:gap-4 md:p-4 p-0 gap-1 w-full">
-        {lists.map((id) => nfts.find(nft => nft.id == id)).map(item => {
+        {lists.map((id) => nfts.find(nft => nft.token == id)).map(item => {
+          console.log(item)
           if (item != undefined) {
-            const { imagePreview, check, alternateUrl } = item
-            // @ts-ignore
-            const onImgError = (event) => {
-              event.target.onerror = null;
-              event.target.src = alternateUrl;
-            }
-            return imagePreview != undefined && <a target="_blank" href={`/nft?address=${item.id}`} className="relative cursor-pointer bg-white rounded-16 mb-0 active-shadow" key={`${item.id}`}>
+            const { image: { url: { PREVIEW } }  } = item
+            return PREVIEW != undefined && <a target="_blank" href={`/nft?address=${item.token}`} className="relative cursor-pointer bg-white rounded-16 mb-0 active-shadow" key={`${item.token}`}>
               <div className="thumbnail-wrapper w-full relative">
-                {imagePreview.slice(imagePreview.length - 3, imagePreview.length) == 'mp4' ?
+                {PREVIEW.slice(PREVIEW.length - 3, PREVIEW.length) == 'mp4' ?
                   <video className="rounded-16  md:border-8 border-4 border-white thumbnail-height" autoPlay loop muted>
-                    <source src={imagePreview} />
-                    <source src={alternateUrl} />
+                    <source src={PREVIEW} />
+                    {/* <source src={alternateUrl} /> */}
                   </video> :
-                  <img className="rounded-16 md:border-8 border-4 border-white thumbnail-height" src={imagePreview} onError={onImgError} />
+                  <img className="rounded-16 md:border-8 border-4 border-white thumbnail-height" src={PREVIEW} />
                 }
-                <div className="absolute flex justify-end	z-10 bottom-0  w-full md:mb-2 md:px-2 mb-1 px-1 pt-6 ">
-                  <div className="flex px-2 rounded-b-16 pt-10 justify-end w-full" style={{ background: 'linear-gradient(360deg, rgba(0, 0, 0, 0.52) 10%, rgba(196, 196, 196, 0) 50%)' }}>
-                    {type == 'onsale' && item.priceETH != undefined &&
-                      <span className="text-white font-bold text-right " >
-                        {lockDigit(item.priceETH)} ETH
-                      </span>}</div>
-                </div>
-                <span className="absolute bottom-0 left-0 flex flex-col pl-3 pb-4 z-10" >
-                  {check?.rarible && <span className="bg-yellow-500 h-4 w-4 text-xs rounded-full flex items-center justify-center rarible-logo"></span>}
-                  {check?.opensea && <span className="bg-blue-500 text-white mt-1 h-4 w-4 text-xs rounded-full flex items-center opensea-logo"></span>}
-                  {check?.foundation && <span className="bg-black text-white mt-1 h-4 w-4 text-xs rounded-full flex items-center foundation-logo"></span>}
-                  {check?.nifty && <span className="bg-blue-700 text-white mt-1 h-4 w-4 text-xs rounded-full flex items-center nifty-logo"></span>}
-                </span>
               </div>
-              <span className="text-black absolute bottom-0 rounded-tr-full left-0 hidden text-xs bg-white p-1 pt-2 pr-2 bg-pink-400 text-pink-800" >
-                {item?.likes}
-              </span>
               <span className="hidden text-black opacity-50 absolute bottom-0 left-0 -mb-5 text-xs w-full text-center">{item?.name}</span>
             </a>
           }
@@ -489,6 +469,7 @@ export const UpdateAction = ({ action, profile }: { action: any, profile: Profil
       onClick={async () => {
         setShow(true)
         if (address != undefined) {
+          // TODO: change creatorFetch to fetchNFT(address, stateAction)
           const parcel = await creatorFetch(address, action, false, profile)
           await firebase.writeDocument("creatorParcel", address, parcel)
         }
