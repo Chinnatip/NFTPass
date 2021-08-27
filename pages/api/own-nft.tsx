@@ -6,15 +6,15 @@ import axios from 'axios'
 const cors = initMiddleware(
   Cors({ methods: ['GET', 'POST', 'OPTIONS'], })
 )
-const RARIBLE_URL = 'http://api.rarible.com/protocol/v0.1'
+// const RARIBLE_URL = 'http://api.rarible.com/protocol/v0.1'
 const MORALIS_API_KEY = 'VWtW1wkC5OLqsZGORbuTMda1aaVUsqrl7AsukAV9diKSndpW14bcSjbgjT13FEkM'
 const MORALIS_API = 'https://deep-index.moralis.io/api/v2'
 // const CHAIN = 'eth'
 
-type Attribute = {
-  key: string
-  value: string
-}
+// type Attribute = {
+//   key: string
+//   value: string
+// }
 
 type OpenseaMetadata = {
   description: string
@@ -23,38 +23,38 @@ type OpenseaMetadata = {
   name: string
 }
 
-type RaribleMetadata = {
-  name: string
-  token: string
-  token_address: string
-  token_id: string
-  description?: string
-  attributes?: Attribute[],
-  image: {
-    url: {
-      ORIGINAL: string
-      BIG: string
-      PREVIEW: string
-    },
-    meta: {
-      PREVIEW: {
-        type: string
-        width: number
-        height: number
-      }
-    }
-  }
-  animation?: {
-    url: {
-      ORIGINAL: string
-    },
-    meta: {
-      ORIGINAL: {
-          type: string
-      }
-    }
-  }
-}
+// type RaribleMetadata = {
+//   name: string
+//   token: string
+//   token_address: string
+//   token_id: string
+//   description?: string
+//   attributes?: Attribute[],
+//   image: {
+//     url: {
+//       ORIGINAL: string
+//       BIG: string
+//       PREVIEW: string
+//     },
+//     meta: {
+//       PREVIEW: {
+//         type: string
+//         width: number
+//         height: number
+//       }
+//     }
+//   }
+//   animation?: {
+//     url: {
+//       ORIGINAL: string
+//     },
+//     meta: {
+//       ORIGINAL: {
+//           type: string
+//       }
+//     }
+//   }
+// }
 
 type Owned = {
   chain?: string

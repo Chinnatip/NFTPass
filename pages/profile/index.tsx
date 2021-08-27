@@ -2,14 +2,13 @@ import React, { useState, useEffect } from 'react'
 import * as firebase from "../../method/firebase"
 import ProfilePage from '@/ProfilePage'
 import { Profile } from '../../method/rarible/interface'
-import { Drop } from '../../method/nifty/interface'
-import { creatorFetch, prepareURI } from '../../method/integrate'
-import { Galleryst } from '../../interfaces/index'
+import { fetchNFT, prepareURI } from '../../method/integrate'
+import { NFTMetadata } from '../../interfaces/index'
 import { observer } from 'mobx-react-lite'
 import { ConnectBtn } from '@/Galleryst'
 import { NextSeo } from 'next-seo'
 
-const Page = observer(({ address, nifty_slug, seo, response, loginModal=false }: {
+const Page = observer(({ address, seo, response }: {
   address: string,
   nifty_slug: string | false
   seo: {
@@ -24,33 +23,29 @@ const Page = observer(({ address, nifty_slug, seo, response, loginModal=false }:
     pic: 'https://www.galleryst.co/favicon/ms-icon-310x310.png',
     address
   })
-  const [NFTLists, setNFTLists] = useState<Galleryst[]>([])
   const [claimStage, setClaimStage] = useState(false)
+  const [NFTLists, setNFTLists] = useState<NFTMetadata[]>([])
   const [ownLists, setOwnLists] = useState<string[]>([])
-  const [onsaleLists, setOnsaleLists] = useState<string[]>([])
   const [createdLists, setCreatedLists] = useState<string[]>([])
-  const [dropLists, setDropLists] = useState<Drop[]>([])
   const [toggle, setToggle] = useState<'drops'|'creates'|'collection'>('collection')
-  const stateLists = { NFTLists, ownLists, onsaleLists, createdLists, dropLists }
-  const stateAction = { setProfile, setOwnLists, setOnsaleLists, setDropLists, setCreatedLists, setNFTLists, setToggle }
+  const stateLists = { NFTLists, ownLists, createdLists }
+  const stateAction = { setProfile, setOwnLists, setCreatedLists, setNFTLists, setToggle }
   useEffect(() => {
     (async () => {
-      console.log(response)
-      if (response != undefined) {
-        const { profile, ownLists, onsaleLists, dropLists, createdLists, NFTLists } = response
-        setProfile(profile)
-        setOwnLists(ownLists)
-        setOnsaleLists(onsaleLists)
-        setDropLists(dropLists)
-        setCreatedLists(createdLists)
-        setNFTLists(NFTLists)
-
-        // Config toggle
-        if(onsaleLists.length == 0 && ownLists.length == 0 && createdLists.length > 0) setToggle('creates')
-      } else {
-        await creatorFetch(address, stateAction, nifty_slug, undefined ,loginModal, setClaimStage)
-      }
-
+      await fetchNFT(address, stateAction)
+      // if (response != undefined) {
+      //   const { profile, ownLists, onsaleLists, createdLists, NFTLists } = response
+      //   setProfile(profile)
+      //   setOwnLists(ownLists)
+      //   // setOnsaleLists(onsaleLists)
+      //   // setDropLists(dropLists)
+      //   setCreatedLists(createdLists)
+      //   setNFTLists(NFTLists)
+      //   // Config toggle
+      //   if(onsaleLists.length == 0 && ownLists.length == 0 && createdLists.length > 0) setToggle('creates')
+      // } else {
+      //   await fetchNFT(address, stateAction)
+      // }
     })()
   }, []);
   return <div className="w-screen h-screen pt-0 relative overflow-y-scroll overflow-x-hidden " style={{ background: 'url("image/bg_blur.jpg")' }}>

@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import * as firebase from "../method/firebase"
 import { Profile } from '../method/rarible/interface'
 import { sanitizeArray } from '../method/integrate'
 import { walletStore } from 'stores/wallet.store'
-import { CreatorHeader, ShareAction, UpdateAction, Filter, Toggle, NFTDrop, NFTGroup } from '@/Galleryst'
+import { CreatorHeader, ShareAction, Toggle, NFTGroup } from '@/Galleryst'
 
 type Section = {
   id: string
@@ -11,7 +11,7 @@ type Section = {
   nftLists: string[]
 }
 
-const ProfilePage = ({ toggle, galleryst, setToggle, profile, action, lists, claimStage = false, setClaimStage }: {
+const ProfilePage = ({ toggle, galleryst, setToggle, profile, lists, claimStage = false, setClaimStage }: {
   profile: Profile,
   action: any,
   lists: any,
@@ -21,15 +21,13 @@ const ProfilePage = ({ toggle, galleryst, setToggle, profile, action, lists, cla
   setToggle: any
   galleryst?: string[]
 }) => {
-  const [collections, setCollection] = useState<Section[]>([])
-  const { onsaleLists, ownLists, createdLists, dropLists, NFTLists } = lists
+  // const [collections, setCollection] = useState<Section[]>([])
+  const { ownLists, createdLists, NFTLists } = lists
   const parcel = {
     profile: { ...profile, verified: true },
     NFTLists: sanitizeArray(NFTLists),
-    onsaleLists,
     ownLists,
-    createdLists,
-    dropLists
+    createdLists
   }
   const wallet = walletStore
   const address = profile.address
@@ -44,11 +42,10 @@ const ProfilePage = ({ toggle, galleryst, setToggle, profile, action, lists, cla
           const collection = await firebase.findbyAddress('galleryst', gallID)
           if (collection.exists) {
             const colGet: any = collection.data()
-            // console.log(colGet)
             colls.push(colGet)
           }
         }))
-        setCollection(colls)
+        // setCollection(colls)
       }
     })()
   }, [galleryst]);
@@ -66,19 +63,18 @@ const ProfilePage = ({ toggle, galleryst, setToggle, profile, action, lists, cla
           <div className="mb-8 inline-block" >
             <Toggle text="Owned" trigger="collection" action={setToggle} toggle={toggle} amount={ownLists.length} />
             <Toggle text="Created" trigger="creates" action={setToggle} toggle={toggle} amount={createdLists.length} />
-            {dropLists.length > 0 && <Toggle text="Drops" trigger="drops" action={setToggle} toggle={toggle} amount={dropLists.length} />}
           </div>
         </div>
       </div>
 
       {/* NFT controller */}
-      <div className="py-3 text-center flex justify-center items-center bg-gray-100">
+      {/* <div className="py-3 text-center flex justify-center items-center bg-gray-100">
         <span className="text-sm text-gray-500 mr-1 hidden">Filter by marletplace</span>
         <Filter platform="rarible" profile={profile} />
         <Filter platform="opensea" profile={profile} />
         <Filter platform="foundation" profile={profile} />
         <Filter platform="nifty" profile={profile} />
-      </div>
+      </div> */}
 
       {/* Gallery */}
       <div className="h-4 relative" />
@@ -86,13 +82,9 @@ const ProfilePage = ({ toggle, galleryst, setToggle, profile, action, lists, cla
         { claimCheck && <a href={`/customize/${profile.shortUrl}`} className="rounded-full h-10 flex py-2 px-2 justify-self-end items-center justify-center button-red mr-3">
           <span className="md:block text-center text-sm">Edit Page</span>
         </a>}
-        <UpdateAction profile={profile} action={action} />
+        {/* <UpdateAction profile={profile} action={action} /> */}
       </div>
-      {toggle == 'drops' && <NFTDrop text={`Nifty drops (${dropLists.length} items)`} lists={dropLists} />}
-
       {toggle == 'collection' && <>
-        {collections.map(({ name, nftLists }) => <NFTGroup type="onsale" text={`${name} (${nftLists.length} items)`} lists={nftLists} nfts={NFTLists} />)}
-        <NFTGroup type="onsale" text={`On sale (${onsaleLists.length} items)`} lists={onsaleLists} nfts={NFTLists} />
         <NFTGroup type="owned" text={`Owned by ${profile?.username} (${ownLists.length} items)`} lists={ownLists} nfts={NFTLists} /></>}
       {toggle == 'creates' && <NFTGroup type="created" text={`Created (${createdLists.length} items)`} lists={createdLists} nfts={NFTLists} />}
 

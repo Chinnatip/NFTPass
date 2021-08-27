@@ -8,11 +8,13 @@ const cors = initMiddleware(
 )
 const RARIBLE_URL = 'http://api.rarible.com/protocol/v0.1'
 
+// Attribute schema
 type Attribute = {
   key: string
   value: string
 }
 
+// NFT Metadata schema
 type NFTMetadata = {
   name: string
   token: string
@@ -47,9 +49,14 @@ type NFTMetadata = {
 }
 
 const NFTMetadata = async(token: string): Promise<NFTMetadata|undefined> => {
-  const resp = await axios(`${RARIBLE_URL}/ethereum/nft/items/${token}/meta`)
-  if(resp.status == 200){
-    return resp.data
+  const metaResp = await axios(`${RARIBLE_URL}/ethereum/nft/items/${token}/meta`)
+  const resp = await axios(`${RARIBLE_URL}/ethereum/nft/items/${token}`)
+  if(resp.status == 200 && metaResp.status == 200){
+    return { ...metaResp.data,
+      creators: resp.data?.creators,
+      supply: resp.data?.supply != undefined ? parseInt(resp.data?.supply) : 1,
+      syncDate: resp.data?.date
+    }
   }else{
     return undefined
   }

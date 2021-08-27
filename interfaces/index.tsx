@@ -1,3 +1,69 @@
+export interface NFTS {
+  nfts: string[]
+  ownLists: string[]
+  collection: {
+    name: string
+    symbol: string
+    address: string
+    token_uri: string
+    collection: boolean
+    tokenType: string
+  }[]
+}
+
+export interface Attribute {
+  key: string
+  value: string
+}
+
+export interface NFTMetadata {
+  name: string
+  token: string
+  token_address: string
+  token_id: string
+  description?: string
+  attributes?: Attribute[],
+  creators: {
+    account: string
+    value: number
+  }[]
+  collection: {
+    address: string
+    collection: boolean
+    name: string
+    symbol: string
+    tokenType: string
+    token_url: string
+  }
+  image: {
+    url: {
+      ORIGINAL: string
+      BIG: string
+      PREVIEW: string
+    },
+    meta: {
+      PREVIEW: {
+        type: string
+        width: number
+        height: number
+      }
+    }
+  }
+  supply: number
+  syncDate: string
+  animation?: {
+    url: {
+      ORIGINAL: string
+    },
+    meta: {
+      ORIGINAL: {
+          type: string
+      }
+    }
+  }
+}
+
+
 export interface ResponseDetail {
   status: boolean
   link?: string

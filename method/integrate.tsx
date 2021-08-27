@@ -8,9 +8,10 @@ import * as rarible from './rarible/fetch'
 import * as opensea from './opensea/fetch'
 import * as nifty from './nifty/fetch'
 import * as foundation from './foundation/fetch'
+import axios from 'axios'
 import { withError } from 'utils/promise.util'
 import { raribleImg } from './rarible/method'
-import { NFTDetail, ResponseDetail, Galleryst } from '../interfaces/index'
+import { NFTDetail, ResponseDetail, Galleryst, NFTS, NFTMetadata } from '../interfaces/index'
 // import { faCommentsDollar } from '@fortawesome/free-solid-svg-icons'
 
 const checkMarket = (action: any, profile: Profile, lists: any, market: string) => {
@@ -72,6 +73,57 @@ const getUserProfile = async (address: string): Promise<Profile> => {
     return {...fndUser, marketCheck: {}}
   }
   return { marketCheck: {}, pic: 'https://www.galleryst.co/favicon/ms-icon-310x310.png', address }
+}
+
+export const fetchNFT = async (address: string, action: any) => {
+  const resp = await axios(`/api/fetch?address=${address}`)
+  const {setOwnLists, setNFTLists, setCreatedLists} = action
+  if(resp.status == 200){
+    const response : any  = resp.data
+    const NFTdata: NFTS = response
+
+    setOwnLists(NFTdata.ownLists)
+    // setLoad(false)
+
+    let lists : NFTMetadata[] = []
+    let parseCreatedList : string[] = []
+
+    NFTdata.nfts.map(id => {
+      if(id.split(':')[1] != ''){
+        firebase.findbyAddress('metadata', id).then(doc => {
+          if(doc.exists){
+            const data: any = doc.data()
+            const metadata : NFTMetadata = data
+            lists = [...lists , metadata]
+            setNFTLists(lists)
+            if(metadata.creators.map(c => c.account).includes(address)){
+              parseCreatedList = [...parseCreatedList, id]
+            }
+            setCreatedLists(parseCreatedList)
+          }else{
+            axios(`/api/metadata?address=${id}`).then(res => {
+              if(res.status == 200){
+                const data: any = res.data
+                const metadata : NFTMetadata = { ...data ,
+                  token: id,
+                  token_address: id.split(':')[0],
+                  token_id: id.split(':')[1],
+                  collection: NFTdata.collection.find(col => col.address == id.split(':')[0])
+                }
+                lists = [...lists , metadata]
+                setNFTLists(lists)
+                if(metadata.creators.map(c => c.account).includes(address)){
+                  parseCreatedList = [...parseCreatedList, id]
+                }
+                setCreatedLists(parseCreatedList)
+                firebase.writeDocument('metadata', id, metadata)
+              }
+            })
+          }
+        })
+      }
+    })
+  }
 }
 
 export const creatorFetch = async (address: string, action: any , nifty_slug: string | false, profile?: Profile, loginModal?: boolean, setClaimStage?: any) => {
