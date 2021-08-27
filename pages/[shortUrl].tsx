@@ -17,7 +17,7 @@ const Page = ({ seo, response }: {
 }) => {
   const [profile, setProfile] = useState<Profile>(response != undefined ? response.profile : {})
   const [claimStage, setClaimStage] = useState(false)
-  // const [gallery, setGalleryst] = useState<string[]>([])
+  const [gallery, setGalleryst] = useState<string[]>([])
   const [NFTLists, setNFTLists] = useState<NFTMetadata[]>([])
   const [ownLists, setOwnLists] = useState<string[]>([])
   const [createdLists, setCreatedLists] = useState<string[]>([])
@@ -28,6 +28,7 @@ const Page = ({ seo, response }: {
     (async () => {
       if (response != undefined) {
         await fetchNFT(response.profile.address, stateAction)
+        setGalleryst(response.galleryst)
       }
     })()
   }, []);
@@ -57,7 +58,7 @@ const Page = ({ seo, response }: {
         </a>
         <ConnectBtn />
       </div>
-      <ProfilePage toggle={toggle} setToggle={setToggle} claimStage={claimStage} setClaimStage={setClaimStage} profile={profile} action={stateAction} lists={stateLists} />
+      <ProfilePage toggle={toggle} galleryst={gallery} setToggle={setToggle} claimStage={claimStage} setClaimStage={setClaimStage} profile={profile} action={stateAction} lists={stateLists} />
     </div>
   </div>
 }

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import * as firebase from "../method/firebase"
 import { Profile } from '../method/rarible/interface'
 import { sanitizeArray } from '../method/integrate'
@@ -21,7 +21,7 @@ const ProfilePage = ({ toggle, galleryst, setToggle, profile, lists, claimStage 
   setToggle: any
   galleryst?: string[]
 }) => {
-  // const [collections, setCollection] = useState<Section[]>([])
+  const [collections, setCollection] = useState<Section[]>([])
   const { ownLists, createdLists, NFTLists } = lists
   const parcel = {
     profile: { ...profile, verified: true },
@@ -35,6 +35,7 @@ const ProfilePage = ({ toggle, galleryst, setToggle, profile, lists, claimStage 
 
   useEffect(() => {
     (async () => {
+      console.log('GGGGG >?? ',galleryst)
       if (galleryst != undefined && galleryst.length > 0) {
         let colls: Section[] = []
         console.log(galleryst)
@@ -45,7 +46,7 @@ const ProfilePage = ({ toggle, galleryst, setToggle, profile, lists, claimStage 
             colls.push(colGet)
           }
         }))
-        // setCollection(colls)
+        setCollection(colls)
       }
     })()
   }, [galleryst]);
@@ -85,6 +86,7 @@ const ProfilePage = ({ toggle, galleryst, setToggle, profile, lists, claimStage 
         {/* <UpdateAction profile={profile} action={action} /> */}
       </div>
       {toggle == 'collection' && <>
+        {collections.map(({ name, nftLists }) => <NFTGroup type="owned" text={`${name} (${nftLists.length} items)`} lists={nftLists} nfts={NFTLists} />)}
         <NFTGroup type="owned" text={`Owned by ${profile?.username} (${ownLists.length} items)`} lists={ownLists} nfts={NFTLists} /></>}
       {toggle == 'creates' && <NFTGroup type="created" text={`Created (${createdLists.length} items)`} lists={createdLists} nfts={NFTLists} />}
 

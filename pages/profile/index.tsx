@@ -26,6 +26,7 @@ const Page = observer(({ address, seo, response }: {
   const [claimStage, setClaimStage] = useState(false)
   const [NFTLists, setNFTLists] = useState<NFTMetadata[]>([])
   const [ownLists, setOwnLists] = useState<string[]>([])
+  const [gallery, setGalleryst] = useState<string[]>([])
   const [createdLists, setCreatedLists] = useState<string[]>([])
   const [toggle, setToggle] = useState<'drops'|'creates'|'collection'>('collection')
   const stateLists = { NFTLists, ownLists, createdLists }
@@ -33,6 +34,7 @@ const Page = observer(({ address, seo, response }: {
   useEffect(() => {
     (async () => {
       await fetchNFT(address, stateAction)
+      setGalleryst(response.galleryst)
       // if (response != undefined) {
       //   const { profile, ownLists, onsaleLists, createdLists, NFTLists } = response
       //   setProfile(profile)
@@ -72,7 +74,7 @@ const Page = observer(({ address, seo, response }: {
       </a>
       <ConnectBtn />
     </div>
-    <ProfilePage toggle={toggle} setToggle={setToggle} claimStage={claimStage} setClaimStage={setClaimStage} profile={profile} action={stateAction} lists={stateLists} />
+    <ProfilePage toggle={toggle} galleryst={gallery} setToggle={setToggle} claimStage={claimStage} setClaimStage={setClaimStage} profile={profile} action={stateAction} lists={stateLists} />
   </div>
 })
 
