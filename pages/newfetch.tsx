@@ -45,50 +45,55 @@ type NFTMetadata = {
   }
 }
 
+const fetchNFTfromETH = async (address: string, setLoad: any ,setNFTLists: any ) => {
+  const resp = await axios(`/api/own-nft?address=${address}&chain=polygon`)
+  if(resp.status == 200){
+    const response : any  = resp.data
+    const NFTdata: NFTS = response
+    setLoad(false)
+
+    let lists : NFTMetadata[] = []
+
+    console.log(NFTdata.nfts)
+
+    NFTdata.ownLists.map(id => {
+      if(id.split(':')[1] != ''){
+        firebase.findbyAddress('metadata', id).then(doc => {
+          if(doc.exists){
+            const data: any = doc.data()
+            const metadata : NFTMetadata = data
+            lists = [...lists , metadata]
+            setNFTLists(lists)
+          }else{
+            axios(`/api/metadata?address=${id}`).then(res => {
+              if(res.status == 200){
+                const metadata = { ...res.data ,
+                  token: id,
+                  token_address: id.split(':')[0],
+                  token_id: id.split(':')[1]
+                }
+                lists = [...lists , metadata]
+                setNFTLists(lists)
+                firebase.writeDocument('metadata', id, metadata)
+              }
+            })
+          }
+        })
+      }
+    })
+  }
+
+}
+
 const Page = ({address}: {
   address: string
 }) => {
   const [load, setLoad] = useState(true)
   const [NFTLists, setNFTLists] = useState<NFTMetadata[]>([])
-  // const [ownLists, setOwnLists] = useState<string[]>([])
   useEffect(() => {
     (async () => {
-      const resp = await axios(`/api/fetch?address=${address}`)
-      if(resp.status == 200){
-        const response : any  = resp.data
-        const NFTdata: NFTS = response
-        // setOwnLists(NFTdata.ownLists)
-        setLoad(false)
+      await fetchNFTfromETH(address, setLoad, setNFTLists)
 
-        let lists : NFTMetadata[] = []
-
-        NFTdata.ownLists.map(id => {
-          if(id.split(':')[1] != ''){
-            firebase.findbyAddress('metadata', id).then(doc => {
-              if(doc.exists){
-                const data: any = doc.data()
-                const metadata : NFTMetadata = data
-                lists = [...lists , metadata]
-                setNFTLists(lists)
-              }else{
-                axios(`/api/metadata?address=${id}`).then(res => {
-                  if(res.status == 200){
-                    const metadata = { ...res.data ,
-                      token: id,
-                      token_address: id.split(':')[0],
-                      token_id: id.split(':')[1]
-                    }
-                    lists = [...lists , metadata]
-                    setNFTLists(lists)
-                    firebase.writeDocument('metadata', id, metadata)
-                  }
-                })
-              }
-            })
-          }
-        })
-
-      }
     })()
   }, []);
   return <div>
