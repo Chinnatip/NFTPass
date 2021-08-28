@@ -171,6 +171,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           .map( async address => await NFTCollection(address))
       )
       nfts = ignoreNullTokenID(uniqueAddress)
+      console.log(`${ownLists.length} : ${transferResp.length} >>> ${uniqueAddress.length}`)
+      console.log(nfts.length)
       res.status(200).json({
         nfts,
         ownLists,

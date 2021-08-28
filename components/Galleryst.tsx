@@ -317,7 +317,7 @@ export const NFTGroup = ({ lists, nfts, text = ''}: { type?: string, text?: stri
       <h2 className="text-base rounded-full inline-block mb-2 py-1  text-white md:mx-4">{text}</h2>
       <div className="grid grid-cols-3 md:gap-4 md:p-4 p-0 gap-1 w-full">
         {lists.map((id) => nfts.find(nft => nft.token == id)).map(item => {
-          console.log(item)
+          // console.log(item)
           if (item != undefined) {
             const { image: { url: { PREVIEW } }  } = item
             return PREVIEW != undefined && <a target="_blank" href={`/nft?address=${item.token}`} className="relative cursor-pointer bg-white rounded-16 mb-0 active-shadow" key={`${item.token}`}>

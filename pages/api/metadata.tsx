@@ -7,6 +7,8 @@ const cors = initMiddleware(
   Cors({ methods: ['GET', 'POST', 'OPTIONS'], })
 )
 const RARIBLE_URL = 'http://api.rarible.com/protocol/v0.1'
+const MORALIS_URL = 'https://deep-index.moralis.io/api/v2/'
+const MORALIS_API_KEY = 'VWtW1wkC5OLqsZGORbuTMda1aaVUsqrl7AsukAV9diKSndpW14bcSjbgjT13FEkM'
 
 // Attribute schema
 type Attribute = {
@@ -50,12 +52,25 @@ type NFTMetadata = {
 
 const NFTMetadata = async(token: string): Promise<NFTMetadata|undefined> => {
   const metaResp = await axios(`${RARIBLE_URL}/ethereum/nft/items/${token}/meta`)
-  const resp = await axios(`${RARIBLE_URL}/ethereum/nft/items/${token}`)
+  // const resp = await axios(`${RARIBLE_URL}/ethereum/nft/items/${token}`)
+  const split = token.split(':')
+  const options = { headers: {  'X-API-Key': MORALIS_API_KEY }}
+  const resp = await axios(`${MORALIS_URL}nft/${split[0]}/${split[1]}/transfers?chain=eth&format=decimal`, options)
+
+  const findCreator = (nft: any) => {
+    if (  nft.from_address == '0x0000000000000000000000000000000000000000'){
+      return nft.to_address
+    }else{
+      return nft.from_address
+    }
+  }
+
   if(resp.status == 200 && metaResp.status == 200){
+    const firstSync = resp.data.result[resp.data.result.length-1]
     return { ...metaResp.data,
-      creators: resp.data?.creators,
-      supply: resp.data?.supply != undefined ? parseInt(resp.data?.supply) : 1,
-      syncDate: resp.data?.date
+      creators: findCreator(firstSync),
+      supply: firstSync.amount != undefined ? parseInt(firstSync.amount) : 1, //resp.data.supply != undefined ? parseInt(resp.data?.supply) : 1,
+      syncDate: firstSync.block_timestamp //resp.data.date
     }
   }else{
     return undefined

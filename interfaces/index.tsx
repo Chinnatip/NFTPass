@@ -23,10 +23,7 @@ export interface NFTMetadata {
   token_id: string
   description?: string
   attributes?: Attribute[],
-  creators: {
-    account: string
-    value: number
-  }[]
+  creators: string
   collection: {
     address: string
     collection: boolean

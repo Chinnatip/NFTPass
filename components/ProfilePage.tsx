@@ -35,7 +35,6 @@ const ProfilePage = ({ toggle, galleryst, setToggle, profile, lists, claimStage 
 
   useEffect(() => {
     (async () => {
-      console.log('GGGGG >?? ',galleryst)
       if (galleryst != undefined && galleryst.length > 0) {
         let colls: Section[] = []
         console.log(galleryst)

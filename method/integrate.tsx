@@ -60,7 +60,7 @@ const getUserProfile = async (address: string): Promise<Profile> => {
       delete restructureResp.acceptedTerms;
       delete restructureResp.blacklisted;
       delete restructureResp.badges;
-      console.log(restructureResp)
+      // console.log(restructureResp)
       return restructureResp
     }
   }
@@ -90,35 +90,58 @@ export const fetchNFT = async (address: string, action: any) => {
 
     NFTdata.nfts.map(id => {
       if(id.split(':')[1] != ''){
-        firebase.findbyAddress('metadata', id).then(doc => {
-          if(doc.exists){
-            const data: any = doc.data()
-            const metadata : NFTMetadata = data
+        // firebase.findbyAddress('metadata', id).then(doc => {
+        //   if(doc.exists){
+        //     const data: any = doc.data()
+        //     const metadata : NFTMetadata = data
+        //     lists = [...lists , metadata]
+        //     setNFTLists(lists)
+        //     // if(metadata.creators.map(c => c.account).includes(address)){
+        //     //   parseCreatedList = [...parseCreatedList, id]
+        //     // }
+        //     // setCreatedLists(parseCreatedList)
+
+        //     setCreatedLists(lists.map(l => l.token))
+
+        //   }else{
+        //     axios(`/api/metadata?address=${id}`).then(res => {
+        //       if(res.status == 200){
+        //         const data: any = res.data
+                
+        //         const metadata : NFTMetadata = { ...data ,
+        //           token: id,
+        //           token_address: id.split(':')[0],
+        //           token_id: id.split(':')[1],
+        //           collection: NFTdata.collection.find(col => col.address == id.split(':')[0])
+        //         }
+        //         console.log(metadata)
+        //         lists = [...lists , metadata]
+        //         setNFTLists(lists)
+        //         if(metadata.creators.map(c => c.account).includes(address)){
+        //           parseCreatedList = [...parseCreatedList, id]
+        //         }
+        //         setCreatedLists(parseCreatedList)
+        //         firebase.writeDocument('metadata', id, metadata)
+        //       }
+        //     })
+        //   }
+        // })
+        axios(`/api/metadata?address=${id}`).then(res => {
+          if(res.status == 200){
+            const data: any = res.data
+            const metadata : NFTMetadata = { ...data ,
+              token: id,
+              token_address: id.split(':')[0],
+              token_id: id.split(':')[1],
+              collection: NFTdata.collection.find(col => col.address == id.split(':')[0])
+            }
             lists = [...lists , metadata]
             setNFTLists(lists)
-            if(metadata.creators.map(c => c.account).includes(address)){
+            if(metadata.creators.map(c => c).includes(address)){
               parseCreatedList = [...parseCreatedList, id]
             }
             setCreatedLists(parseCreatedList)
-          }else{
-            axios(`/api/metadata?address=${id}`).then(res => {
-              if(res.status == 200){
-                const data: any = res.data
-                const metadata : NFTMetadata = { ...data ,
-                  token: id,
-                  token_address: id.split(':')[0],
-                  token_id: id.split(':')[1],
-                  collection: NFTdata.collection.find(col => col.address == id.split(':')[0])
-                }
-                lists = [...lists , metadata]
-                setNFTLists(lists)
-                if(metadata.creators.map(c => c.account).includes(address)){
-                  parseCreatedList = [...parseCreatedList, id]
-                }
-                setCreatedLists(parseCreatedList)
-                firebase.writeDocument('metadata', id, metadata)
-              }
-            })
+            firebase.writeDocument('metadata', id, metadata)
           }
         })
       }
