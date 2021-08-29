@@ -12,6 +12,7 @@ import axios from 'axios'
 import { withError } from 'utils/promise.util'
 import { raribleImg } from './rarible/method'
 import { NFTDetail, ResponseDetail, Galleryst, NFTS, NFTMetadata } from '../interfaces/index'
+import { getAddress } from '@ethersproject/address'
 
 const checkMarket = (action: any, profile: Profile, lists: any, market: string) => {
   if(lists.allID.length > 0) {
@@ -95,7 +96,8 @@ export const fetchNFT = async (address: string, action: any) => {
             const metadata : NFTMetadata = data
             lists = [...lists , metadata]
             setNFTLists(lists)
-            if(metadata.creators == address){
+            const checkSumCreator = getAddress(metadata.creators)
+            if(checkSumCreator == address){
               parseCreatedList = [...parseCreatedList, id]
             }
             setCreatedLists(parseCreatedList)
@@ -110,9 +112,10 @@ export const fetchNFT = async (address: string, action: any) => {
                   collection: NFTdata.collection.find(col => col.address == id.split(':')[0])
                 }
                 lists = [...lists , metadata]
+                const checkSumCreator = getAddress(metadata.creators)
                 setNFTLists(lists)
                 firebase.writeDocument('metadata', id, metadata)
-                if(metadata.creators == address){
+                if(checkSumCreator == address){
                   parseCreatedList = [...parseCreatedList, id]
                 }
                 setCreatedLists(parseCreatedList)

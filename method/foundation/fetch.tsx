@@ -18,8 +18,6 @@ import { getFoundationAlternateUrl, getFoundationAssetUrl } from './utils'
 
 export const mapStrToCheckSum = map<string, string>(getAddress);
 
-
-
 const foundationApolloClient = new ApolloClient({
   uri: FOUNDATION_GQL_URI,
   cache: new InMemoryCache(),
