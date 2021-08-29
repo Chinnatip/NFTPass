@@ -81,18 +81,18 @@ type Transfer = {
   log_index: number
 }
 
-// type TransferVerbose = {
-//   transaction_hash: string
-//   address: string
-//   block_timestamp: string
-//   block_number: string
-//   block_hash: string
-//   to_address: string
-//   from_address: string
-//   token_id: string[]
-//   amounts: string[]
-//   contract_type: string
-// }
+type TransferVerbose = {
+  transaction_hash: string
+  address: string
+  block_timestamp: string
+  block_number: string
+  block_hash: string
+  to_address: string
+  from_address: string
+  token_id: string[]
+  amounts: string[]
+  contract_type: string
+}
 
 const options = { headers: {  'X-API-Key': MORALIS_API_KEY }}
 
@@ -109,6 +109,15 @@ const NFTOf = async (address: string, chain:string='eth'): Promise<Owned[]> => {
 const NFTtransfer = async (address: string, chain:string='eth'): Promise<Transfer[]> => {
   const transferString = '&format=decimal&direction=both&order=token_address.DESC'
   const resp = await axios(`${MORALIS_API}/${address}/nft/transfers?chain=${chain}${transferString}`,options)
+  if(resp.status == 200){
+    return resp.data.result
+  }else{
+    return []
+  }
+}
+
+const NFTtransferVerbose = async (address: string, chain:string='eth'): Promise<TransferVerbose[]> => {
+  const resp = await axios(`${MORALIS_API}/${address}/nft/transfers/verbose?chain=${chain}`,options)
   if(resp.status == 200){
     return resp.data.result
   }else{
@@ -162,17 +171,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const { address } = req.query
     if(address != undefined && typeof address === 'string'){
       let nfts : string[]
+      let verbList : string[] = []
       const ownedResp = await NFTOf(address)
       const ownLists = [...new Set(ownedResp.map(o => `${o.token_address}:${o.token_id}`))]
       const transferResp = await NFTtransfer(address)
-      const uniqueAddress = [...new Set([...ownLists, ...transferResp.map(o => `${o.token_address}:${o.token_id}`)])]
+      const transferVerbose = await NFTtransferVerbose(address)
+      transferVerbose.map(verb => {
+        if(verb.token_id[0] != null){ verbList.push(`${verb.address}:${verb.token_id[0]}`)}
+      })
+      console.log(verbList.length)
+      const uniqueAddress = [...new Set([
+        ...ownLists, 
+        ...transferResp.map(o => `${o.token_address}:${o.token_id}`),
+        ...verbList
+      ])]
+      console.log(uniqueAddress.length)
       const collection = await Promise.all(
         [...new Set( uniqueAddress.map(u => u.split(':')[0]) )]
           .map( async address => await NFTCollection(address))
       )
       nfts = ignoreNullTokenID(uniqueAddress)
-      console.log(`${ownLists.length} : ${transferResp.length} >>> ${uniqueAddress.length}`)
-      console.log(nfts.length)
       res.status(200).json({
         nfts,
         ownLists,

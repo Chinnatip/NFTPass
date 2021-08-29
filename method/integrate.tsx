@@ -12,7 +12,6 @@ import axios from 'axios'
 import { withError } from 'utils/promise.util'
 import { raribleImg } from './rarible/method'
 import { NFTDetail, ResponseDetail, Galleryst, NFTS, NFTMetadata } from '../interfaces/index'
-// import { faCommentsDollar } from '@fortawesome/free-solid-svg-icons'
 
 const checkMarket = (action: any, profile: Profile, lists: any, market: string) => {
   if(lists.allID.length > 0) {
@@ -100,7 +99,6 @@ export const fetchNFT = async (address: string, action: any) => {
               parseCreatedList = [...parseCreatedList, id]
             }
             setCreatedLists(parseCreatedList)
-            setCreatedLists(lists.map(l => l.token))
           }else{
             axios(`/api/metadata?address=${id}`).then(res => {
               if(res.status == 200){
@@ -113,11 +111,11 @@ export const fetchNFT = async (address: string, action: any) => {
                 }
                 lists = [...lists , metadata]
                 setNFTLists(lists)
+                firebase.writeDocument('metadata', id, metadata)
                 if(metadata.creators == address){
                   parseCreatedList = [...parseCreatedList, id]
                 }
                 setCreatedLists(parseCreatedList)
-                firebase.writeDocument('metadata', id, metadata)
               }
             })
           }

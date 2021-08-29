@@ -56,7 +56,6 @@ const NFTMetadata = async(token: string): Promise<NFTMetadata|undefined> => {
   const split = token.split(':')
   const options = { headers: {  'X-API-Key': MORALIS_API_KEY }}
   const resp = await axios(`${MORALIS_URL}nft/${split[0]}/${split[1]}/transfers?chain=eth&format=decimal`, options)
-
   const findCreator = (nft: any) => {
     if (  nft.from_address == '0x0000000000000000000000000000000000000000'){
       return nft.to_address
@@ -64,13 +63,12 @@ const NFTMetadata = async(token: string): Promise<NFTMetadata|undefined> => {
       return nft.from_address
     }
   }
-
   if(resp.status == 200 && metaResp.status == 200){
     const firstSync = resp.data.result[resp.data.result.length-1]
     return { ...metaResp.data,
       creators: findCreator(firstSync),
-      supply: firstSync.amount != undefined ? parseInt(firstSync.amount) : 1, //resp.data.supply != undefined ? parseInt(resp.data?.supply) : 1,
-      syncDate: firstSync.block_timestamp //resp.data.date
+      supply: firstSync.amount != undefined ? parseInt(firstSync.amount) : 1,
+      syncDate: firstSync.block_timestamp
     }
   }else{
     return undefined
