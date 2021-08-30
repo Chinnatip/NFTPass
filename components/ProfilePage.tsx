@@ -76,6 +76,8 @@ const ProfilePage = ({ toggle, galleryst, setToggle, profile, lists, claimStage 
         <Filter platform="nifty" profile={profile} />
       </div> */}
 
+      {profile.shortUrl && <a className="bg-blue-500 p-4 text-white rounded-full" href={`/embed/${profile.shortUrl}/playground`}>Open widget</a>}
+
       {/* Gallery */}
       <div className="h-4 relative" />
       <div className="flex w-full justify-end">

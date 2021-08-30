@@ -10,6 +10,7 @@ import dayjs from 'dayjs'
 import { customAlphabet } from 'nanoid'
 import { removeNullish } from 'utils/json.util'
 import { ERC1155_INTERFACE_ID, ERC721_INTERFACE_ID } from 'static/InterfaceId'
+import { getAddress } from '@ethersproject/address'
 
 const alphabets = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
 const nanoid = customAlphabet(alphabets, 5)
@@ -65,8 +66,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         console.log('getting metadata')
         // First: get token metadata
         const { contractAddress, tokenId }: Body = req.body
-        const address = `${contractAddress}:${tokenId}`
-        const provider = new ethers.providers.JsonRpcProvider(process.env.ALCHEMY_RPC_URL)
+        const address = `${getAddress(contractAddress)}:${tokenId}`
+        console.log(address)
+        const provider = new ethers.providers.JsonRpcProvider(process.env.INFURA_RPC_URL)
         const contract = new ethers.Contract(contractAddress, REQUIRED_ABIs, provider)
 
         // detect erc-721 or erc-1155 first
@@ -91,11 +93,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
           const genericUri = await contract.uri(tokenId)
           const filename = tokenId.toString(16).padStart(64, '0')
           const metadataUri = genericUri.replace('{id}', filename)
+          console.log(metadataUri)
           const response = await axios.get(metadataUri)
+          console.log(response)
           metadata = response.data
         } else {
           throw new Error(`${contractAddress} is not an nft contract.`)
         }
+
 
         console.log('parsing media list')
         let gallerystCheck
@@ -178,7 +183,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse): 
         res.status(404).send('Not found')
       }
     }
-  } catch (err) {
+  } catch (err: any) {
     console.log(err.message)
     res.status(500).send('Internal server error')
   }

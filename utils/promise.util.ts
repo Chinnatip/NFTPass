@@ -12,7 +12,7 @@ export const withError = async <T extends {}>(promise: Promise<T>): Promise<[T, 
   try {
     const data = await promise
     return [data, null]
-  } catch (err) {
+  } catch (err: any) {
     return [null!, err]
   }
 }
