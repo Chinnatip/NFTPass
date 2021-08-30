@@ -83,7 +83,6 @@ export const fetchNFT = async (address: string, action: any) => {
     const NFTdata: NFTS = response
 
     setOwnLists(NFTdata.ownLists)
-    // setLoad(false)
 
     let lists : NFTMetadata[] = []
     let parseCreatedList : string[] = []
@@ -97,7 +96,8 @@ export const fetchNFT = async (address: string, action: any) => {
             lists = [...lists , metadata]
             setNFTLists(lists)
             const checkSumCreator = getAddress(metadata.creators)
-            if(checkSumCreator == address){
+            const checkSumAddress = getAddress(address)
+            if(checkSumCreator == checkSumAddress){
               parseCreatedList = [...parseCreatedList, id]
             }
             setCreatedLists(parseCreatedList)
