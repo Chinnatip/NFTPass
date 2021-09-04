@@ -311,7 +311,7 @@ export const NFTDrop = ({ lists, text = '' }: { lists: Drop[], text: string }) =
 }
 
 // NFT GROUP
-export const NFTGroup = ({ lists, nfts, text = ''}: { type?: string, text?: string, lists: string[], nfts: NFTMetadata[] }) => {
+export const NFTGroup = ({ lists, nfts, text = '' }: { type?: string, text?: string, lists: string[], nfts: NFTMetadata[] }) => {
   return <>
     {lists.length > 0 && <div className="pt-5 rounded-24 section-tile ">
       <h2 className="text-base rounded-full inline-block mb-2 py-1  text-white md:mx-4">{text}</h2>
@@ -319,7 +319,7 @@ export const NFTGroup = ({ lists, nfts, text = ''}: { type?: string, text?: stri
         {lists.map((id) => nfts.find(nft => nft.token == id)).map(item => {
           // console.log(item)
           if (item != undefined) {
-            const { image: { url: { PREVIEW } }  } = item
+            const { image: { url: { PREVIEW } } } = item
             return PREVIEW != undefined && <a target="_blank" href={`/nft?address=${item.token}`} className="relative cursor-pointer bg-white rounded-16 mb-0 active-shadow" key={`${item.token}`}>
               <div className="thumbnail-wrapper w-full relative">
                 {PREVIEW.slice(PREVIEW.length - 3, PREVIEW.length) == 'mp4' ?
@@ -424,6 +424,7 @@ export const ConnectBtn = observer(() => {
             {walletStore.address != '' && !walletStore.dbVerified ?
               <a href={`/profile?address=${walletStore.address}&loginModal=true`} className=" w-full inline-block bg-black text-white focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft">Claim My Page</a> :
               <a href={`/profile?address=${walletStore.address}`} className=" w-full inline-block bg-black text-white focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft">View My Page</a>}
+            <a className=" w-full inline-block mt-4 bg-white focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft text-black" href={`/embed/playground`}>Open widget</a>
             <button className=" w-full inline-block mt-4 bg-white focus:outline-none rounded-full p-2 px-3 flex items-center shadow-nft text-black" onClick={() => {
               setShow(false)
               walletService.disconnect()
