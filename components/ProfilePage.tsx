@@ -76,12 +76,12 @@ const ProfilePage = ({ toggle, galleryst, setToggle, profile, lists, claimStage 
         <Filter platform="nifty" profile={profile} />
       </div> */}
 
-      {profile.shortUrl && <a className="bg-blue-500 p-4 text-white rounded-full" href={`/embed/${profile.shortUrl}/playground`}>Open widget</a>}
+      {profile.shortUrl && <a className="bg-blue-500 p-4 text-white rounded-full hidden" href={`/embed/${profile.shortUrl}/playground`}>Open widget</a>}
 
       {/* Gallery */}
       <div className="h-4 relative" />
       <div className="flex w-full justify-end">
-        { claimCheck && <a href={`/customize/${profile.shortUrl}`} className="rounded-full h-10 flex py-2 px-2 justify-self-end items-center justify-center button-red mr-3">
+        {claimCheck && <a href={`/customize/${profile.shortUrl}`} className="rounded-full h-10 flex py-2 px-2 justify-self-end items-center justify-center button-red mr-3">
           <span className="md:block text-center text-sm">Edit Page</span>
         </a>}
         {/* <UpdateAction profile={profile} action={action} /> */}
