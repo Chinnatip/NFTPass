@@ -47,7 +47,7 @@ const Page = () => {
     { label: 'Show username', checked: showUsername, onChange: setShowUsername },
     { label: 'Show address', checked: showAddress, onChange: setShowAddress },
   ]
-  const username = router.query.username
+  const address = router.query.address
   const renderOptions = {
     width: iWidth,
     height: iHeight,
@@ -55,7 +55,7 @@ const Page = () => {
     scrolling,
   }
   const params = QueryString.stringify(renderOptions, '&')
-  const iframePath = `/embed/${username}?${params}`
+  const iframePath = `/embed/${address}?${params}`
   const result =
     typeof window !== 'undefined'
       ? ReactDOMServer.renderToStaticMarkup(

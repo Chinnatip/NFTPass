@@ -28,11 +28,11 @@ type Queries = {
   scrolling: string
 }
 
-export const getServerSideProps: GetServerSideProps<Props, { username: string }> =
+export const getServerSideProps: GetServerSideProps<Props, { address: string }> =
   async context => {
-    const username = context.params?.username ?? ''
-    const document = await firebase.findDocument('creatorParcel', username, 'profile.shortUrl')
-    const userData = document.docs?.[0]?.data()
+    const address = context.params?.address ?? ''
+    const response = await firebase.findbyAddress('creatorParcel', address)
+    const userData: any = response
     const { name = '', pic = '' } = userData.profile ?? {}
     const queries: Queries = context.query as Queries
     const width = +queries.width || 500
@@ -181,7 +181,6 @@ export const EmbedIframe = (props: InferGetServerSidePropsType<typeof getServerS
           <a className="focus:outline-none" href="/">
             <img className="md:h-8 h-6 ml-2" src="/image/ic_galleryst_logo.png" alt="" />
           </a>
-          <ConnectBtn />
         </div> */}
         <ProfilePage
           toggle={toggle}
